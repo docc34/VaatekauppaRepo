@@ -1,0 +1,48 @@
+.storePostBox{
+    display:flex;
+    flex-direction: column;
+}
+.storePostBoxRow{
+    flex-direction: row;
+}
+.ProfileCardMain{
+    display:flex;
+    
+}
+.ProfileCardTitleContainer{
+    display:flex;
+    flex-direction: row;
+}
+.ProfileCardTitleLabelBox{
+    flex-grow:1;
+}
+.Profile-Card-Stars{
+    background-color: gold;
+}
+.ProfileCardText{
+    text-decoration: none;
+    color: black;
+    padding-top: 3mm;
+    padding-left: 1.5mm;
+    text-align: justify;
+}
+.ProfileCardText:hover{
+    color:black;
+    text-decoration: none;
+}
+.ProfileCardImg{
+    width:50px;
+    height: 43px;
+}
+.Post-Card{
+  width: 18rem;
+  height: auto;
+}
+.g-4{ 
+    max-height: 1500px;
+}
+
+.testis{
+    padding:10px;
+    margin: 10px;
+}

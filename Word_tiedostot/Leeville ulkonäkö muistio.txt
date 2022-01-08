@@ -1,0 +1,20 @@
+
+	Kauppa sivu
+Hirvee nimi tolla välilehellä pitäs keksii parempi
+Ilmoitusten ulkonäkö ja asettelu kuntoon
+Haku elementtiin o:n tilalle pieni suurennuslasin logo
+
+	Header
+Headerin hakukentän asettelu kuntoon
+Headerille parempi värimaailma
+
+	Kirjautumis sivu
+Kirjautuminen voisi tulla ponnahdusikkunan sisälle sen sijaan että olisi oma välilehti 
+tähän voisi käyttää tätä elementtiä centered https://getbootstrap.com/docs/5.0/components/modal/
+
+	Rekisteröitymis sivu
+Rekisteröitymiselle parempi ulkonäkö ja layout katso mahdollisesti parempia elementtejä bootstrap kirjastosta
+	
+	Footer
+Footerin pitäs pysyä sivun alhaalla 
+jos sivulla ei ole tarpeeksi sisältöä työntääkseen sitä alas ja jos sivua pienentää vertikaalisesti sen pitäisi jäädä alas että ei tule muun sisällön päälle

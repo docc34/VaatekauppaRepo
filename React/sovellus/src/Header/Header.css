@@ -1,0 +1,99 @@
+
+/*@media (min-width: 576px) {  }
+@media (min-width: 768px) {  }
+@media (min-width: 992px) {  }
+@media (min-width: 1200px) { }
+@media (min-width: 1400px) { }
+@media (min-width: 576px) {  }*/
+.flex-container {
+    display: flex;
+    width: 100%;
+    background-color: darkslategray;
+    margin: 0px;
+    padding: 0px;
+}
+.header-img{
+    width: 150px;
+    height: 50px;
+}
+.flex-header-left-box{
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    
+}
+.flex-header-logo {
+    padding: 10px;  
+    
+}
+.flex-header-searchBar{
+    padding-left: 2em;
+}
+.flex-header-link{
+    padding: 10px;
+    text-decoration: none;
+    color: white;
+}
+.flex-header-link:hover{
+    text-decoration: none;
+    color: white;
+}
+.flex-header-login{
+    padding: 10px;
+}
+.flex-header-links{
+    justify-content: right;
+    display: flex;
+    flex-direction: row;
+    flex: 2;
+    margin: 0px;
+    padding: 0px;
+
+}
+/* Ei antanut käyttää luokkaa koska navbar luokka olisi muuten ylikirjoittanut box-shadow määrityksen */
+#flex-header-navbar{
+box-shadow: none;
+}
+
+.input-group-text{
+    padding:0px;
+    width: 48px;
+}
+.Header-SearchBar{
+    padding-left: 1.5%;
+    padding-top: 1%;
+    max-width: 400px;
+    height: 44px;
+}
+.Header-SearchBar-Button-Div{
+    max-height: 38px;
+}
+.Header-SearchBar-Button{
+    border: none;
+    width: 100%;
+    height: 100%;
+}
+.Header-SearchBar-Link{
+    text-decoration: none;
+    color: black;
+}
+.Header-SearchBar-Link:hover{
+    text-decoration: none;
+    color: black;
+}
+
+.login-main{
+    padding: 2em;
+}
+.Login-Modal-Body{
+    display: flex;
+    align-items: center;
+}
+
+.form-control{
+     width: 250px;
+}
+.Login-Modal-Footer{
+    display: flex;
+    flex-direction: row-reverse;
+}

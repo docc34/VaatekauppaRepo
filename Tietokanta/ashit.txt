@@ -1,0 +1,168 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema yrityskanta
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema yrityskanta
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `yrityskanta` DEFAULT CHARACTER SET utf8 ;
+USE `yrityskanta` ;
+
+-- -----------------------------------------------------
+-- Table `yrityskanta`.`userdata`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `yrityskanta`.`userdata` (
+  `userId` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(45) NOT NULL,
+  `name` VARCHAR(45) NULL,
+  `email` VARCHAR(254) NOT NULL,
+  `userIsSeller` TINYINT NOT NULL,
+  `userIsAdmin` TINYINT NOT NULL,
+  PRIMARY KEY (`userId`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `yrityskanta`.`profile`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `yrityskanta`.`profile` (
+  `userId` INT NOT NULL,
+  `userInfo` VARCHAR(400) NULL,
+  `phonenumber` VARCHAR(45) NULL,
+  `image` VARCHAR(255) NULL,
+  `deleted` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`userId`),
+  INDEX `fk_Profiili_userData_idx` (`userId` ASC),
+  CONSTRAINT `fk_Profiili_userData`
+    FOREIGN KEY (`userId`)
+    REFERENCES `yrityskanta`.`userdata` (`userId`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `yrityskanta`.`education`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `yrityskanta`.`education` (
+  `educationId` INT NOT NULL AUTO_INCREMENT,
+  `profile_userId` INT NOT NULL,
+  `schoolName` VARCHAR(45) NOT NULL,
+  `degree` VARCHAR(45) NOT NULL,
+  `startDate` DATE NOT NULL,
+  `endDate` DATE NOT NULL,
+  INDEX `fk_Koulutukset_profile1_idx` (`profile_userId` ASC),
+  PRIMARY KEY (`educationId`),
+  CONSTRAINT `fk_Koulutukset_profile1`
+    FOREIGN KEY (`profile_userId`)
+    REFERENCES `yrityskanta`.`profile` (`userId`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `yrityskanta`.`jobs`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `yrityskanta`.`jobs` (
+  `jobsId` INT NOT NULL AUTO_INCREMENT,
+  `profile_userId` INT NOT NULL,
+  `workplace` VARCHAR(45) NOT NULL,
+  `profession` VARCHAR(45) NOT NULL,
+  `startDate` DATE NOT NULL,
+  `endDate` DATE NOT NULL,
+  INDEX `fk_jobs_profile1_idx` (`profile_userId` ASC),
+  PRIMARY KEY (`jobsId`),
+  CONSTRAINT `fk_jobs_profile1`
+    FOREIGN KEY (`profile_userId`)
+    REFERENCES `yrityskanta`.`profile` (`userId`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `yrityskanta`.`jobPost`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `yrityskanta`.`jobPost` (
+  `idJobPost` INT NOT NULL AUTO_INCREMENT,
+  `label` VARCHAR(45) NOT NULL,
+  `priceStartingAt` DOUBLE NOT NULL,
+  `priceEndingAt` DOUBLE NULL,
+  `hourEstimate` DOUBLE NOT NULL,
+  `description` VARCHAR(400) NOT NULL,
+  `userId` INT NOT NULL,
+  `deleted` TINYINT NOT NULL,
+  PRIMARY KEY (`idJobPost`),
+  INDEX `fk_jobPost_userdata1_idx` (`userId` ASC),
+  CONSTRAINT `fk_jobPost_userdata1`
+    FOREIGN KEY (`userId`)
+    REFERENCES `yrityskanta`.`userdata` (`userId`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `yrityskanta`.`jobType`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `yrityskanta`.`jobType` (
+  `idjobType` INT NOT NULL,
+  `name` VARCHAR(45) NULL,
+  `idjobPost` INT NOT NULL,
+  PRIMARY KEY (`idjobType`),
+  INDEX `fk_jobType_jobPost1_idx` (`idjobPost` ASC),
+  CONSTRAINT `fk_jobType_jobPost1`
+    FOREIGN KEY (`idjobPost`)
+    REFERENCES `yrityskanta`.`jobPost` (`idJobPost`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `yrityskanta`.`location`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `yrityskanta`.`location` (
+  `idlocation` INT NOT NULL AUTO_INCREMENT,
+  `profile_userId` INT NOT NULL,
+  `city` VARCHAR(60) NOT NULL,
+  PRIMARY KEY (`idlocation`),
+  INDEX `fk_location_profile1_idx` (`profile_userId` ASC),
+  CONSTRAINT `fk_location_profile1`
+    FOREIGN KEY (`profile_userId`)
+    REFERENCES `yrityskanta`.`profile` (`userId`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `yrityskanta`.`ratings`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `yrityskanta`.`ratings` (
+  `idratings` INT NOT NULL AUTO_INCREMENT,
+  `ratingsText` VARCHAR(400) NOT NULL,
+  `stars` DOUBLE NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  `profile_userId` INT NOT NULL,
+  PRIMARY KEY (`idratings`),
+  INDEX `fk_ratings_profile1_idx` (`profile_userId` ASC),
+  CONSTRAINT `fk_ratings_profile1`
+    FOREIGN KEY (`profile_userId`)
+    REFERENCES `yrityskanta`.`profile` (`userId`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

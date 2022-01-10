@@ -1,0 +1,5 @@
+CREATE TABLE `orderstatus` (
+  `orderStatusId` int(11) NOT NULL AUTO_INCREMENT,
+  `status` varchar(60) NOT NULL,
+  PRIMARY KEY (`orderStatusId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

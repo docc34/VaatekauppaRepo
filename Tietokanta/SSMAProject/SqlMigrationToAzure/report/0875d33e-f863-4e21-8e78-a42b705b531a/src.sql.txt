@@ -1,0 +1,16 @@
+CREATE TABLE `order` (
+  `ordersId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `postId` int(11) NOT NULL,
+  `idOrders` int(11) NOT NULL,
+  `orderStatusId` int(11) NOT NULL,
+  PRIMARY KEY (`ordersId`),
+  KEY `fk_orders_profile1_idx` (`userId`),
+  KEY `fk_orders_post1_idx` (`postId`),
+  KEY `fk_order_Orders1_idx` (`idOrders`),
+  KEY `fk_order_orderStatus1_idx` (`orderStatusId`),
+  CONSTRAINT `fk_order_Orders1` FOREIGN KEY (`idOrders`) REFERENCES `orders` (`idOrders`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_orderStatus1` FOREIGN KEY (`orderStatusId`) REFERENCES `orderstatus` (`orderStatusId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_orders_post1` FOREIGN KEY (`postId`) REFERENCES `post` (`postId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_orders_profile1` FOREIGN KEY (`userId`) REFERENCES `profile` (`userId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

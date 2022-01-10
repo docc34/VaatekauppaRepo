@@ -5,159 +5,247 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema yrityskanta
+-- Schema vaatekauppaDb
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema yrityskanta
+-- Schema vaatekauppaDb
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `yrityskanta` DEFAULT CHARACTER SET utf8 ;
-USE `yrityskanta` ;
+CREATE SCHEMA IF NOT EXISTS `vaatekauppaDb` DEFAULT CHARACTER SET utf8 ;
+USE `vaatekauppaDb` ;
 
 -- -----------------------------------------------------
--- Table `yrityskanta`.`userdata`
+-- Table `vaatekauppaDb`.`user`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `yrityskanta`.`userdata` (
-  `userId` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`user` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(100) NOT NULL,
   `username` VARCHAR(45) NOT NULL,
   `password` VARCHAR(45) NOT NULL,
   `name` VARCHAR(45) NULL,
-  `email` VARCHAR(254) NOT NULL,
-  `userIsSeller` TINYINT NOT NULL,
-  `userIsAdmin` TINYINT NOT NULL,
-  PRIMARY KEY (`userId`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `yrityskanta`.`profile`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `yrityskanta`.`profile` (
-  `userId` INT NOT NULL,
-  `userInfo` VARCHAR(400) NULL,
   `phonenumber` VARCHAR(45) NULL,
-  `image` VARCHAR(255) NULL,
-  `deleted` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`userId`),
-  INDEX `fk_Profiili_userData_idx` (`userId` ASC),
-  CONSTRAINT `fk_Profiili_userData`
-    FOREIGN KEY (`userId`)
-    REFERENCES `yrityskanta`.`userdata` (`userId`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  `created` DATETIME NOT NULL,
+  `lastLogin` DATETIME NOT NULL,
+  `deleted` TINYINT NOT NULL,
+  `admin` TINYINT NOT NULL,
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `yrityskanta`.`education`
+-- Table `vaatekauppaDb`.`color`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `yrityskanta`.`education` (
-  `educationId` INT NOT NULL AUTO_INCREMENT,
-  `profile_userId` INT NOT NULL,
-  `schoolName` VARCHAR(45) NOT NULL,
-  `degree` VARCHAR(45) NOT NULL,
-  `startDate` DATE NOT NULL,
-  `endDate` DATE NOT NULL,
-  INDEX `fk_Koulutukset_profile1_idx` (`profile_userId` ASC),
-  PRIMARY KEY (`educationId`),
-  CONSTRAINT `fk_Koulutukset_profile1`
-    FOREIGN KEY (`profile_userId`)
-    REFERENCES `yrityskanta`.`profile` (`userId`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`color` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `color` VARCHAR(30) NULL,
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `yrityskanta`.`jobs`
+-- Table `vaatekauppaDb`.`size`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `yrityskanta`.`jobs` (
-  `jobsId` INT NOT NULL AUTO_INCREMENT,
-  `profile_userId` INT NOT NULL,
-  `workplace` VARCHAR(45) NOT NULL,
-  `profession` VARCHAR(45) NOT NULL,
-  `startDate` DATE NOT NULL,
-  `endDate` DATE NOT NULL,
-  INDEX `fk_jobs_profile1_idx` (`profile_userId` ASC),
-  PRIMARY KEY (`jobsId`),
-  CONSTRAINT `fk_jobs_profile1`
-    FOREIGN KEY (`profile_userId`)
-    REFERENCES `yrityskanta`.`profile` (`userId`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`size` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `size` VARCHAR(4) NULL,
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `yrityskanta`.`jobPost`
+-- Table `vaatekauppaDb`.`tax`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `yrityskanta`.`jobPost` (
-  `idJobPost` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`tax` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `taxPercentage` DOUBLE NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `vaatekauppaDb`.`post`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`post` (
+  `id` INT NOT NULL AUTO_INCREMENT,
   `label` VARCHAR(45) NOT NULL,
-  `priceStartingAt` DOUBLE NOT NULL,
-  `priceEndingAt` DOUBLE NULL,
-  `hourEstimate` DOUBLE NOT NULL,
+  `price` DOUBLE NOT NULL,
   `description` VARCHAR(400) NOT NULL,
   `userId` INT NOT NULL,
+  `taxId` INT NOT NULL,
+  `discount` INT NULL,
+  `material` VARCHAR(45) NULL,
+  `length` VARCHAR(60) NULL,
+  `sleeveLength` VARCHAR(60) NULL,
+  `colorId` INT NULL,
+  `sizeId` INT NULL,
+  `deliveryDaysEstimateStarting` INT NULL,
+  `deliveryDaysEstimateEnding` INT NULL,
   `deleted` TINYINT NOT NULL,
-  PRIMARY KEY (`idJobPost`),
+  PRIMARY KEY (`id`),
   INDEX `fk_jobPost_userdata1_idx` (`userId` ASC),
+  INDEX `fk_post_color2_idx` (`colorId` ASC),
+  INDEX `fk_post_size1_idx` (`sizeId` ASC),
+  INDEX `fk_post_tax1_idx` (`taxId` ASC),
   CONSTRAINT `fk_jobPost_userdata1`
     FOREIGN KEY (`userId`)
-    REFERENCES `yrityskanta`.`userdata` (`userId`)
+    REFERENCES `vaatekauppaDb`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_post_color2`
+    FOREIGN KEY (`colorId`)
+    REFERENCES `vaatekauppaDb`.`color` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_post_size1`
+    FOREIGN KEY (`sizeId`)
+    REFERENCES `vaatekauppaDb`.`size` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_post_tax1`
+    FOREIGN KEY (`taxId`)
+    REFERENCES `vaatekauppaDb`.`tax` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `yrityskanta`.`jobType`
+-- Table `vaatekauppaDb`.`location`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `yrityskanta`.`jobType` (
-  `idjobType` INT NOT NULL,
-  `name` VARCHAR(45) NULL,
-  `idjobPost` INT NOT NULL,
-  PRIMARY KEY (`idjobType`),
-  INDEX `fk_jobType_jobPost1_idx` (`idjobPost` ASC),
-  CONSTRAINT `fk_jobType_jobPost1`
-    FOREIGN KEY (`idjobPost`)
-    REFERENCES `yrityskanta`.`jobPost` (`idJobPost`)
+CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`location` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userId` INT NOT NULL,
+  `city` VARCHAR(100) NOT NULL,
+  `address` VARCHAR(100) NOT NULL,
+  `postalCode` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_location_userdata1_idx` (`userId` ASC),
+  CONSTRAINT `fk_location_userdata1`
+    FOREIGN KEY (`userId`)
+    REFERENCES `vaatekauppaDb`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `yrityskanta`.`location`
+-- Table `vaatekauppaDb`.`images`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `yrityskanta`.`location` (
-  `idlocation` INT NOT NULL AUTO_INCREMENT,
-  `profile_userId` INT NOT NULL,
-  `city` VARCHAR(60) NOT NULL,
-  PRIMARY KEY (`idlocation`),
-  INDEX `fk_location_profile1_idx` (`profile_userId` ASC),
-  CONSTRAINT `fk_location_profile1`
-    FOREIGN KEY (`profile_userId`)
-    REFERENCES `yrityskanta`.`profile` (`userId`)
+CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`images` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `postId` INT NOT NULL,
+  `imageLink` VARCHAR(300) NOT NULL,
+  INDEX `fk_Images_post1_idx` (`postId` ASC),
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_Images_post1`
+    FOREIGN KEY (`postId`)
+    REFERENCES `vaatekauppaDb`.`post` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `yrityskanta`.`ratings`
+-- Table `vaatekauppaDb`.`ratings`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `yrityskanta`.`ratings` (
-  `idratings` INT NOT NULL AUTO_INCREMENT,
-  `ratingsText` VARCHAR(400) NOT NULL,
+CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`ratings` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `postId` INT NOT NULL,
+  `userId` INT NOT NULL,
   `stars` DOUBLE NOT NULL,
-  `name` VARCHAR(45) NOT NULL,
-  `profile_userId` INT NOT NULL,
-  PRIMARY KEY (`idratings`),
-  INDEX `fk_ratings_profile1_idx` (`profile_userId` ASC),
-  CONSTRAINT `fk_ratings_profile1`
-    FOREIGN KEY (`profile_userId`)
-    REFERENCES `yrityskanta`.`profile` (`userId`)
+  `review` VARCHAR(200) NULL,
+  INDEX `fk_ratings_post1_idx` (`postId` ASC),
+  PRIMARY KEY (`id`),
+  INDEX `fk_ratings_userdata1_idx` (`userId` ASC),
+  CONSTRAINT `fk_ratings_post1`
+    FOREIGN KEY (`postId`)
+    REFERENCES `vaatekauppaDb`.`post` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ratings_userdata1`
+    FOREIGN KEY (`userId`)
+    REFERENCES `vaatekauppaDb`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `vaatekauppaDb`.`Orders`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`Orders` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `price` DOUBLE NOT NULL,
+  `orderDate` DATETIME NOT NULL,
+  `location_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_Orders_location1_idx` (`location_id` ASC),
+  CONSTRAINT `fk_Orders_location1`
+    FOREIGN KEY (`location_id`)
+    REFERENCES `vaatekauppaDb`.`location` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `vaatekauppaDb`.`orderStatus`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`orderStatus` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `status` VARCHAR(60) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `vaatekauppaDb`.`shoppingCart`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`shoppingCart` (
+  `userId` INT NOT NULL,
+  `postId` INT NOT NULL,
+  `ordered` TINYINT NOT NULL,
+  PRIMARY KEY (`userId`),
+  INDEX `fk_shoppingCart_post1_idx` (`postId` ASC),
+  INDEX `fk_shoppingCart_user1_idx` (`userId` ASC),
+  CONSTRAINT `fk_shoppingCart_post1`
+    FOREIGN KEY (`postId`)
+    REFERENCES `vaatekauppaDb`.`post` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_shoppingCart_user1`
+    FOREIGN KEY (`userId`)
+    REFERENCES `vaatekauppaDb`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `vaatekauppaDb`.`order`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`order` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ordersId` INT NOT NULL,
+  `orderStatusId` INT NOT NULL,
+  `userId` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_order_Orders1_idx` (`ordersId` ASC),
+  INDEX `fk_order_orderStatus1_idx` (`orderStatusId` ASC),
+  INDEX `fk_order_shoppingCart1_idx` (`userId` ASC),
+  CONSTRAINT `fk_order_Orders1`
+    FOREIGN KEY (`ordersId`)
+    REFERENCES `vaatekauppaDb`.`Orders` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_orderStatus1`
+    FOREIGN KEY (`orderStatusId`)
+    REFERENCES `vaatekauppaDb`.`orderStatus` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_shoppingCart1`
+    FOREIGN KEY (`userId`)
+    REFERENCES `vaatekauppaDb`.`shoppingCart` (`userId`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

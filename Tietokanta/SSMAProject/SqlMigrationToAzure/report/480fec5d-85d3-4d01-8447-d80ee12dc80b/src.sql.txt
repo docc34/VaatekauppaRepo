@@ -1,0 +1,8 @@
+CREATE TABLE `images` (
+  `imageId` int(11) NOT NULL AUTO_INCREMENT,
+  `postId` int(11) NOT NULL,
+  `imageLink` varchar(300) NOT NULL,
+  PRIMARY KEY (`imageId`),
+  KEY `fk_Images_post1_idx` (`postId`),
+  CONSTRAINT `fk_Images_post1` FOREIGN KEY (`postId`) REFERENCES `post` (`postId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

@@ -1,0 +1,12 @@
+CREATE TABLE `ratings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `postId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `stars` double NOT NULL,
+  `review` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_ratings_post1_idx` (`postId`),
+  KEY `fk_ratings_userdata1_idx` (`userId`),
+  CONSTRAINT `fk_ratings_post1` FOREIGN KEY (`postId`) REFERENCES `post` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ratings_userdata1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

@@ -1,0 +1,13 @@
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(100) NOT NULL,
+  `username` varchar(45) NOT NULL,
+  `password` varchar(45) NOT NULL,
+  `name` varchar(45) DEFAULT NULL,
+  `phonenumber` varchar(45) DEFAULT NULL,
+  `created` datetime NOT NULL,
+  `lastLogin` datetime NOT NULL,
+  `deleted` tinyint(4) NOT NULL,
+  `admin` tinyint(4) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

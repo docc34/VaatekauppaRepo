@@ -1,0 +1,9 @@
+CREATE TABLE `orders` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `price` double NOT NULL,
+  `orderDate` datetime NOT NULL,
+  `location_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_Orders_location1_idx` (`location_id`),
+  CONSTRAINT `fk_Orders_location1` FOREIGN KEY (`location_id`) REFERENCES `location` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

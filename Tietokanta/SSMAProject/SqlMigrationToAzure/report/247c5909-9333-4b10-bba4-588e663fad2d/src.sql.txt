@@ -1,0 +1,10 @@
+CREATE TABLE `location` (
+  `idLocation` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `city` varchar(100) NOT NULL,
+  `address` varchar(100) NOT NULL,
+  `postalCode` int(11) NOT NULL,
+  PRIMARY KEY (`idLocation`),
+  KEY `fk_location_profile1_idx` (`userId`),
+  CONSTRAINT `fk_location_profile1` FOREIGN KEY (`userId`) REFERENCES `profile` (`userId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

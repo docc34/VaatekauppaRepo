@@ -1,0 +1,10 @@
+CREATE TABLE `shoppingcart` (
+  `userId` int(11) NOT NULL,
+  `postId` int(11) NOT NULL,
+  `ordered` tinyint(4) NOT NULL,
+  PRIMARY KEY (`userId`),
+  KEY `fk_shoppingCart_post1_idx` (`postId`),
+  KEY `fk_shoppingCart_user1_idx` (`userId`),
+  CONSTRAINT `fk_shoppingCart_post1` FOREIGN KEY (`postId`) REFERENCES `post` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_shoppingCart_user1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

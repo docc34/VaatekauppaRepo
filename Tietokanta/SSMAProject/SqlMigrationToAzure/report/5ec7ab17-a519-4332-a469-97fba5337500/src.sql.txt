@@ -1,0 +1,5 @@
+CREATE TABLE `color` (
+  `colorId` int(11) NOT NULL AUTO_INCREMENT,
+  `color` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`colorId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

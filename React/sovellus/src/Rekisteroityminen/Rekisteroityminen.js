@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import {useHistory} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import './Rekisteroityminen.css'
 import { NavLink } from 'react-router-dom';
 
@@ -15,19 +15,16 @@ const Rekisteroityminen = ()=>{
     const phonenumber = useFormInput('');
     const [error, setError] = useState(null);
 
-    //Uudelleenohjaa kirjautumissivulle rekisteröitymisen jälkeen
-      let history = useHistory();
-      function redirect() {
-        history.push("/Kirjautuminen")
-      }
+    //TODO: Avaa kirjautuminen
+    let navigate = useNavigate();
     //Kutsutaan rekisteröitymisen backendiä
     useEffect( async()=>{
          if(loading != false){
-          let post = await fetch("http://localhost:3100/users/registering", {
+          let post = await fetch("https://localhost:44344/api/Authenticate/register", {
             
             method:'POST',
             headers: { 'Content-Type': 'application/json' },
-            body:JSON.stringify({username: username.value, password: password.value, passwordAgain: passwordAgain.value,  name: name.value,email:email.value , phonenumber: phonenumber.value})
+            body:JSON.stringify({username: username.value, password: password.value,  name: name.value,email:email.value , phonenumber: phonenumber.value})
             });
             let tarkistus = await post.json();
             if( tarkistus.status == "NOT OK"){
@@ -35,7 +32,7 @@ const Rekisteroityminen = ()=>{
             } 
             else{
               setError("");
-              redirect();
+              navigate("/");
             }
             setLoading(false);
          }
@@ -77,7 +74,13 @@ return(
   <Form.Label>Puhelinnumero</Form.Label>
   <Form.Control placeholder="Puhelinnumero"{...phonenumber}/>
 </Form.Group>
-<input type="Button" onClick={()=>{setLoading(true)}} value={'Rekisteröidy'} disabled={loading} variant="primary"/><br />
+<input type="Button" onClick={()=>{if(passwordAgain.value == password.value){
+  setLoading(true)}
+  else
+  {
+    setError("Salasanat eivät täsmää");
+  }
+  }} value={'Rekisteröidy'} disabled={loading} variant="primary"/><br />
 
 </Form>
 <p>Onko sinulla jo käyttäjä. Voit kirjautua sisään  <NavLink  to="/Kirjautuminen">Täältä</NavLink> </p>

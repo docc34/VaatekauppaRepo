@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-
-import { verifyTokenAsync } from "../asyncActions/authAsyncActions";
-import { userLogout, verifyTokenEnd } from "../actions/authActions";
 
 import { Button, InputGroup, FormControl, Modal,CardColumns } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { setAuthToken } from '../services/auth';
 import { getStorePostsService } from '../services/store';
 
 import '@inovua/reactdatagrid-community/index.css'
@@ -21,11 +16,7 @@ import { postPostService, postDeleteService, postModifyService } from '../servic
 import './jobPostManager.css';
 
 const PostManager = () => {
-    //Otetaan tarvittavat muuttujat tokenin verifikointia varten
-    const dispatch = useDispatch();
-    const authObj = useSelector(state => state.auth);
-    const { user, token, expiredAt } = authObj;
-
+    var user = null;
     const [modifyDataModal, setModifyDataModal] = useState(false);
     const [postModalShow, setPostModalShow] = useState(false);
     const [postLabel, setPostLabel] = useState("");
@@ -36,22 +27,11 @@ const PostManager = () => {
     const [postDescription, setPostDescription] = useState("");
     const [idJobPost, setIdJobPost] = useState("");
     const [postData, setPostData] = useState("");
+    //TODO:User objekti pitää ottaa käyttöön
     const [profileId] = useState(user.userId);
     const [error, setError] = useState("");
     const [userPosts, setUserPosts] = useState([]);
     const [postModifyData, setPostModifyData] = useState([]);
-
-    // set timer to renew token
-    useEffect(() => {
-        setAuthToken(token);
-        const verifyTokenTimer = setTimeout(() => {
-            dispatch(verifyTokenAsync(true));
-        }, moment(expiredAt).diff() - 10 * 1000);
-        return () => {
-            clearTimeout(verifyTokenTimer);
-        }
-    }, [expiredAt, token])
-
 
 
     {/* nollaa kaikki ponnahdusikkunoiden arvot ja sulkee pnnahdusikkunat */ }
@@ -71,10 +51,7 @@ const PostManager = () => {
 
         const posts = await getProfilePostsService(user.userId);
         if (posts.error) {
-            dispatch(verifyTokenEnd());
-            if (posts.response && [401, 403].includes(posts.response.status))
-                dispatch(userLogout());
-            return;
+        //TODO:Error
         }
 
         let post = posts.data;
@@ -85,11 +62,8 @@ const PostManager = () => {
         if (postData != "") {
             const posts = await postPostService(postData);
             if (posts.error) {
-                setError(posts.response.data.msg);
-                dispatch(verifyTokenEnd());
-                if (posts.response && [401, 403].includes(posts.response.status))
-                    dispatch(userLogout());
-                return;
+                           //TODO:Error
+
             }
 
             let post = posts.data;
@@ -110,11 +84,8 @@ const PostManager = () => {
             if (data != undefined && data != null) {
                 const posts = await postDeleteService({ selectedPost: data, userId: profileId });
                 if (posts.error) {
-                    setError(posts.response.data.msg);
-                    dispatch(verifyTokenEnd());
-                    if (posts.response && [401, 403].includes(posts.response.status))
-                        dispatch(userLogout());
-                    return;
+                                //TODO:Error
+
                 }
                 let post = posts.data;
                 resetValues();
@@ -136,16 +107,11 @@ const PostManager = () => {
 
     }
     useEffect(async () => {
-        console.log(postModifyData);
         if (postModifyData.length != 0 && postModifyData != null) {
 
             const posts = await postModifyService(postModifyData);
             if (posts.error) {
-                setError(posts.response.data.msg);
-                dispatch(verifyTokenEnd());
-                if (posts.response && [401, 403].includes(posts.response.status))
-                    dispatch(userLogout());
-                return;
+            //TODO:Error
             }
             let post = posts.data;
             resetValues();

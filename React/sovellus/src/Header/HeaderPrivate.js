@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar, Button, InputGroup, FormControl, Form } from 'react-bootstrap';
+import { Navbar, Button, InputGroup, FormControl, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Header.css'
 import { NavLink, useLocation } from 'react-router-dom';
-import { verifyTokenAsync, userLogoutAsync } from "./../asyncActions/authAsyncActions";
-import { userLogout, verifyTokenEnd } from "./../actions/authActions";
 import logo from './mrWorldwide.jpg'
-import { useDispatch, useSelector } from 'react-redux';
+import { useCookies } from 'react-cookie';
+import {  useNavigate  } from 'react-router-dom';
 
 
 const HeaderPrivate = () => {
- 
-    const dispatch = useDispatch();
-       // handle click event of the logout button
-       const handleLogout = () => {
-        dispatch(userLogoutAsync());
-      }
+    const [logOutModalShow, setLogOutModalShow] = useState(false);
     const [labelSearchText,setLabelSearchText] = useState("");
     const path = useLocation().pathname;
+    const [cookies, setCookie] = useCookies(['token']);
+    let navigate = useNavigate();
 
     const searchStore =()=>{
     if(path != "/Kauppa"){
@@ -67,11 +63,38 @@ const HeaderPrivate = () => {
                         {/*Kauppaan pääsee vain kun ei ole kirjautunut */}
                         <NavLink className="flex-header-link" activeClassName="active" to="/Kauppa">Kauppa </NavLink>
                         {/*Kirjautumiseen pääsee vain kun ei ole kirjautunut */}
-                        <NavLink className="flex-header-link" onClick={handleLogout} activeClassName="active" to="/">Kirjaudu ulos</NavLink>
+                        {/* TODO: Tähän ulos kirjautuminen */}
+                        <NavLink className="flex-header-link" onClick={()=>{setLogOutModalShow(true);}} activeClassName="active" to="/">Kirjaudu ulos</NavLink>
 
                     </Navbar.Collapse>
                 </Navbar>
             </div>
+            <Modal
+                show={logOutModalShow}
+                className="SignOut-Modal"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+                >
+                <Modal.Header >
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        Signing out
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="Return-Modal-Body">
+                    <div className="return-main">
+                        <div>
+                            <h3>Are you sure you want to Sign out</h3>
+                        </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer className="Return-Modal-Footer">
+                    <div>
+                        <Button className='HeaderLogoutModalButton' onClick={() => {setLogOutModalShow(false); setCookie('token', "", { path: '/' }); setCookie('userId', "", { path: '/' }); navigate("/");}}>Sign out</Button>
+                        <Button onClick={() => { setLogOutModalShow(false); }}>Cancel</Button>
+                    </div>
+
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }

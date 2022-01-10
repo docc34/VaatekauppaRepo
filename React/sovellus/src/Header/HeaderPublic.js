@@ -3,30 +3,41 @@ import { Navbar, InputGroup, FormControl, Form, Modal, Button } from 'react-boot
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Header.css'
 import { NavLink } from 'react-router-dom';
-
 import logo from './mrWorldwide.jpg'
-
-import { useSelector, useDispatch } from 'react-redux';
-
 import { useLocation } from "react-router-dom";
-import { userLoginAsync } from './../asyncActions/authAsyncActions';
+import { useCookies } from 'react-cookie';
+
 // import './Kirjautuminen.css';
 
 const HeaderPublic = () => {
     let [loginModalShow, setLoginModalShow] = useState(false);
-    const authObj = useSelector(state => state.auth);
-    const dispatch = useDispatch();
-    const [labelSearchText,setLabelSearchText] = useState("");
     
-    const { userLoginLoading, loginError } = authObj;
+    const [labelSearchText,setLabelSearchText] = useState("");
+    const [error,setError] = useState("");
 
     const username = useFormInput('');
     const password = useFormInput('');
     const path = useLocation().pathname;
+    const [cookies, setCookie] = useCookies(['token']);
     
     // handle button click of login form
-    const handleLogin = () => {
-        dispatch(userLoginAsync(username.value, password.value));
+    //TODO:Handel login
+    const handleLogin = async() => {
+        let data = await fetch("https://localhost:44344/api/Authenticate/login",{
+            
+            method:'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:JSON.stringify({username: username.value, password: password.value})
+            });
+            let tarkistus = await data.json();
+            if( tarkistus.status == "NOT OK"){
+                setError(tarkistus.msg);
+            } 
+            else{
+            setCookie('token', tarkistus.token, { path: '/' })
+            setCookie('userId', tarkistus.id, { path: '/' })
+              setError("");
+            }
     }
 
     const resetValues = () => {
@@ -79,7 +90,7 @@ const HeaderPublic = () => {
                         <NavLink className="flex-header-link" activeClassName="active" to="/Kauppa">Kauppa </NavLink>
                         {/*Kirjautumiseen pääsee vain kun ei ole kirjautunut */}
                         {/* <NavLink className="flex-header-link" activeClassName="active" to="/Kirjautuminen">Kirjaudu</NavLink> */}
-
+                        {error}
                         <a className="flex-header-link" href="#" onClick={() => { setLoginModalShow(true) }}>Kirjaudu</a>
                     </Navbar.Collapse>
                 </Navbar>
@@ -115,15 +126,15 @@ const HeaderPublic = () => {
                             {/*<Button type="Submit"  defaultValue={loading ? 'Loading...' : 'Login'} onClick={handleLogin} disabled={loading} variant="primary" >Kirjaudu</Button>*/}
 
                         </Form>
-
-                            <Error error={loginError} />
+                            {/* //TODO:Error */}
+                            {/* <Error error={loginError} /> */}
                         </div>
                     </div>
 
                 </Modal.Body>
                 <Modal.Footer className="Login-Modal-Footer">
                     <div>
-                        <Button  onClick={handleLogin} disabled={userLoginLoading} >{userLoginLoading ? 'Loading...' : 'Kirjaudu'}</Button>
+                        <Button  onClick={handleLogin} >Kirjaudu</Button>
                         <Button onClick={() => { resetValues(); }}>Peruuta</Button></div>
                     {/* Ilmoituksen footteri */}
                     <div>

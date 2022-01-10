@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
-import moment from 'moment';
 
-
-import { verifyTokenAsync } from "../asyncActions/authAsyncActions";
-import { userLogout, verifyTokenEnd } from "../actions/authActions";
-
-import { setAuthToken } from '../services/auth';
-import { getUserListService } from '../services/user';
 import { getProfileListService } from '../services/profile';
 import { getProfilePostsService } from '../services/store';
 

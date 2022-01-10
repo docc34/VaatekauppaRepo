@@ -14,7 +14,7 @@ function PaymentPage() {
   const search = useLocation().search;
   const [checkout, setCheckout] = useState(false);
   const jobPostId = new URLSearchParams(search).get('jobPostId');
-  console.log(jobPostId);
+
   var x = CheckEmptyFields(["Post number"], [jobPostId]);
   const [JobPost, setJobPost] = useState("");
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Etusivu.css'
 import tyomies from './Tyomies.jpg'
@@ -6,7 +6,6 @@ import tyomies from './Tyomies.jpg'
 
 const EtusivuTekstit = () => {
     return (
-
         <div className="flex-etusivu-container">
             <div className="flex-etusivu-tekstiloota-Vasen">
                 <a href="/Rekisteroityminen" className="etusivu-muotoilu-otsikot"><img src={tyomies} className="etusivu-muotoilu-Kuvat"></img></a>
@@ -17,7 +16,8 @@ const EtusivuTekstit = () => {
 
                 <p className="etusivu-muotoilu-tekstit">Jos haluat etsiä työntekijöitä selaile kauppasivua</p>
             </div>
-        </div>)
+        </div>
+        )
 }
 
 export { EtusivuTekstit }

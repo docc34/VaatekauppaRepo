@@ -1,12 +1,16 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter, Switch, NavLink, Redirect, Route } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect,useState } from 'react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link
+} from "react-router-dom";
+
+// import { useSelector, useDispatch } from 'react-redux';
 import './App.css'
+import { useCookies } from 'react-cookie';
 
-import PrivateRoute from './routes/PrivateRoute';
-import PublicRoute from './routes/PublicRoute';
-
-import { verifyTokenAsync } from './asyncActions/authAsyncActions';
+//import { verifyTokenAsync } from './asyncActions/authAsyncActions';
 import { EtusivuTekstit } from './Etusivu/Etusivu';
 import { HeaderPublic } from './Header/HeaderPublic';
 import { HeaderPrivate } from './Header/HeaderPrivate';
@@ -25,77 +29,95 @@ import {PaymentPage} from './Payment/PaymentPage';
 //Täällä hoidetaan sivun reititys 
 //Kaikille sivuille renderöidään footer ja joko julkinen tai yksityinen header
 function App() {
-  const authObj = useSelector(state => state.auth);
-  const dispatch = useDispatch();
-
-  const {user, authLoading, isAuthenticated } = authObj;
-
-  // verify token on app load
-  useEffect(() => {
-    dispatch(verifyTokenAsync());
-  }, []);
-
-  // checking authentication
-  if (authLoading) {
-    return <div className="content">Checking Authentication...</div>
-  }
-
-  //Tarkistaa kumpaa headeria tulee käyttää
-  const Tarkista = () => {
-    if (isAuthenticated == false) {
-      return (<Route path="/" component={HeaderPublic} />)
-    }
-    else if (isAuthenticated == true) {
-      return (<Route path="/" component={HeaderPrivate} />)
-    }
-    else {
-      return (null)
-    }
-  }
+  const [cookies] = useCookies(['token']);
+  const [state, setState] = useState();
   
-  const checkIfUserIsSeller = ()=>{
-    if(user?.isSeller == 1){
-      return(<PrivateRoute path="/Tyoilmoitukset" component={PostManager} isAuthenticated={isAuthenticated} />)
+  useEffect(async()=>{
+    if(cookies.token!= "" && cookies.token != null ){
+      const options = {
+        method: 'GET',
+        headers: {"Authorization": `Bearer ${cookies.token}`}
+      }
+
+      try{ let validation = await fetch("https://localhost:44344/api/authenticate/validatetoken", options)
+        let data = await validation.json();
+      
+        if( data == true){
+        setState(true);
+        }
+        else{
+        setState(false);
+        }
+      }
+      catch{
+        setState(false);
+      }
+    }
+  },[cookies?.token]);
+
+  const checkToken = ()=>{
+    if(state == true ){
+      return(
+      <div>
+        <nav className="header">
+          <Routes>
+            <Route path="/*" element={<HeaderPrivate />} />
+          </Routes>
+        </nav>
+
+        <div className="content">
+          <Routes>
+            <Route path="/" element={<EtusivuTekstit />} />
+            <Route path="/Kauppa" element={<Store />}/>
+            <Route path="/Maksu" element={<PaymentPage />} />
+            <Route path="/ProfiiliPublic" element={<ProfilePublic />}/>
+            <Route path="/Profiili" element={<Profiili />}/>
+            <Route path="/ProfiiliMuokkaus" element={<ProfiiliMuokkaus />}/>
+            <Route path="/Maksu" element={<PaymentPage />}/>
+            <Route path="/Julkaisut" element={<PostManager />}/>
+          </Routes>
+        </div>
+
+        <footer className="footer">
+          <Routes>
+            <Route path="/" element={<Footer />} />
+          </Routes>
+        </footer>
+      </div>
+    )
     }
     else{
-      return(null)
+      return (
+      <div>
+        <nav className="header">
+          <Routes>
+            <Route path="/*" element={<HeaderPublic />} />
+          </Routes>
+        </nav>
+        <div className="content">
+        <Routes>
+          <Route path="/" element={<EtusivuTekstit />} />
+          <Route path="/Maksu" element={<PaymentPage />} />
+          <Route path="/Rekisteroityminen" element={<Rekisteroityminen />}/>
+        </Routes>
+        </div>
+        <footer className="footer">
+          <Routes>
+            <Route path="/*" element={<Footer />} />
+          </Routes>
+        </footer>
+      </div>
+      );
     }
   }
 
-  return (
-    <div className="App">
-      <BrowserRouter>
-          <nav className="header">
-            {Tarkista()}
-          </nav>
-          <div className="content">
-            <Switch>
-              <Route exact path="/" component={EtusivuTekstit} />
-              {/* {checkStore()} */}
-              <Route path="/Kauppa" component={Store}/>
-              <PublicRoute path="/Maksu" component={PaymentPage} />
-              
-              <Route path="/ProfiiliPublic" component={ProfilePublic} isAuthenticated={isAuthenticated} />
-              
-              
-              <PublicRoute path="/Rekisteroityminen" component={Rekisteroityminen} isAuthenticated={isAuthenticated} />
-              
-              <PrivateRoute path="/Profiili" component={Profiili} isAuthenticated={isAuthenticated} />
-              {checkIfUserIsSeller()}
 
-              <PrivateRoute path="/ProfiiliMuokkaus" component={ProfiiliMuokkaus} isAuthenticated={isAuthenticated} />
-              <PrivateRoute path="/Maksu" component={PaymentPage} isAuthenticated={isAuthenticated} />
-              {/* Ois siisti saaha profiili linkin klikkaus uudelleenohjaamaan kirjautumiseen */}
-              <Redirect to={isAuthenticated ? '/Profiili' : '/'} />
-            </Switch>
-          </div>
-          <div className="Footer">
-            <Route path="/" component={Footer} />
-          </div>
-        
-      </BrowserRouter>
-    </div>
-  );
+
+return (
+  <Router>
+    {checkToken()}
+  </Router>
+);
 }
 
 export default App;

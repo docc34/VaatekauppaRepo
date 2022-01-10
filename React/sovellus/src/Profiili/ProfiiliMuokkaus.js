@@ -1,15 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import moment from 'moment';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { Button, Modal, Image , InputGroup, FormControl,CardColumns} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { verifyTokenAsync } from "../asyncActions/authAsyncActions";
-import { userLogout, verifyTokenEnd } from "../actions/authActions";
-
-import { setAuthToken } from '../services/auth';
 import { getUserListService } from '../services/user';
 import { getProfileListService, setProfileListService, postProfileEducationAddService, postProfileJobsAddService, deleteProfileJobsService, deleteProfileEducationService, postProfilePictureService } from '../services/profile';
 import { getProfilePostsService } from '../services/store';
@@ -55,48 +49,28 @@ const ProfiiliMuokkaus = () => {
 
   const [profilePosts, setProfilePosts] = useState([]);
 
-  const dispatch = useDispatch();
-  const authObj = useSelector(state => state.auth);
-  const { user, token, expiredAt } = authObj;
-
-  let history = useHistory();
+  var user = null;
+  let navigate = useNavigate();
   function redirect() {
-    history.push("/Profiili")
+    navigate("/Profiili");
   }
   // get user list
   const getUserList = async () => {
     const result = await getUserListService(user.userId);
     if (result.error) {
-      dispatch(verifyTokenEnd());
-      if (result.response && [401, 403].includes(result.response.status))
-        dispatch(userLogout());
-      return;
+      //TODO:Error
     }
-    
     setUserData(result.data.userList[0]);
   }
 
-  // uusii kirjautumisen tokenin tietyn ajan jälkeen
-  useEffect(() => {
-    setAuthToken(token);
-    const verifyTokenTimer = setTimeout(() => {
-      dispatch(verifyTokenAsync(true));
-    }, moment(expiredAt).diff() - 10 * 1000);
-    return () => {
-      clearTimeout(verifyTokenTimer);
-    }
-  }, [expiredAt, token])
-
+  //TODO:User objektiin nykyinen user
   // Hakee profiilin taulukkodatat
   const getProfileData = async () => {
-    const result = await getProfileListService(user.userId);
-    const posts = await getProfilePostsService(user.userId);
-    if (result.error) {
-      dispatch(verifyTokenEnd());
-      if (result.response && [401, 403].includes(result.response.status))
-        dispatch(userLogout());
-      return;
-    }
+    const result = await getProfileListService(0);
+    const posts = await getProfilePostsService(0);
+    if (result.error || posts.error) {
+      //TODO:Error
+      }
     let datat = result.data;
     let post = posts.data;
     
@@ -118,10 +92,7 @@ const ProfiiliMuokkaus = () => {
   const modifyProfileData = async () => {
     const result = await setProfileListService({ userId: profileId, userInfo: profileInfo, email: profileEmail, phonenumber: profilePhonenumber, fileName: sentImgFile.name });
     if (result.error) {
-      dispatch(verifyTokenEnd());
-      if (result.response && [401, 403].includes(result.response.status))
-        dispatch(userLogout());
-      return;
+     //TODO:Error
     }
     if (result.statusText == "OK") {
       redirect();
@@ -133,11 +104,7 @@ const ProfiiliMuokkaus = () => {
       const result = await postProfileEducationAddService(educationData);
       if (result.error) {
 
-        setError(result.response.data.msg);
-        dispatch(verifyTokenEnd());
-        if (result.response && [401, 403].includes(result.response.status))
-          dispatch(userLogout());
-        return;
+        //TODO:Error
       }
       if (result.statusText == "OK") {
 
@@ -154,11 +121,7 @@ const ProfiiliMuokkaus = () => {
     if (jobsData != "") {
       const result = await postProfileJobsAddService(jobsData);
       if (result.error) {
-        setError(result.response.data.msg);
-        dispatch(verifyTokenEnd());
-        if (result.response && [401, 403].includes(result.response.status))
-          dispatch(userLogout());
-        return;
+        //TODO:Error
       }
       if (result.statusText == "OK") {
         getProfileData();
@@ -175,11 +138,7 @@ const ProfiiliMuokkaus = () => {
     if (selectedRowEducation.selected != null || selectedRowEducation != "") {
       const result = await deleteProfileEducationService({ educationId: selectedRowEducation.data.educationId, userId: profileId });
       if (result.error) {
-        setError(result.response.data.msg);
-        dispatch(verifyTokenEnd());
-        if (result.response && [401, 403].includes(result.response.status))
-          dispatch(userLogout());
-        return;
+        //TODO:Error
       }
       if (result.statusText == "OK") {
         setSelectedRowEducation("");
@@ -193,11 +152,7 @@ const ProfiiliMuokkaus = () => {
     if (selectedRowJobs.selected != null || selectedRowJobs != "") {
       const result = await deleteProfileJobsService({ jobsId: selectedRowJobs.data.jobsId, userId: profileId });
       if (result.error) {
-        setError(result.response.data.msg);
-        dispatch(verifyTokenEnd());
-        if (result.response && [401, 403].includes(result.response.status))
-          dispatch(userLogout());
-        return;
+        //TODO:Error
       }
       if (result.statusText == "OK") {
         setSelectedRowJobs("");
@@ -267,11 +222,7 @@ const ProfiiliMuokkaus = () => {
 
       const result = await postProfilePictureService(formData, profileId);
       if (result.error) {
-        setError(result.response.data.msg);
-        dispatch(verifyTokenEnd());
-        if (result.response && [401, 403].includes(result.response.status))
-          dispatch(userLogout());
-        return;
+        //TODO:Error
       }
       if (result.statusText == "OK") {
         getProfileData();

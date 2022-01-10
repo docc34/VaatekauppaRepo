@@ -1,12 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import moment from 'moment';
 
-
-import { verifyTokenAsync } from "./../asyncActions/authAsyncActions";
-import { userLogout, verifyTokenEnd } from "./../actions/authActions";
-
-import { setAuthToken } from '../services/auth';
 import { getProfileListService } from '../services/profile';
 import { getProfilePostsService } from '../services/store';
 
@@ -28,32 +21,14 @@ function Profiili() {
   const [show, setShow] = useState(false);
   const target = useRef(null);
 
-  const dispatch = useDispatch();
-  const authObj = useSelector(state => state.auth);
-  const { user, token, expiredAt } = authObj;
-
-
-  // set timer to renew token
-  useEffect(() => {
-    setAuthToken(token);
-    const verifyTokenTimer = setTimeout(() => {
-      dispatch(verifyTokenAsync(true));
-    }, moment(expiredAt).diff() - 10 * 1000);
-    return () => {
-      clearTimeout(verifyTokenTimer);
-    }
-  }, [expiredAt, token])
-
-
+  var user = null;
+  //TODO:User.userId pitää ottaa cookiesta
   // get user profile data
   const getProfileData = async () => {
-    const result = await getProfileListService(user.userId);
-    const posts = await getProfilePostsService(user.userId);
+    const result = await getProfileListService(0);
+    const posts = await getProfilePostsService(0);
     if (result.error || posts.error) {
-      dispatch(verifyTokenEnd());
-      if (result.response || posts.response && [401, 403].includes())
-        dispatch(userLogout());
-      return;
+    //TODO:Error
     }
     let datat = result.data;
     let post = posts.data;

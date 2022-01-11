@@ -25,32 +25,30 @@ const Store = () => {
     // haetaan kaikki ilmoitukset 
     const getStoreData = async (i) => {
         if(i != null){
-        //let result = null;
-        if(jobPostTitle != null && jobPostTitle != undefined && i?.jobPostTitle == "" || i?.jobPostTitle == null || i?.jobPostTitle == undefined){
-          i.jobPostTitle = jobPostTitle;
-        }
-        const options = {
-            method: 'GET',
-            headers: {"Authorization": `Bearer ${cookies.token}`}
-        }
+            const options = {
+                method: 'GET',
+                headers: {"Authorization": `Bearer ${cookies.token}`}
+            }
+            let url = "https://localhost:44344/api/Posts/?1=1";
+            if(jobPostTitle != null && jobPostTitle != undefined && i?.jobPostTitle == "" || i?.jobPostTitle == null || i?.jobPostTitle == undefined){
+                url += "&title="+i.jobPostTitle;
+            }
+            if(i?.priceSort == "" || i?.priceSort == null || i?.priceSort == undefined){
+                url += "&sortPrice="+i?.priceSort;
+            }
 
-        let data = await fetch("https://localhost:44344/api/Posts",options);
-        let posts = await data.json();
-        // if( tarkistus.status == "NOT OK"){
-        //     setError(tarkistus.msg);
-        // } 
-        // else{
-        //     setError("");
-        // }
-        // let result = await getStorePostsService(i);
-  
-        if (result.error) {
-            //TODO:Error
+
+            let data = await fetch(url,options);
+            let posts = await data.json();
+            if( posts.status == "NOT OK"){
+                setError(posts.msg);
+            } 
+            else{
+                setError("");
+                setStorePostsData(posts);
+            }
+            // let result = await getStorePostsService(i);
         }
-  
-        setStorePostsData(posts);
-        }
-        
     }
 
     // get user list on page load
@@ -68,7 +66,7 @@ const Store = () => {
                 
                 <InputGroup >
                     <InputGroup.Prepend className="Store-SearchBar-Button-Div">
-                    <InputGroup.Text id="basic-addon1"><button className="Store-SearchBar-Button" onClick={() => {let i = searchObject; i.jobPostTitle = "%" + labelSearchText + "%"; setSearchObject(i); getStoreData(i); }}>{/*Tähän se suurennuslasin logo */}o</button></InputGroup.Text>
+                    <InputGroup.Text id="basic-addon1"><button className="Store-SearchBar-Button" onClick={() => {let i = searchObject; i.jobPostTitle =labelSearchText; setSearchObject(i); getStoreData(i); }}>{/*Tähän se suurennuslasin logo */}o</button></InputGroup.Text>
                 </InputGroup.Prepend>
                     <FormControl onChange={(e) => { setLabelSearchText(e.target.value); }} placeholder="Hae" aria-label="Search" aria-describedby="basic-addon1" />
                 </InputGroup>

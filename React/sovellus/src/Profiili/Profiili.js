@@ -10,6 +10,7 @@ import { MakePost } from '../Utils/Functions';
 import ReactDataGrid from '@inovua/reactdatagrid-community'
 import '@inovua/reactdatagrid-community/index.css'
 import { Image, Overlay, Tooltip, CardColumns } from 'react-bootstrap';
+import { useCookies } from 'react-cookie';
 
 //Renderöidään perus profiili
 function Profiili() {
@@ -20,13 +21,15 @@ function Profiili() {
   const [profilePosts, setProfilePosts] = useState([]);
   const [show, setShow] = useState(false);
   const target = useRef(null);
+  const [cookies] = useCookies(['token']);
 
   var user = null;
   //TODO:User.userId pitää ottaa cookiesta
   // get user profile data
   const getProfileData = async () => {
-    const result = await getProfileListService(0);
-    const posts = await getProfilePostsService(0);
+    
+    const result = await getProfileListService(cookies?.userId);
+    const posts = await getProfilePostsService(cookies?.userId);
     if (result.error || posts.error) {
     //TODO:Error
     }

@@ -1,8 +1,0 @@
-CREATE TABLE `profile` (
-  `userId` int(11) NOT NULL,
-  `phonenumber` varchar(45) DEFAULT NULL,
-  `deleted` varchar(45) NOT NULL,
-  PRIMARY KEY (`userId`),
-  KEY `fk_Profiili_userData_idx` (`userId`),
-  CONSTRAINT `fk_Profiili_userData` FOREIGN KEY (`userId`) REFERENCES `userdata` (`userId`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8

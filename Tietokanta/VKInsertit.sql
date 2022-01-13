@@ -27,3 +27,9 @@ insert into color (color) values("Aqua");
 insert into color (color) values("Lime");
 insert into color (color) values("Teal");
 insert into color (color) values("Navy");
+
+insert into user (email,username,password,name,phonenumber,created,lastLogin,deleted,admin) values ("eemeli.antikainen@gmail.com","Eemeli","", "Eemeli Antikainen","0409606973",'2022-10-1 18:00:00','2022-10-1 18:00:00',0,1);
+
+insert into Location (userId,city,address,postalCode) values (1,"Kuopio","Presidentinkatu 5", "70400");
+
+insert into post (label,price,description,deleted,deliveryDaysEstimateStarting,deliveryDaysEstimateEnding,colorId,sizeId,taxId,userId) values ("T-Paita",25.50,"Perus t-paita täysin musta",0,3,10,1,3,1,1);

@@ -1,0 +1,13 @@
+Status;Source table;Target table;Total rows;Migrated rows;Success rate;Duration (DD:HH:MM:SS:MS);Error messages
+"Initial";"`vaatekauppadb`.`color`";;;;"N/A";;
+"Initial";"`vaatekauppadb`.`images`";;;;"N/A";;
+"Initial";"`vaatekauppadb`.`location`";;;;"N/A";;
+"Initial";"`vaatekauppadb`.`order`";;;;"N/A";;
+"Initial";"`vaatekauppadb`.`orders`";;;;"N/A";;
+"Initial";"`vaatekauppadb`.`orderstatus`";;;;"N/A";;
+"Initial";"`vaatekauppadb`.`post`";;;;"N/A";;
+"Initial";"`vaatekauppadb`.`ratings`";;;;"N/A";;
+"Initial";"`vaatekauppadb`.`shoppingcart`";;;;"N/A";;
+"Initial";"`vaatekauppadb`.`size`";;;;"N/A";;
+"Initial";"`vaatekauppadb`.`tax`";;;;"N/A";;
+"Initial";"`vaatekauppadb`.`user`";;;;"N/A";;

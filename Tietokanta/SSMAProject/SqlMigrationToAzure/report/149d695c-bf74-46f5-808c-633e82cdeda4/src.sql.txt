@@ -1,6 +1,0 @@
-CREATE TABLE `orders` (
-  `idOrders` int(11) NOT NULL AUTO_INCREMENT,
-  `price` double NOT NULL,
-  `orderDate` datetime NOT NULL,
-  PRIMARY KEY (`idOrders`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8

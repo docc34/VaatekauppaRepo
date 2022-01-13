@@ -29,13 +29,13 @@ const HeaderPublic = () => {
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({username: username.value, password: password.value})
             });
-            let tarkistus = await data.json();
-            if( tarkistus.status == "NOT OK"){
-                setError(tarkistus.msg);
-            } 
+            let result = await data.json();
+            if (result?.Status == "Error") {
+                setError(result.Message);
+            }
             else{
-            setCookie('token', tarkistus.token, { path: '/' })
-            setCookie('userId', tarkistus.id, { path: '/' })
+            setCookie('token', result.token, { path: '/' })
+            setCookie('userId', result.id, { path: '/' })
               setError("");
             }
     }

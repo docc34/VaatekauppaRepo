@@ -1,5 +1,0 @@
-CREATE TABLE `size` (
-  `sizeId` int(11) NOT NULL AUTO_INCREMENT,
-  `size` varchar(4) DEFAULT NULL,
-  PRIMARY KEY (`sizeId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8

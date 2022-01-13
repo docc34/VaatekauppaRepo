@@ -1,15 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-
-import { getProfileListService } from '../services/profile';
-import { getProfilePostsService } from '../services/store';
-
-
 import './Profiili.css';
-import { MakePost } from '../Utils/Functions';
 
 import ReactDataGrid from '@inovua/reactdatagrid-community'
 import '@inovua/reactdatagrid-community/index.css'
-import { Image, Overlay, Tooltip, CardColumns } from 'react-bootstrap';
+import { Image, Overlay } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 
 //Renderöidään perus profiili

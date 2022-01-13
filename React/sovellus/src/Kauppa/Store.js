@@ -4,7 +4,6 @@ import './Store.css';
 import {  Button, InputGroup, FormControl,  Modal, CardColumns } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { getStorePostsService } from '../services/store';
 import { useLocation } from "react-router-dom";
 
 import '@inovua/reactdatagrid-community/index.css'
@@ -26,29 +25,36 @@ const Store = () => {
     // haetaan kaikki ilmoitukset 
     const getStoreData = async (i) => {
         if(i != null){
-            const options = {
-                method: 'GET',
-                headers: {"Authorization": `Bearer ${cookies.token}`}
-            }
-            let url = "https://localhost:44344/api/Posts/?1=1";
-            if(jobPostTitle != null && jobPostTitle != undefined && i?.jobPostTitle == "" || i?.jobPostTitle == null || i?.jobPostTitle == undefined){
-                url += "&title="+i.jobPostTitle;
-            }
-            if(i?.priceSort == "" || i?.priceSort == null || i?.priceSort == undefined){
-                url += "&sortPrice="+i?.priceSort;
-            }
+            try{
+                const options = {
+                    method: 'GET',
+                    headers: {"Authorization": `Bearer ${cookies.token}`}
+                }
+                let url = "https://localhost:44344/api/Posts/?1=1";
+                if( i?.jobPostTitle != "" && i?.jobPostTitle != null && i?.jobPostTitle != undefined){
+                    url += "&title="+i.jobPostTitle;
+                }
+                else if(jobPostTitle != null && jobPostTitle != undefined){
+                    url += "&title="+jobPostTitle;
+                }
+                if(i?.priceSort == "" || i?.priceSort == null || i?.priceSort == undefined){
+                    url += "&sortPrice="+i?.priceSort;
+                }
 
 
-            let data = await fetch(url,options);
-            let posts = await data.json();
-            if (posts?.Status == "Error") {
-                setError(posts.Message);
+                let data = await fetch(url,options);
+                let posts = await data.json();
+                if (posts?.Status == "Error") {
+                    setError(posts.Message);
+                }
+                else{
+                    setError("");
+                    setStorePostsData(posts);
+                }
             }
-            else{
-                setError("");
-                setStorePostsData(posts);
+            catch{
+                setError("Fatal Error");
             }
-            // let result = await getStorePostsService(i);
         }
     }
 
@@ -58,8 +64,9 @@ const Store = () => {
     }, []);
 
 
-    return (<div className="Store-Post-Main-Box">
-        <h1> Hae työilmoituksia</h1>
+    return (
+    <div className="Store-Post-Main-Box">
+        <h1> Hae tuotteita</h1>
         
         {/* Hakukenttä */}
         <div className="Store-Search-Options-Container">
@@ -71,7 +78,7 @@ const Store = () => {
                 </InputGroup.Prepend>
                     <FormControl onChange={(e) => { setLabelSearchText(e.target.value); }} placeholder="Hae" aria-label="Search" aria-describedby="basic-addon1" />
                 </InputGroup>
-                {error}
+                <Error error={error}/>
             </div>
             {/* Outobugi ei näytä nappeja jos ovat tässä */}
             <div>
@@ -81,11 +88,11 @@ const Store = () => {
             </div>
         </div>
 
-    <div className="Store-Card-Column-container">
-        <CardColumns  className="Store-Card-Column">
-            <MakePost data={storePostsData} />
-        </CardColumns>
-    </div>
+        <div className="Store-Card-Column-container">
+            <CardColumns  className="Store-Card-Column">
+                <MakePost data={storePostsData} />
+            </CardColumns>
+        </div>
 
     </div>)
 }

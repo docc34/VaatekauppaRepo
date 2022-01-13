@@ -4,13 +4,12 @@ import moment from 'moment';
 import { Button, InputGroup, FormControl, Modal,CardColumns } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { getStorePostsService } from '../services/store';
 
 import '@inovua/reactdatagrid-community/index.css'
 
 import { MakePost, Error } from '../Utils/Functions';
 //^Importataan kaikki paketit mitä tarvitaan
-import { getProfilePostsService } from '../services/store';
+
 import { postPostService, postDeleteService, postModifyService } from '../services/postManager';
 
 import './jobPostManager.css';
@@ -49,7 +48,7 @@ const PostManager = () => {
     // get user profile data
     const getUserPosts = async () => {
 
-        const posts = await getProfilePostsService(user.userId);
+        const posts = null;
         if (posts.error) {
         //TODO:Error
         }

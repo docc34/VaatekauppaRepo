@@ -32,4 +32,7 @@ insert into user (email,username,password,name,phonenumber,created,lastLogin,del
 
 insert into Location (userId,city,address,postalCode) values (1,"Kuopio","Presidentinkatu 5", "70400");
 
-insert into post (label,price,description,deleted,deliveryDaysEstimateStarting,deliveryDaysEstimateEnding,colorId,sizeId,taxId,userId) values ("T-Paita",25.50,"Perus t-paita täysin musta",0,3,10,1,3,1,1);
+insert into post (label,price,description,sleeveLength,material,discount,length,deleted,deliveryDaysEstimateStarting,deliveryDaysEstimateEnding,colorId,sizeId,taxId,userId) values ("T-Paita",25.50,"Perus t-paita täysin musta","10cm","Villa, Muovi","20","80cm",0,3,10,1,3,1,1);
+insert into post (label,price,description,sleeveLength,material,length,deleted,deliveryDaysEstimateStarting,deliveryDaysEstimateEnding,colorId,sizeId,taxId,userId) values ("T-Paita",26.00,"Perus hyvä t-paita","10cm","Villa","80cm",0,3,10,2,3,1,1);
+insert into post (label,price,description,sleeveLength,material,length,deleted,deliveryDaysEstimateStarting,deliveryDaysEstimateEnding,colorId,sizeId,taxId,userId) values ("Huppari",50,"Pehmee lämmin tyylikäs huppari","50cm","Villa","120cm",0,5,15,4,4,1,1);
+insert into post (label,price,description,sleeveLength,material,discount,length,deleted,deliveryDaysEstimateStarting,deliveryDaysEstimateEnding,colorId,sizeId,taxId,userId) values ("Tiukat housut",15,"Tiukat mustat spandex housut","50cm","Spandex","20","120cm",0,1,3,1,1,1,1);

@@ -3,10 +3,9 @@ import { Navbar, InputGroup, FormControl, Form, Modal, Button } from 'react-boot
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Header.css'
 import { NavLink } from 'react-router-dom';
-import logo from './mrWorldwide.jpg'
 import { useLocation } from "react-router-dom";
 import { useCookies } from 'react-cookie';
-
+import {Error} from '../Utils/Functions'
 // import './Kirjautuminen.css';
 
 const HeaderPublic = () => {
@@ -23,21 +22,27 @@ const HeaderPublic = () => {
     // handle button click of login form
     //TODO:Handel login
     const handleLogin = async() => {
-        let data = await fetch("https://localhost:44344/api/Authenticate/login",{
+        try{
+            let data = await fetch("https://localhost:44344/api/Authenticate/login",{
             
-            method:'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:JSON.stringify({username: username.value, password: password.value})
-            });
-            let result = await data.json();
-            if (result?.Status == "Error") {
-                setError(result.Message);
-            }
-            else{
-            setCookie('token', result.token, { path: '/' })
-            setCookie('userId', result.id, { path: '/' })
-              setError("");
-            }
+                method:'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:JSON.stringify({username: username.value, password: password.value})
+                });
+                let result = await data.json();
+                if (result?.Status == "Error") {
+                    setError(result.Message);
+                }
+                else{
+                setCookie('token', result.token, { path: '/' })
+                setCookie('userId', result.id, { path: '/' })
+                  setError("");
+                }
+        }
+        catch{
+            setError("Error");
+        }
+            
     }
 
     const resetValues = () => {
@@ -63,7 +68,7 @@ const HeaderPublic = () => {
     return (
         <div className="flex-container">
             <div className="flex-header-logo">
-                <NavLink className="flex-header-link" exact activeClassName="active" to="/"><img className="header-img" src={logo}></img></NavLink>
+                <NavLink className="flex-header-link" exact activeClassName="active" to="/"><img className="header-img" src="https://vaatekauppastorage.blob.core.windows.net/defaultkuvat/mrWorldwide.jpg"></img></NavLink>
             </div>
 
             <div className="Header-SearchBar">
@@ -73,7 +78,7 @@ const HeaderPublic = () => {
                             {searchStore()}
                         </InputGroup.Text>
                     </InputGroup.Prepend>
-                    <FormControl onChange={(e) => { setLabelSearchText(e.target.value); }} placeholder="Hae" aria-label="Search" aria-describedby="basic-addon1" />
+                    <FormControl onChange={(e) => { setLabelSearchText(e.target.value); }} placeholder="Hae kaupasta" aria-label="Search" aria-describedby="basic-addon1" />
                 </InputGroup>
             </div>
 
@@ -86,11 +91,9 @@ const HeaderPublic = () => {
                         {/*Kotiin pääsee aina*/}
                         <NavLink className="flex-header-link" exact activeClassName="active" to="/">Etusivu</NavLink>
                         {/*Profiiliin pääsee vain kun on kirjautunut */}
-                        <NavLink className="flex-header-link" activeClassName="active" to="/Profiili">Profiili</NavLink>
                         <NavLink className="flex-header-link" activeClassName="active" to="/Kauppa">Kauppa </NavLink>
                         {/*Kirjautumiseen pääsee vain kun ei ole kirjautunut */}
                         {/* <NavLink className="flex-header-link" activeClassName="active" to="/Kirjautuminen">Kirjaudu</NavLink> */}
-                        {error}
                         <a className="flex-header-link" href="#" onClick={() => { setLoginModalShow(true) }}>Kirjaudu</a>
                     </Navbar.Collapse>
                 </Navbar>
@@ -114,20 +117,15 @@ const HeaderPublic = () => {
                             <Form.Group controlId="formBasicEmail">
                                 <Form.Label>Käyttäjänimi</Form.Label>
                                 <Form.Control className="login-inputs" type="username" placeholder="Käyttäjänimi"{...username} autoComplete="new-password" />
-
                             </Form.Group>
 
                             <Form.Group controlId="formBasicPassword">
                                 <Form.Label>Salasana</Form.Label>
                                 <Form.Control className="login-inputs" type="password" placeholder="Salasana" {...password} autoComplete="new-password" />
                             </Form.Group>
-
-
                             {/*<Button type="Submit"  defaultValue={loading ? 'Loading...' : 'Login'} onClick={handleLogin} disabled={loading} variant="primary" >Kirjaudu</Button>*/}
-
-                        </Form>
-                            {/* //TODO:Error */}
-                            {/* <Error error={loginError} /> */}
+                            </Form>
+                            <Error error={error}/>
                         </div>
                     </div>
 
@@ -146,9 +144,7 @@ const HeaderPublic = () => {
     )
 }
 
-const Error = (props) => {
-    return (<p className="errorText">{props.error}</p>)
-}
+
 // custom hook to manage the form input
 const useFormInput = initialValue => {
     const [value, setValue] = useState(initialValue);

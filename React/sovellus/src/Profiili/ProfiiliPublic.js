@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
 
 import { getProfileListService } from '../services/profile';
-import { getProfilePostsService } from '../services/store';
-
 
 import './Profiili.css';
 import { MakePost } from '../Utils/Functions';
@@ -29,7 +27,7 @@ function ProfilePublic() {
   const getProfileData = async () => {
     if (profileN != null && profileN != undefined && profileN != "") {
       const result = await getProfileListService(profileN);
-      const posts = await getProfilePostsService(profileN);
+      const posts = null
 
       let datat = result.data;
       let post = posts.data;

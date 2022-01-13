@@ -2,69 +2,88 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
 import {  Button } from 'react-bootstrap';
 
-import { getJobPostListService } from '../services/postManager';
-
 import {CheckEmptyFields, Paypal} from '../Utils/Functions';
 import './PaymentPage.css';
-import { MakePost } from '../Utils/Functions';
+import { Error } from '../Utils/Functions';
 
 import '@inovua/reactdatagrid-community/index.css'
+import { useCookies } from 'react-cookie';
 
 function PaymentPage() {
   const search = useLocation().search;
   const [checkout, setCheckout] = useState(false);
-  const jobPostId = new URLSearchParams(search).get('jobPostId');
+  const [error, setError] = useState(false);
+  const [post, setPost] = useState("");
 
-  var x = CheckEmptyFields(["Post number"], [jobPostId]);
-  const [JobPost, setJobPost] = useState("");
+  const Id = new URLSearchParams(search).get('id');
+  const [cookies] = useCookies(['token']);
+  var x = CheckEmptyFields(["Post number"], [Id]);
 
-    const GetJobPostById = async () => {
-      if(x.status != false){
+  const GetJobPostById = async () => {
+    try{
+        if(x.status != false){
         //const result = await getProfileListService(profileN);
-        const posts = await getJobPostListService(jobPostId);
-        let post = await posts.data;
+        const options = {
+          method: 'GET',
+          headers: {"Authorization": `Bearer ${cookies.token}`}
+        }
+        const posts = await fetch("https://localhost:44344/api/Posts/"+Id,options);
+        let post = await posts.json();
         
-        console.log(post.posts);
-        setJobPost(post);
+        setPost(post);
+        console.log(post);
       }
       else{
-        console.log(x.kentat);
+        setError(x.kentat);
       }
-      }
+    }
+    catch{
+      setError("Error");
+    }
+  }
     
-      useEffect(() => {
-        GetJobPostById();
-      }, []);
+  useEffect(() => {
+    GetJobPostById();
+  }, []);
   // jobpost tarkistus ei ehkä toimi.
-  if(x.status != false && JobPost !=""){
-
-let l =  JobPost.posts[0];
-console.log(l);
-  return (
-    <div>
+  if(x.status != false && post !="")
+  {
+    return (
       <div>
         <div>
-          <a href="/Kauppa">Takaisin kauppaan</a>
-          <p>JobPost haettu</p>
-          <MakePost data={JobPost.posts} profileId={l.userId}  />
-        </div>
-        <div>
-          {checkout ? (
-              <Paypal id={jobPostId}/>
-          ):(
-          <Button onClick={()=>{setCheckout(true);}}>Checkout</Button>
-          )}
-        
+          <div>
+            <a href="/Kauppa">Takaisin kauppaan</a>
+            <div>
+              <h3>{post?.label}</h3>
+              <p>Hinta: {post.price}</p>
+              {post?.material ? 
+                <p>{post?.material}</p>
+                :null
+              }
+              {post?.discount ? <div>
+                <p>{post?.discount}</p>
+              </div>:null
+              }
+            </div>
+            <Error error={error}/>
+          </div>
+          <div>
+            {checkout ? (
+                <Paypal id={Id} token={cookies.token}/>
+            ):(
+            <Button onClick={()=>{setCheckout(true);}}>Checkout</Button>
+            )}
+          
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
-else{
-  return(<div>
-  <p>Postin numero ei ollut validi</p>
-  </div>)
-}
+    );
+  }
+  else{
+    return(<div>
+    <p>Error</p>
+    </div>)
+  }
 }
 
 export { PaymentPage };

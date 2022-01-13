@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Modal, Image , InputGroup, FormControl,CardColumns} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { getUserListService } from '../services/user';
 import { getProfileListService, setProfileListService, postProfileEducationAddService, postProfileJobsAddService, deleteProfileJobsService, deleteProfileEducationService, postProfilePictureService } from '../services/profile';
-import { getProfilePostsService } from '../services/store';
+
 
 import './Profiili.css';
 import ReactDataGrid from '@inovua/reactdatagrid-community'
@@ -56,18 +55,19 @@ const ProfiiliMuokkaus = () => {
   }
   // get user list
   const getUserList = async () => {
-    const result = await getUserListService(user.userId);
+    const result = null;
     if (result.error) {
       //TODO:Error
     }
-    setUserData(result.data.userList[0]);
+    setUserData(result?.data.userList[0]);
   }
 
   //TODO:User objektiin nykyinen user
   // Hakee profiilin taulukkodatat
   const getProfileData = async () => {
     const result = await getProfileListService(0);
-    const posts = await getProfilePostsService(0);
+    //const posts = await getProfilePostsService(0);
+    const posts = null;
     if (result.error || posts.error) {
       //TODO:Error
       }

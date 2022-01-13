@@ -97,6 +97,7 @@ function App() {
         <div className="content">
         <Routes>
           <Route path="/" element={<EtusivuTekstit />} />
+          <Route path="/Kauppa" element={<Store />}/>
           <Route path="/Maksu" element={<PaymentPage />} />
           <Route path="/Rekisteroityminen" element={<Rekisteroityminen />}/>
         </Routes>

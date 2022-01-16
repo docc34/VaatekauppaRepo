@@ -43,37 +43,36 @@ return(
 <div className="login-main"> 
   <div>
     
-    <Form>
-  <Form.Group controlId="formBasicUsername">
-    <Form.Label>Käyttäjänimi</Form.Label>
-    <Form.Control  placeholder="Käyttäjänimi" {...username} />
+  <Form>
+    <Form.Group controlId="formBasicUsername">
+      <Form.Label>Käyttäjänimi</Form.Label>
+      <Form.Control  placeholder="Käyttäjänimi" {...username} />
+    </Form.Group>
 
-  </Form.Group>
+    <Form.Group controlId="formBasicName">
+      <Form.Label>Nimi</Form.Label>
+      <Form.Control   placeholder="Nimi" {...name}/>
+    </Form.Group>
 
-  <Form.Group controlId="formBasicName">
-    <Form.Label>Nimi</Form.Label>
-    <Form.Control   placeholder="Nimi" {...name}/>
-  </Form.Group>
+    <Form.Group controlId="formBasicPassword">
+      <Form.Label>Salasana</Form.Label>
+      <Form.Control type="password" placeholder="Salasana"{...password}/>
+    </Form.Group>
 
-  <Form.Group controlId="formBasicPassword">
-    <Form.Label>Salasana</Form.Label>
-    <Form.Control type="password" placeholder="Salasana"{...password}/>
-  </Form.Group>
+    <Form.Group controlId="formBasicPassword">
+      <Form.Label>Salasana uudestaan</Form.Label>
+      <Form.Control type="password" placeholder="Salasana uudestaan"{...passwordAgain}/>
+    </Form.Group>
 
-  <Form.Group controlId="formBasicPassword">
-    <Form.Label>Salasana uudestaan</Form.Label>
-    <Form.Control type="password" placeholder="Salasana uudestaan"{...passwordAgain}/>
-  </Form.Group>
+    <Form.Group controlId="formBasicEmail">
+      <Form.Label>Email</Form.Label>
+      <Form.Control type="email"  placeholder="Email" {...email}/>
+    </Form.Group>
 
-  <Form.Group controlId="formBasicEmail">
-    <Form.Label>Email</Form.Label>
-    <Form.Control type="email"  placeholder="Email" {...email}/>
-  </Form.Group>
-
-  <Form.Group controlId="formBasicPhonenumber">
-    <Form.Label>Puhelinnumero</Form.Label>
-    <Form.Control placeholder="Puhelinnumero"{...phonenumber}/>
-  </Form.Group>
+    <Form.Group controlId="formBasicPhonenumber">
+      <Form.Label>Puhelinnumero</Form.Label>
+      <Form.Control placeholder="Puhelinnumero"{...phonenumber}/>
+    </Form.Group>
     <input type="Button" onClick={()=>{if(passwordAgain.value == password.value){
       setLoading(true)}
       else

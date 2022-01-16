@@ -8,12 +8,14 @@ import { Error } from '../Utils/Functions';
 
 import '@inovua/reactdatagrid-community/index.css'
 import { useCookies } from 'react-cookie';
-
+import {useNavigate} from 'react-router-dom';
 function PaymentPage() {
   const search = useLocation().search;
   const [checkout, setCheckout] = useState(false);
   const [error, setError] = useState(false);
   const [post, setPost] = useState("");
+  const [loggedIn, setLoggedIn] = useState("");
+  let navigate = useNavigate();
 
   const Id = new URLSearchParams(search).get('id');
   const [cookies] = useCookies(['token']);
@@ -22,20 +24,29 @@ function PaymentPage() {
   const GetJobPostById = async () => {
     try{
         if(x.status != false){
-        //const result = await getProfileListService(profileN);
-        const options = {
-          method: 'GET',
-          headers: {"Authorization": `Bearer ${cookies.token}`}
+          const options = {
+            method: 'GET',
+            headers: {"Authorization": `Bearer ${cookies.token}`}
+          }
+
+          var check = await fetch("https://localhost:44344/api/Locations/user",options);
+          var i = await check.json();
+
+          if(i.status != "Error") {
+          setLoggedIn(true);}
+          else{
+            setLoggedIn(false);
+          }
+
+          const posts = await fetch("https://localhost:44344/api/Posts/"+Id,options);
+          let post = await posts.json();
+          
+          setPost(post);
+          console.log(post);
         }
-        const posts = await fetch("https://localhost:44344/api/Posts/"+Id,options);
-        let post = await posts.json();
-        
-        setPost(post);
-        console.log(post);
-      }
-      else{
-        setError(x.kentat);
-      }
+        else{
+          setError(x.kentat);
+        }
     }
     catch{
       setError("Error");
@@ -46,7 +57,7 @@ function PaymentPage() {
     GetJobPostById();
   }, []);
   // jobpost tarkistus ei ehkä toimi.
-  if(x.status != false && post !="")
+  if(x.status != false && post !="" )
   {
     return (
       <div>
@@ -75,13 +86,22 @@ function PaymentPage() {
             )}
           
           </div>
+          <div>
+            {/* TODO: Renderöi tähän joko osoitetietojen antaminen ihmisille jotka ovat kirjautuneet sisään, rekisteröityminen ja osoitetietojen anto jos ei ole kirjautunut sisään ja täytä vaikka osoitetietojen anto kentät jos ne on jo kerran annettu. */}
+            {loggedIn == false ?
+            (<div>
+              <p>Tämä renderöi jos et ole kirjautunut tai sinulla ei ole laitettuna sijaintitietoja vielä</p>
+            </div>) : (<div>
+              <p>Tämä renderöi jos oot kirjautunut ja sulla on sijaintitiedot jo kerrottu</p>
+            </div>)}
+          </div>
         </div>
       </div>
     );
   }
   else{
     return(<div>
-    <p>Error</p>
+    <p>Loading</p>
     </div>)
   }
 }

@@ -94,6 +94,7 @@ const MakePost = (p) => {
       <Row xs={1} sm={1} md={2}  xl={4}  className="g-4" >
         {p.data.map((e, i) => {
           let url = "";
+          console.log(e);
           if(e!= null){
             url = "/Maksu/?id=" + e?.id;
             return (<Col>
@@ -250,12 +251,32 @@ const Paypal = (o)=>{
     if(post != ""){
       window.paypal.Buttons({
         //Luodaan tilaus
+        
         createOrder: (data, actions, error) =>{
           return actions.order.create({
             intent: "CAPTURE",
+            payer:{
+              email_address:"",
+              name:{
+                full_name:""
+              },
+              phone_with_type:{
+                phone_number:{
+                  national_number:""
+                }
+              },
+              address_portable:{
+                address_line_1:"",
+                postal_code:"",
+                country_code:"FI",
+                admin_area_1:"Alue",
+                admin_area_2:"Kaupunki"
+              }
+            },
+
             purchase_units:[
               {
-                description: "static test desc",
+                description: post.description,
                 amount: {
                   currency_code:"EUR",
                   value: post.price

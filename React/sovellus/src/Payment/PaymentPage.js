@@ -39,6 +39,7 @@ function PaymentPage() {
 
   let navigate = useNavigate();
   const Id = new URLSearchParams(search).get('id');
+  const urlTabKey = new URLSearchParams(search).get('tabKey');
   const [cookies] = useCookies(['token']);
   var x = CheckEmptyFields(["Post number"], [Id]);
   //#endregion
@@ -65,6 +66,8 @@ function PaymentPage() {
             setCityPut(i.city);
             setCurrentLocationId(i.id);
             setLoggedIn(3);
+            
+            if(urlTabKey != null)setTabKey(urlTabKey.toString());
           }
 
           const posts = await fetch("https://localhost:44344/api/Posts/"+Id,options);
@@ -116,8 +119,9 @@ function PaymentPage() {
       let parsedAnswer = await answer.json();
 
       if(parsedAnswer?.status != "Error"){
+        
         setError(parsedAnswer?.message);
-
+        if(parsedAnswer?.message == "Location created succesfully")window.location.reload();
       }
       else{
         setError(parsedAnswer?.message);
@@ -274,8 +278,8 @@ function PaymentPage() {
                     });}}>Tallenna</button>
                   </div>
 
+                <button onClick={()=>{setTabKey("1")}}>Maksamaan</button>
               </div>) : null}
-              <button onClick={()=>{setTabKey("1")}}>Oikealle</button>
             </Tab>
             <Tab eventKey="1" title="Maksaminen" disabled>
               <p>Tab 2 maksaminen</p>
@@ -288,11 +292,15 @@ function PaymentPage() {
                 )}
               
               </div>
-            <button onClick={()=>{setTabKey("0")}}>Vasemmalle</button>
+            <button onClick={()=>{setTabKey("0")}}>Peruuta</button>
+            {/* TODO: */}
+            <p>HUOM POISTA OIKEALLE NAPPI </p>
             <button onClick={()=>{setTabKey("2")}}>Oikealle</button>
             </Tab>
             <Tab eventKey="2" title="Tilaus valmis" disabled>
               <p>Tab 3 Tilaus valmis!</p>
+            {/* TODO: */}
+            <p>HUOM POISTA VASEMMALLE NAPPI </p>
             <button onClick={()=>{setTabKey("1")}}>Vasemmalle</button>
             </Tab>
           </Tabs>

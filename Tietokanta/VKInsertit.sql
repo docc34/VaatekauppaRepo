@@ -28,7 +28,25 @@ insert into color (color) values("Lime");
 insert into color (color) values("Teal");
 insert into color (color) values("Navy");
 
-insert into user (email,username,password,name,phonenumber,created,lastLogin,deleted,admin) values ("eemeli.antikainen@gmail.com","Eemeli","", "Eemeli Antikainen","0409606973",'2022-10-1 18:00:00','2022-10-1 18:00:00',0,1);
+insert into province (provinceName) values("Pirkanmaan_maakunta");
+insert into province (provinceName) values("Uudenmaan_maakunta");
+insert into province (provinceName) values("Pohjois-Pohjanmaan_maakunta");
+insert into province (provinceName) values("Kymenlaakson_maakunta");
+insert into province (provinceName) values("Satakunnan_maakunta");
+insert into province (provinceName) values("Pohjois-Savon_maakunta");
+insert into province (provinceName) values("Pohjois-Karjalan_maakunta");
+insert into province (provinceName) values("Keski-Suomen_maakunta");
+insert into province (provinceName) values("Varsinais-Suomen_maakunta");
+insert into province (provinceName) values("Kainuun_maakunta");
+insert into province (provinceName) values("Keski-Pohjanmaan_maakunta");
+insert into province (provinceName) values("Pohjanmaan_maakunta");
+insert into province (provinceName) values("Lapin_maakunta");
+insert into province (provinceName) values("Ahvenanmaan_maakunta");
+
+insert into city (cityName) values("");
+insert into province (provinceName) values("");
+
+insert into user (email,username,password,firstName,lastName,phonenumber,created,lastLogin,deleted,admin) values ("eemeli.antikainen@gmail.com","Eemeli","", "Eemeli","Antikainen","0409606973",'2022-10-1 18:00:00','2022-10-1 18:00:00',0,1);
 
 insert into Location (userId,city,address,postalCode) values (1,"Kuopio","Presidentinkatu 5", "70400");
 

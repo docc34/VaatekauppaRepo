@@ -42,7 +42,7 @@ const Rekisteroityminen = ()=>{
 return(
 <div className="login-main"> 
   <div>
-    
+    <h2>Rekisteröityminen</h2>
   <Form>
     <Form.Group controlId="formBasicUsername">
       <Form.Label>Käyttäjänimi</Form.Label>

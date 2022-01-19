@@ -226,6 +226,7 @@ const Paypal = (o)=>{
 
   const paypal = useRef();
   const [post, setPost] = useState("");
+  const [user, setUser] = useState("");
   useEffect(async ()=>{
    try{ 
     const options = {
@@ -233,12 +234,12 @@ const Paypal = (o)=>{
       headers: {"Authorization": `Bearer ${o.token}`}
     }
     var post = await fetch("https://localhost:44344/api/Posts/"+o.id,options);
-    
-    if(post?.Status == "Error"){
-      
+    var user = await fetch("https://localhost:44344/api/user",options)
+    if(post?.Status == "Error" ){
     }
     else{
-      setPost(post);
+      setPost(await post?.json());
+      setUser(await user?.json());
     }
   }
   catch{
@@ -251,29 +252,28 @@ const Paypal = (o)=>{
     if(post != ""){
       window.paypal.Buttons({
         //Luodaan tilaus
-        
         createOrder: (data, actions, error) =>{
           return actions.order.create({
             intent: "CAPTURE",
             payer:{
-              email_address:"",
+              email_address:user.email,
               name:{
-                full_name:""
+                given_name:user.firstName,
+                surname:user.lastName
               },
               phone_with_type:{
                 phone_number:{
-                  national_number:""
+                  national_number:user.phonenumber
                 }
               },
               address_portable:{
-                address_line_1:"",
-                postal_code:"",
+                address_line_1:user?.location?.address,
+                postal_code:user?.location?.postalCode,
                 country_code:"FI",
-                admin_area_1:"Alue",
-                admin_area_2:"Kaupunki"
+                admin_area_1:user?.province,
+                admin_area_2:user?.city
               }
             },
-
             purchase_units:[
               {
                 description: post.description,
@@ -287,6 +287,8 @@ const Paypal = (o)=>{
         },
         //Jos tilaus menee läpi toteutetaan on Approve funktio
         onApprove: async (data, actions) =>{
+          //TODO: Julkaise ostoskorin sisältö ordereihin
+          //https://localhost:44344/api/Orders/OrderItem
           const order = await (actions.order.capture()) 
           console.log(order);
         },

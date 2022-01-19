@@ -23,7 +23,7 @@ function PaymentPage() {
   const [passwordAgain, setPasswordAgain] = useState("");
   const [email, setEmail] = useState("");
   const [phonenumber, setPhonenumber] = useState("");
-  const [city, setCity] = useState("");
+  const [cityId, setCityId] = useState("");
   const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [locationObject, setLocationObject] = useState("");
@@ -32,11 +32,13 @@ function PaymentPage() {
   
   const [postalCodePut, setPostalCodePut] = useState("");
   const [addressPut, setAddressPut] = useState("");
-  const [cityPut, setCityPut] = useState("");
+  const [cityPutId, setCityPutId] = useState("");
   const [locationObjectPut, setLocationObjectPut] = useState("");
   const [currentLocationId, setCurrentLocationId] = useState("");
   const [putEnabled, setPutEnabled] = useState(true);
 
+  const [cities, setCities] = useState([]);
+  
   let navigate = useNavigate();
   const Id = new URLSearchParams(search).get('id');
   const urlTabKey = new URLSearchParams(search).get('tabKey');
@@ -63,7 +65,7 @@ function PaymentPage() {
           else{
             setPostalCodePut(i.postalCode);
             setAddressPut(i.address);
-            setCityPut(i.city);
+            setCityPutId(i.cityId);
             setCurrentLocationId(i.id);
             setLoggedIn(3);
             
@@ -82,7 +84,23 @@ function PaymentPage() {
       setError("Error");
     }
   }
-
+  const GetTableData = async () => {
+    try{
+      
+      const options = {
+        method: 'GET'
+      }
+      if(cities.length == 0){
+        var i = await fetch("https://localhost:44344/api/Cities",options);
+        var data = await i.json();
+        setCities(data);
+      }
+    }
+    catch{
+      setError("Error");
+    }
+  }
+  
   useEffect(async() => {
     if(locationObjectPut != "" && putEnabled == false){
       try{
@@ -132,10 +150,14 @@ function PaymentPage() {
     }
   }, [locationObject]);
   
-  useEffect(() => {
-    GetJobPostById();
+  useEffect(async () => {
+    await GetJobPostById();
+    await GetTableData();
   }, []);
 
+  const citiesToSelect = cities.map((e,i)=>{
+    return(<option value={e.id}>{e.cityName}</option>);
+  });
 
   if(x.status != false && post !="" )
   {
@@ -165,10 +187,12 @@ function PaymentPage() {
               {/* TODO: Laita tietojen anto/Maksaminen vaiheistettuun tabiin */}
               {loggedIn == 1 || loggedIn == 2 ?(
               <div>
-                {/* TODO: Tähän kaupungin autofill. */}
+                {/* TODO: Tähän kaupungin autofill ja hae kaupungit backendista*/}
                 <Form.Group controlId="formBasicCity">
-                  <Form.Label>Kaupunki</Form.Label>
-                  <Form.Control placeholder="Kaupunki"onChange={(e)=>{setCity(e.target.value);}}/>
+                <select onChange={(e)=>{setCityId(e.target.value);}}>
+                  <option value="">Valitse kaupunki</option>
+                  {citiesToSelect}
+                </select>
                 </Form.Group>
                 <Form.Group controlId="formBasicAddress">
                   <Form.Label>osoite</Form.Label>
@@ -183,7 +207,7 @@ function PaymentPage() {
               {/* Jos on kirjautunut mutta ei ole vielä antanut osoitetietoja */}
               {loggedIn == 2 ?(<button type='button' onClick={()=>{setLocationObject({
                 userId:cookies.userId,
-                city:city,
+                cityId:cityId,
                 address:address,
                 postalCode:postalCode,
                 user: null
@@ -228,7 +252,7 @@ function PaymentPage() {
                 <input type="Button" onClick={()=>{if(passwordAgain.value == password.value){
                   setLocationObject({
                     userId:cookies.UserId,
-                    city:city,
+                    cityId:cityId,
                     address:address,
                     postalCode:postalCode,
                     user:{
@@ -256,9 +280,12 @@ function PaymentPage() {
                   <button disabled={putEnabled} onClick={()=>{setPutEnabled(true);}}>Peruuta</button>
                   <div>
                     {/* TODO: Tähän kaupungin autofill. */}
+                    
                     <Form.Group controlId="formBasicCity">
-                      <Form.Label>Kaupunki</Form.Label>
-                      <Form.Control disabled={putEnabled} value={cityPut} placeholder="Kaupunki"onChange={(e)=>{setCityPut(e.target.value);}}/>
+                    <select disabled={putEnabled} value={cityPutId} onChange={(e)=>{setCityPutId(e.target.value);}}>
+                      <option value="">Valitse kaupunki</option>
+                      {citiesToSelect}
+                    </select>
                     </Form.Group>
                     <Form.Group controlId="formBasicAddress">
                       <Form.Label>osoite</Form.Label>
@@ -271,7 +298,7 @@ function PaymentPage() {
                     <button disabled={putEnabled} type='button' onClick={()=>{setLocationObjectPut({
                       Id:currentLocationId,
                       userId:cookies.userId,
-                      city:cityPut,
+                      cityId:cityPutId,
                       address:addressPut,
                       postalCode:postalCodePut,
                       user: null

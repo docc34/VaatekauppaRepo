@@ -1,279 +1,272 @@
 -- MySQL Workbench Forward Engineering
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS UNIQUE_CHECKS=;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS FOREIGN_KEY_CHECKS=;
-SET @OLD_SQL_MODE=@@SQL_MODE SQL_MODE='ONLY_FULL_GROUP_BYSTRICT_TRANS_TABLESNO_ZERO_IN_DATENO_ZERO_DATEERROR_FOR_DIVISION_BY_ZERONO_ENGINE_SUBSTITUTION';
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema vaatekauppaDb
+-- Schema VaatekauppaDb
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema vaatekauppaDb
+-- Schema VaatekauppaDb
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `vaatekauppaDb` DEFAULT CHARACTER SET utf ;
-USE `vaatekauppaDb` ;
+CREATE SCHEMA IF NOT EXISTS `VaatekauppaDb` DEFAULT CHARACTER SET utf8 ;
+USE `VaatekauppaDb` ;
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`user`
+-- Table `VaatekauppaDb`.`user`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`user` (
-  `id` INT NOT NULL AUTO_INCREMENT
-  `email` VARCHAR() NOT NULL
-  `username` VARCHAR() NOT NULL
-  `password` VARCHAR() NOT NULL
-  `firstName` VARCHAR() NOT NULL
-  `lastName` VARCHAR() NOT NULL
-  `phonenumber` VARCHAR() NOT NULL
-  `created` DATETIME NOT NULL
-  `lastLogin` DATETIME NOT NULL
-  `deleted` TINYINT NOT NULL
-  `admin` TINYINT NOT NULL
+CREATE TABLE IF NOT EXISTS `VaatekauppaDb`.`user` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(100) NOT NULL,
+  `username` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(45) NOT NULL,
+  `firstName` VARCHAR(60) NOT NULL,
+  `lastName` VARCHAR(80) NOT NULL,
+  `phonenumber` VARCHAR(45) NOT NULL,
+  `created` DATETIME NOT NULL,
+  `lastLogin` DATETIME NOT NULL,
+  `deleted` TINYINT NOT NULL,
+  `admin` TINYINT NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`color`
+-- Table `VaatekauppaDb`.`color`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`color` (
-  `id` INT NOT NULL AUTO_INCREMENT
-  `color` VARCHAR() NULL
+CREATE TABLE IF NOT EXISTS `VaatekauppaDb`.`color` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `color` VARCHAR(30) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`size`
+-- Table `VaatekauppaDb`.`size`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`size` (
-  `id` INT NOT NULL AUTO_INCREMENT
-  `size` VARCHAR() NULL
+CREATE TABLE IF NOT EXISTS `VaatekauppaDb`.`size` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `size` VARCHAR(4) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`tax`
+-- Table `VaatekauppaDb`.`tax`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`tax` (
-  `id` INT NOT NULL AUTO_INCREMENT
-  `taxPercentage` DOUBLE NOT NULL
+CREATE TABLE IF NOT EXISTS `VaatekauppaDb`.`tax` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `taxPercentage` DOUBLE NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`post`
+-- Table `VaatekauppaDb`.`post`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`post` (
-  `id` INT NOT NULL AUTO_INCREMENT
-  `label` VARCHAR() NOT NULL
-  `price` DOUBLE NOT NULL
-  `description` VARCHAR() NOT NULL
-  `userId` INT NOT NULL
-  `taxId` INT NOT NULL
-  `discount` INT NULL
-  `material` VARCHAR() NULL
-  `length` VARCHAR() NULL
-  `sleeveLength` VARCHAR() NULL
-  `colorId` INT NULL
-  `sizeId` INT NULL
-  `deliveryDaysEstimateStarting` INT NULL
-  `deliveryDaysEstimateEnding` INT NULL
-  `deleted` TINYINT NOT NULL
-  PRIMARY KEY (`id`)
-  INDEX `fk_jobPost_userdata_idx` (`userId` ASC)
-  INDEX `fk_post_color_idx` (`colorId` ASC)
-  INDEX `fk_post_size_idx` (`sizeId` ASC)
-  INDEX `fk_post_tax_idx` (`taxId` ASC)
-  CONSTRAINT `fk_jobPost_userdata`
+CREATE TABLE IF NOT EXISTS `VaatekauppaDb`.`post` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `label` VARCHAR(45) NOT NULL,
+  `price` DOUBLE NOT NULL,
+  `description` VARCHAR(400) NOT NULL,
+  `userId` INT NOT NULL,
+  `taxId` INT NOT NULL,
+  `discount` INT NULL,
+  `material` VARCHAR(45) NULL,
+  `length` VARCHAR(60) NULL,
+  `sleeveLength` VARCHAR(60) NULL,
+  `colorId` INT NULL,
+  `sizeId` INT NULL,
+  `deliveryDaysEstimateStarting` INT NULL,
+  `deliveryDaysEstimateEnding` INT NULL,
+  `deleted` TINYINT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_jobPost_userdata1_idx` (`userId` ASC),
+  INDEX `fk_post_color2_idx` (`colorId` ASC),
+  INDEX `fk_post_size1_idx` (`sizeId` ASC),
+  INDEX `fk_post_tax1_idx` (`taxId` ASC),
+  CONSTRAINT `fk_jobPost_userdata1`
     FOREIGN KEY (`userId`)
-    REFERENCES `vaatekauppaDb`.`user` (`id`)
+    REFERENCES `VaatekauppaDb`.`user` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-  CONSTRAINT `fk_post_color`
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_post_color2`
     FOREIGN KEY (`colorId`)
-    REFERENCES `vaatekauppaDb`.`color` (`id`)
+    REFERENCES `VaatekauppaDb`.`color` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-  CONSTRAINT `fk_post_size`
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_post_size1`
     FOREIGN KEY (`sizeId`)
-    REFERENCES `vaatekauppaDb`.`size` (`id`)
+    REFERENCES `VaatekauppaDb`.`size` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-  CONSTRAINT `fk_post_tax`
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_post_tax1`
     FOREIGN KEY (`taxId`)
-    REFERENCES `vaatekauppaDb`.`tax` (`id`)
+    REFERENCES `VaatekauppaDb`.`tax` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`province`
+-- Table `VaatekauppaDb`.`province`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`province` (
-  `id` INT NOT NULL AUTO_INCREMENT
-  `provinceName` VARCHAR() NULL
+CREATE TABLE IF NOT EXISTS `VaatekauppaDb`.`province` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `provinceName` VARCHAR(100) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`city`
+-- Table `VaatekauppaDb`.`city`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`city` (
-  `id` INT NOT NULL AUTO_INCREMENT
-  `cityName` VARCHAR() NULL
-  `provinceId` INT NOT NULL
-  PRIMARY KEY (`id`)
-  INDEX `fk_city_province_idx` (`provinceId` ASC)
-  CONSTRAINT `fk_city_province`
+CREATE TABLE IF NOT EXISTS `VaatekauppaDb`.`city` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `cityName` VARCHAR(100) NULL,
+  `provinceId` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_city_province1_idx` (`provinceId` ASC),
+  CONSTRAINT `fk_city_province1`
     FOREIGN KEY (`provinceId`)
-    REFERENCES `vaatekauppaDb`.`province` (`id`)
+    REFERENCES `VaatekauppaDb`.`province` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`location`
+-- Table `VaatekauppaDb`.`location`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`location` (
-  `id` INT NOT NULL AUTO_INCREMENT
-  `userId` INT NOT NULL
-  `city` VARCHAR() NOT NULL
-  `address` VARCHAR() NOT NULL
-  `postalCode` INT NOT NULL
-  `provinceId` INT NOT NULL
-  `cityId` INT NOT NULL
-  `house` VARCHAR() NULL
-  PRIMARY KEY (`id`)
-  INDEX `fk_location_userdata_idx` (`userId` ASC)
-  INDEX `fk_location_province_idx` (`provinceId` ASC)
-  INDEX `fk_location_city_idx` (`cityId` ASC)
-  CONSTRAINT `fk_location_userdata`
+CREATE TABLE IF NOT EXISTS `VaatekauppaDb`.`location` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userId` INT NOT NULL,
+  `city` VARCHAR(100) NOT NULL,
+  `address` VARCHAR(100) NOT NULL,
+  `postalCode` INT NOT NULL,
+  `cityId` INT NOT NULL,
+  `house` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_location_userdata1_idx` (`userId` ASC),
+  INDEX `fk_location_city1_idx` (`cityId` ASC),
+  CONSTRAINT `fk_location_userdata1`
     FOREIGN KEY (`userId`)
-    REFERENCES `vaatekauppaDb`.`user` (`id`)
+    REFERENCES `VaatekauppaDb`.`user` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-  CONSTRAINT `fk_location_province`
-    FOREIGN KEY (`provinceId`)
-    REFERENCES `vaatekauppaDb`.`province` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-  CONSTRAINT `fk_location_city`
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_location_city1`
     FOREIGN KEY (`cityId`)
-    REFERENCES `vaatekauppaDb`.`city` (`id`)
+    REFERENCES `VaatekauppaDb`.`city` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`images`
+-- Table `VaatekauppaDb`.`images`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`images` (
-  `id` INT NOT NULL AUTO_INCREMENT
-  `postId` INT NOT NULL
-  `imageLink` VARCHAR() NOT NULL
-  INDEX `fk_Images_post_idx` (`postId` ASC)
-  PRIMARY KEY (`id`)
-  CONSTRAINT `fk_Images_post`
+CREATE TABLE IF NOT EXISTS `VaatekauppaDb`.`images` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `postId` INT NOT NULL,
+  `imageLink` VARCHAR(300) NOT NULL,
+  INDEX `fk_Images_post1_idx` (`postId` ASC),
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_Images_post1`
     FOREIGN KEY (`postId`)
-    REFERENCES `vaatekauppaDb`.`post` (`id`)
+    REFERENCES `VaatekauppaDb`.`post` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`ratings`
+-- Table `VaatekauppaDb`.`ratings`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`ratings` (
-  `id` INT NOT NULL AUTO_INCREMENT
-  `postId` INT NOT NULL
-  `userId` INT NOT NULL
-  `stars` DOUBLE NOT NULL
-  `review` VARCHAR() NULL
-  INDEX `fk_ratings_post_idx` (`postId` ASC)
-  PRIMARY KEY (`id`)
-  INDEX `fk_ratings_userdata_idx` (`userId` ASC)
-  CONSTRAINT `fk_ratings_post`
+CREATE TABLE IF NOT EXISTS `VaatekauppaDb`.`ratings` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `postId` INT NOT NULL,
+  `userId` INT NOT NULL,
+  `stars` DOUBLE NOT NULL,
+  `review` VARCHAR(200) NULL,
+  INDEX `fk_ratings_post1_idx` (`postId` ASC),
+  PRIMARY KEY (`id`),
+  INDEX `fk_ratings_userdata1_idx` (`userId` ASC),
+  CONSTRAINT `fk_ratings_post1`
     FOREIGN KEY (`postId`)
-    REFERENCES `vaatekauppaDb`.`post` (`id`)
+    REFERENCES `VaatekauppaDb`.`post` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-  CONSTRAINT `fk_ratings_userdata`
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ratings_userdata1`
     FOREIGN KEY (`userId`)
-    REFERENCES `vaatekauppaDb`.`user` (`id`)
+    REFERENCES `VaatekauppaDb`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`Orders`
+-- Table `VaatekauppaDb`.`Orders`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`Orders` (
-  `id` INT NOT NULL AUTO_INCREMENT
-  `price` DOUBLE NOT NULL
-  `orderDate` DATETIME NOT NULL
-  `location_id` INT NOT NULL
-  PRIMARY KEY (`id`)
-  INDEX `fk_Orders_location_idx` (`location_id` ASC)
-  CONSTRAINT `fk_Orders_location`
+CREATE TABLE IF NOT EXISTS `VaatekauppaDb`.`Orders` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `price` DOUBLE NOT NULL,
+  `orderDate` DATETIME NOT NULL,
+  `location_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_Orders_location1_idx` (`location_id` ASC),
+  CONSTRAINT `fk_Orders_location1`
     FOREIGN KEY (`location_id`)
-    REFERENCES `vaatekauppaDb`.`location` (`id`)
+    REFERENCES `VaatekauppaDb`.`location` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`orderStatus`
+-- Table `VaatekauppaDb`.`orderStatus`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`orderStatus` (
-  `id` INT NOT NULL AUTO_INCREMENT
-  `status` VARCHAR() NOT NULL
+CREATE TABLE IF NOT EXISTS `VaatekauppaDb`.`orderStatus` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `status` VARCHAR(60) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`order`
+-- Table `VaatekauppaDb`.`order`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`order` (
-  `id` INT NOT NULL AUTO_INCREMENT
-  `ordersId` INT NOT NULL
-  `orderStatusId` INT NOT NULL
-  `userId` INT NOT NULL
-  `postId` INT NOT NULL
-  `ordered` TINYINT NOT NULL
-  PRIMARY KEY (`id`)
-  INDEX `fk_order_Orders_idx` (`ordersId` ASC)
-  INDEX `fk_order_orderStatus_idx` (`orderStatusId` ASC)
-  INDEX `fk_order_user_idx` (`userId` ASC)
-  INDEX `fk_order_post_idx` (`postId` ASC)
-  CONSTRAINT `fk_order_Orders`
+CREATE TABLE IF NOT EXISTS `VaatekauppaDb`.`order` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ordersId` INT NOT NULL,
+  `orderStatusId` INT NOT NULL,
+  `userId` INT NOT NULL,
+  `postId` INT NOT NULL,
+  `ordered` TINYINT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_order_Orders1_idx` (`ordersId` ASC),
+  INDEX `fk_order_orderStatus1_idx` (`orderStatusId` ASC),
+  INDEX `fk_order_user1_idx` (`userId` ASC),
+  INDEX `fk_order_post1_idx` (`postId` ASC),
+  CONSTRAINT `fk_order_Orders1`
     FOREIGN KEY (`ordersId`)
-    REFERENCES `vaatekauppaDb`.`Orders` (`id`)
+    REFERENCES `VaatekauppaDb`.`Orders` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-  CONSTRAINT `fk_order_orderStatus`
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_orderStatus1`
     FOREIGN KEY (`orderStatusId`)
-    REFERENCES `vaatekauppaDb`.`orderStatus` (`id`)
+    REFERENCES `VaatekauppaDb`.`orderStatus` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-  CONSTRAINT `fk_order_user`
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_user1`
     FOREIGN KEY (`userId`)
-    REFERENCES `vaatekauppaDb`.`user` (`id`)
+    REFERENCES `VaatekauppaDb`.`user` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-  CONSTRAINT `fk_order_post`
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_post1`
     FOREIGN KEY (`postId`)
-    REFERENCES `vaatekauppaDb`.`post` (`id`)
+    REFERENCES `VaatekauppaDb`.`post` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -282,755 +275,3 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-
-<tbody>
-
-Akaa Akaa Akaa
-Pirkanmaan_maakunta Pirkanmaan maakunta Pirkanmaa
-
-
-
-
-
-Alaj%C%Arvi Alajärvi Alajärvi
-Etel%C%A-Pohjanmaan_maakunta Etelä-Pohjanmaan maakunta Etelä-Pohjanmaa
-
-
-
-
-
-Alavus Alavus Alavus
-Etel%C%A-Pohjanmaan_maakunta Etelä-Pohjanmaan maakunta Etelä-Pohjanmaa
-
-
-
-
-
-Espoo Espoo Espoo
-Uudenmaan_maakunta Uudenmaan maakunta Uusimaa
-
-
-
-
-
-Forssa Forssa Forssa
-Kanta-H%C%Ameen_maakunta Kanta-Hämeen maakunta Kanta-Häme
-
-
-
-
-
-Haapaj%C%Arvi Haapajärvi Haapajärvi
-Pohjois-Pohjanmaan_maakunta Pohjois-Pohjanmaan maakunta Pohjois-Pohjanmaa
-
-
-
-
-
-Haapavesi Haapavesi Haapavesi
-Pohjois-Pohjanmaan_maakunta Pohjois-Pohjanmaan maakunta Pohjois-Pohjanmaa
-
-
-
-
-
-Hamina Hamina Hamina
-Kymenlaakson_maakunta Kymenlaakson maakunta Kymenlaakso
-
-
-
-
-
-Hanko Hanko Hanko
-Uudenmaan_maakunta Uudenmaan maakunta Uusimaa
-
-
-
-
-
-Harjavalta Harjavalta Harjavalta
-Satakunnan_maakunta Satakunnan maakunta Satakunta
-
-
-
-
-
-Heinola Heinola Heinola
-P%C%Aij%C%At-H%C%Ameen_maakunta Päijät-Hämeen maakunta Päijät-Häme
-
-
-
-
-
-Helsinki Helsinki Helsinki
-Uudenmaan_maakunta Uudenmaan maakunta Uusimaa
-
-
-
-
-
-Huittinen Huittinen Huittinen
-Satakunnan_maakunta Satakunnan maakunta Satakunta
-
-
-
-
-
-Hyvink%C%A%C%A Hyvinkää Hyvinkää
-Uudenmaan_maakunta Uudenmaan maakunta Uusimaa
-
-
-
-
-
-H%C%Ameenlinna Hämeenlinna Hämeenlinna
-Kanta-H%C%Ameen_maakunta Kanta-Hämeen maakunta Kanta-Häme
-
-
-
-
-
-Iisalmi Iisalmi Iisalmi
-Pohjois-Savon_maakunta Pohjois-Savon maakunta Pohjois-Savo
-
-
-
-
-
-Ikaalinen Ikaalinen Ikaalinen
-Pirkanmaan_maakunta Pirkanmaan maakunta Pirkanmaa
-
-
-
-
-
-Imatra Imatra Imatra
-Etel%C%A-Karjalan_maakunta Etelä-Karjalan maakunta Etelä-Karjala
-
-
-
-
-
-Joensuu Joensuu Joensuu
-Pohjois-Karjalan_maakunta Pohjois-Karjalan maakunta Pohjois-Karjala
-
-
-
-
-
-Jyv%C%Askyl%C%A Jyväskylä Jyväskylä
-Keski-Suomen_maakunta Keski-Suomen maakunta Keski-Suomi
-
-
-
-
-
-J%C%Ams%C%A Jämsä Jämsä
-Keski-Suomen_maakunta Keski-Suomen maakunta Keski-Suomi
-
-
-
-
-
-J%C%Arvenp%C%A%C%A Järvenpää Järvenpää
-Uudenmaan_maakunta Uudenmaan maakunta Uusimaa
-
-
-
-
-
-Kaarina Kaarina Kaarina
-Varsinais-Suomen_maakunta Varsinais-Suomen maakunta Varsinais-Suomi
-
-
-
-
-
-Kajaani Kajaani Kajaani
-Kainuun_maakunta Kainuun maakunta Kainuu
-
-
-
-
-
-Kalajoki Kalajoki Kalajoki
-Pohjois-Pohjanmaan_maakunta Pohjois-Pohjanmaan maakunta Pohjois-Pohjanmaa
-
-
-
-
-
-Kangasala Kangasala Kangasala
-Pirkanmaan_maakunta Pirkanmaan maakunta Pirkanmaa
-
-
-
-
-
-Kankaanp%C%A%C%A Kankaanpää Kankaanpää
-Satakunnan_maakunta Satakunnan maakunta Satakunta
-
-
-
-
-
-Kannus_(kaupunki) Kannus (kaupunki) Kannus
-Keski-Pohjanmaan_maakunta Keski-Pohjanmaan maakunta Keski-Pohjanmaa
-
-
-
-
-
-Karkkila Karkkila Karkkila
-Uudenmaan_maakunta Uudenmaan maakunta Uusimaa
-
-
-
-
-
-Kaskinen Kaskinen Kaskinen
-Pohjanmaan_maakunta Pohjanmaan maakunta Pohjanmaa
-
-
-
-
-
-Kauhajoki Kauhajoki Kauhajoki
-Etel%C%A-Pohjanmaan_maakunta Etelä-Pohjanmaan maakunta Etelä-Pohjanmaa
-
-
-
-
-
-Kauhava Kauhava Kauhava
-Etel%C%A-Pohjanmaan_maakunta Etelä-Pohjanmaan maakunta Etelä-Pohjanmaa
-
-
-
-
-
-Kauniainen Kauniainen Kauniainen
-Uudenmaan_maakunta Uudenmaan maakunta Uusimaa
-
-
-
-
-
-Kemi Kemi Kemi
-Lapin_maakunta Lapin maakunta Lappi
-
-
-
-
-
-Kemij%C%Arvi Kemijärvi Kemijärvi
-Lapin_maakunta Lapin maakunta Lappi
-
-
-
-
-
-Kerava Kerava Kerava
-Uudenmaan_maakunta Uudenmaan maakunta Uusimaa
-
-
-
-
-
-Keuruu Keuruu Keuruu
-Keski-Suomen_maakunta Keski-Suomen maakunta Keski-Suomi
-
-
-
-
-
-Kitee Kitee Kitee
-Pohjois-Karjalan_maakunta Pohjois-Karjalan maakunta Pohjois-Karjala
-
-
-
-
-
-Kiuruvesi Kiuruvesi Kiuruvesi
-Pohjois-Savon_maakunta Pohjois-Savon maakunta Pohjois-Savo
-
-
-
-
-
-Kokem%C%Aki Kokemäki Kokemäki
-Satakunnan_maakunta Satakunnan maakunta Satakunta
-
-
-
-
-
-Kokkola Kokkola Kokkola
-Keski-Pohjanmaan_maakunta Keski-Pohjanmaan maakunta Keski-Pohjanmaa
-
-
-
-
-
-Kotka_(kaupunki) Kotka (kaupunki) Kotka
-Kymenlaakson_maakunta Kymenlaakson maakunta Kymenlaakso
-
-
-
-
-
-Kouvola Kouvola Kouvola
-Kymenlaakson_maakunta Kymenlaakson maakunta Kymenlaakso
-
-
-
-
-
-Kristiinankaupunki Kristiinankaupunki Kristiinankaupunki
-Pohjanmaan_maakunta Pohjanmaan maakunta Pohjanmaa
-
-
-
-
-
-Kuhmo Kuhmo Kuhmo
-Kainuun_maakunta Kainuun maakunta Kainuu
-
-
-
-
-
-Kuopio Kuopio Kuopio
-Pohjois-Savon_maakunta Pohjois-Savon maakunta Pohjois-Savo
-
-
-
-
-
-Kurikka Kurikka Kurikka
-Etel%C%A-Pohjanmaan_maakunta Etelä-Pohjanmaan maakunta Etelä-Pohjanmaa
-
-
-
-
-
-Kuusamo Kuusamo Kuusamo
-Pohjois-Pohjanmaan_maakunta Pohjois-Pohjanmaan maakunta Pohjois-Pohjanmaa
-
-
-
-
-
-Lahti Lahti Lahti
-P%C%Aij%C%At-H%C%Ameen_maakunta Päijät-Hämeen maakunta Päijät-Häme
-
-
-
-
-
-Laitila Laitila Laitila
-Varsinais-Suomen_maakunta Varsinais-Suomen maakunta Varsinais-Suomi
-
-
-
-
-
-Lappeenranta Lappeenranta Lappeenranta
-Etel%C%A-Karjalan_maakunta Etelä-Karjalan maakunta Etelä-Karjala
-
-
-
-
-
-Lapua Lapua Lapua
-Etel%C%A-Pohjanmaan_maakunta Etelä-Pohjanmaan maakunta Etelä-Pohjanmaa
-
-
-
-
-
-Lieksa Lieksa Lieksa
-Pohjois-Karjalan_maakunta Pohjois-Karjalan maakunta Pohjois-Karjala
-
-
-
-
-
-Lohja Lohja Lohja
-Uudenmaan_maakunta Uudenmaan maakunta Uusimaa
-
-
-
-
-
-Loimaa Loimaa Loimaa
-Varsinais-Suomen_maakunta Varsinais-Suomen maakunta Varsinais-Suomi
-
-
-
-
-
-Loviisa Loviisa Loviisa
-Uudenmaan_maakunta Uudenmaan maakunta Uusimaa
-
-
-
-
-
-Maarianhamina Maarianhamina Maarianhamina
-Ahvenanmaan_maakunta Ahvenanmaan maakunta Ahvenanmaa
-
-
-
-
-
-Mikkeli Mikkeli Mikkeli
-Etel%C%A-Savon_maakunta Etelä-Savon maakunta Etelä-Savo
-
-
-
-
-
-M%C%Antt%C%A-Vilppula Mänttä-Vilppula Mänttä-Vilppula
-Pirkanmaan_maakunta Pirkanmaan maakunta Pirkanmaa
-
-
-
-
-
-Naantali Naantali Naantali
-Varsinais-Suomen_maakunta Varsinais-Suomen maakunta Varsinais-Suomi
-
-
-
-
-
-Nivala Nivala Nivala
-Pohjois-Pohjanmaan_maakunta Pohjois-Pohjanmaan maakunta Pohjois-Pohjanmaa
-
-
-
-
-
-Nokia_(kaupunki) Nokia (kaupunki) Nokia
-Pirkanmaan_maakunta Pirkanmaan maakunta Pirkanmaa
-
-
-
-
-
-Nurmes Nurmes Nurmes
-Pohjois-Karjalan_maakunta Pohjois-Karjalan maakunta Pohjois-Karjala
-
-
-
-
-
-N%C%Arpi%C%B Närpiö Närpiö
-Pohjanmaan_maakunta Pohjanmaan maakunta Pohjanmaa
-
-
-
-
-
-Orimattila Orimattila Orimattila
-P%C%Aij%C%At-H%C%Ameen_maakunta Päijät-Hämeen maakunta Päijät-Häme
-
-
-
-
-
-Orivesi Orivesi Orivesi
-Pirkanmaan_maakunta Pirkanmaan maakunta Pirkanmaa
-
-
-
-
-
-Oulainen Oulainen Oulainen
-Pohjois-Pohjanmaan_maakunta Pohjois-Pohjanmaan maakunta Pohjois-Pohjanmaa
-
-
-
-
-
-Oulu Oulu Oulu
-Pohjois-Pohjanmaan_maakunta Pohjois-Pohjanmaan maakunta Pohjois-Pohjanmaa
-
-
-
-
-
-Outokumpu Outokumpu Outokumpu
-Pohjois-Karjalan_maakunta Pohjois-Karjalan maakunta Pohjois-Karjala
-
-
-
-
-
-Paimio Paimio Paimio
-Varsinais-Suomen_maakunta Varsinais-Suomen maakunta Varsinais-Suomi
-
-
-
-
-
-Parainen Parainen Parainen
-Varsinais-Suomen_maakunta Varsinais-Suomen maakunta Varsinais-Suomi
-
-
-
-
-
-Parkano Parkano Parkano
-Pirkanmaan_maakunta Pirkanmaan maakunta Pirkanmaa
-
-
-
-
-
-Pieks%C%Am%C%Aki Pieksämäki Pieksämäki
-Etel%C%A-Savon_maakunta Etelä-Savon maakunta Etelä-Savo
-
-
-
-
-
-Pietarsaari Pietarsaari Pietarsaari
-Pohjanmaan_maakunta Pohjanmaan maakunta Pohjanmaa
-
-
-
-
-
-Pori Pori Pori
-Satakunnan_maakunta Satakunnan maakunta Satakunta
-
-
-
-
-
-Porvoo Porvoo Porvoo
-Uudenmaan_maakunta Uudenmaan maakunta Uusimaa
-
-
-
-
-
-Pudasj%C%Arvi Pudasjärvi Pudasjärvi
-Pohjois-Pohjanmaan_maakunta Pohjois-Pohjanmaan maakunta Pohjois-Pohjanmaa
-
-
-
-
-
-Pyh%C%Aj%C%Arvi Pyhäjärvi Pyhäjärvi
-Pohjois-Pohjanmaan_maakunta Pohjois-Pohjanmaan maakunta Pohjois-Pohjanmaa
-
-
-
-
-
-Raahe Raahe Raahe
-Pohjois-Pohjanmaan_maakunta Pohjois-Pohjanmaan maakunta Pohjois-Pohjanmaa
-
-
-
-
-
-Raasepori Raasepori Raasepori
-Uudenmaan_maakunta Uudenmaan maakunta Uusimaa
-
-
-
-
-
-Raisio Raisio Raisio
-Varsinais-Suomen_maakunta Varsinais-Suomen maakunta Varsinais-Suomi
-
-
-
-
-
-Rauma Rauma Rauma
-Satakunnan_maakunta Satakunnan maakunta Satakunta
-
-
-
-
-
-Riihim%C%Aki Riihimäki Riihimäki
-Kanta-H%C%Ameen_maakunta Kanta-Hämeen maakunta Kanta-Häme
-
-
-
-
-
-Rovaniemi Rovaniemi Rovaniemi
-Lapin_maakunta Lapin maakunta Lappi
-
-
-
-
-
-Saarij%C%Arvi Saarijärvi Saarijärvi
-Keski-Suomen_maakunta Keski-Suomen maakunta Keski-Suomi
-
-
-
-
-
-Salo Salo Salo
-Varsinais-Suomen_maakunta Varsinais-Suomen maakunta Varsinais-Suomi
-
-
-
-
-
-Sastamala Sastamala Sastamala
-Pirkanmaan_maakunta Pirkanmaan maakunta Pirkanmaa
-
-
-
-
-
-Savonlinna Savonlinna Savonlinna
-Etel%C%A-Savon_maakunta Etelä-Savon maakunta Etelä-Savo
-
-
-
-
-
-Sein%C%Ajoki Seinäjoki Seinäjoki
-Etel%C%A-Pohjanmaan_maakunta Etelä-Pohjanmaan maakunta Etelä-Pohjanmaa
-
-
-
-
-
-Somero Somero Somero
-Varsinais-Suomen_maakunta Varsinais-Suomen maakunta Varsinais-Suomi
-
-
-
-
-
-Suonenjoki Suonenjoki Suonenjoki
-Pohjois-Savon_maakunta Pohjois-Savon maakunta Pohjois-Savo
-
-
-
-
-
-Tampere Tampere Tampere
-Pirkanmaan_maakunta Pirkanmaan maakunta Pirkanmaa
-
-
-
-
-
-Tornio Tornio Tornio
-Lapin_maakunta Lapin maakunta Lappi
-
-
-
-
-
-Turku Turku Turku
-Varsinais-Suomen_maakunta Varsinais-Suomen maakunta Varsinais-Suomi
-
-
-
-
-
-Ulvila Ulvila Ulvila
-Satakunnan_maakunta Satakunnan maakunta Satakunta
-
-
-
-
-
-Uusikaarlepyy Uusikaarlepyy Uusikaarlepyy
-Pohjanmaan_maakunta Pohjanmaan maakunta Pohjanmaa
-
-
-
-
-
-Uusikaupunki Uusikaupunki Uusikaupunki
-Varsinais-Suomen_maakunta Varsinais-Suomen maakunta Varsinais-Suomi
-
-
-
-
-
-Vaasa Vaasa Vaasa
-Pohjanmaan_maakunta Pohjanmaan maakunta Pohjanmaa
-
-
-
-
-
-Valkeakoski Valkeakoski Valkeakoski
-Pirkanmaan_maakunta Pirkanmaan maakunta Pirkanmaa
-
-
-
-
-
-Vantaa Vantaa Vantaa
-Uudenmaan_maakunta Uudenmaan maakunta Uusimaa
-
-
-
-
-
-Varkaus_(kaupunki) Varkaus (kaupunki) Varkaus
-Pohjois-Savon_maakunta Pohjois-Savon maakunta Pohjois-Savo
-
-
-
-
-
-Viitasaari Viitasaari Viitasaari
-Keski-Suomen_maakunta Keski-Suomen maakunta Keski-Suomi
-
-
-
-
-
-Virrat Virrat Virrat
-Pirkanmaan_maakunta Pirkanmaan maakunta Pirkanmaa
-
-
-
-
-
-Ylivieska Ylivieska Ylivieska
-Pohjois-Pohjanmaan_maakunta Pohjois-Pohjanmaan maakunta Pohjois-Pohjanmaa
-
-
-
-
-
-Yl%C%Bj%C%Arvi Ylöjärvi Ylöjärvi
-Pirkanmaan_maakunta Pirkanmaan maakunta Pirkanmaa
-
-
-
-
-
-%C%ht%C%Ari Ähtäri Ähtäri
-Etel%C%A-Pohjanmaan_maakunta Etelä-Pohjanmaan maakunta Etelä-Pohjanmaa
-
-
-
-
-
-%C%%C%Anekoski Äänekoski Äänekoski
-Keski-Suomen_maakunta Keski-Suomen maakunta Keski-Suomi
-
-
-
-
-</tbody>

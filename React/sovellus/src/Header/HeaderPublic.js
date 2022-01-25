@@ -34,8 +34,8 @@ const HeaderPublic = () => {
                     setError(result.Message);
                 }
                 else{
-                setCookie('token', result.token, { path: '/' })
-                setCookie('userId', result.id, { path: '/' })
+                setCookie('token', result.token, { path: '/' ,expires: 0})
+                setCookie('userId', result.id, { path: '/' ,expires: 0})
                   setError("");
                 }
         }
@@ -87,7 +87,7 @@ const HeaderPublic = () => {
                 <Navbar id="flex-header-navbar" expand="md">
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
-
+                        {labelSearchText}
                         {/*Kotiin pääsee aina*/}
                         <NavLink className="flex-header-link" exact activeClassName="active" to="/">Etusivu</NavLink>
                         {/*Profiiliin pääsee vain kun on kirjautunut */}
@@ -95,6 +95,8 @@ const HeaderPublic = () => {
                         {/*Kirjautumiseen pääsee vain kun ei ole kirjautunut */}
                         {/* <NavLink className="flex-header-link" activeClassName="active" to="/Kirjautuminen">Kirjaudu</NavLink> */}
                         <a className="flex-header-link" href="#" onClick={() => { setLoginModalShow(true) }}>Kirjaudu</a>
+                        {/* TODO: Ostoskorin logo ja päivittyvät grafiikat kun ostoskoriin lisätään esineitä. */}
+                        <a href='/Maksu'>Ostoskori: {cookies?.shoppingCart?.length}</a>
                     </Navbar.Collapse>
                 </Navbar>
             </div>

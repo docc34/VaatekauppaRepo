@@ -5,19 +5,19 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema vaatekauppaDb
+-- Schema vaatekauppadb
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema vaatekauppaDb
+-- Schema vaatekauppadb
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `vaatekauppaDb` DEFAULT CHARACTER SET utf8 ;
-USE `vaatekauppaDb` ;
+CREATE SCHEMA IF NOT EXISTS `vaatekauppadb` DEFAULT CHARACTER SET utf8 ;
+USE `vaatekauppadb` ;
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`user`
+-- Table `vaatekauppadb`.`user`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`user` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`user` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(100) NOT NULL,
   `username` VARCHAR(45) NOT NULL,
@@ -34,9 +34,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`color`
+-- Table `vaatekauppadb`.`color`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`color` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`color` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `productColor` VARCHAR(30) NULL,
   PRIMARY KEY (`id`))
@@ -44,9 +44,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`size`
+-- Table `vaatekauppadb`.`size`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`size` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`size` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `size` VARCHAR(4) NULL,
   PRIMARY KEY (`id`))
@@ -54,9 +54,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`tax`
+-- Table `vaatekauppadb`.`tax`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`tax` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`tax` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `taxPercentage` DOUBLE NOT NULL,
   PRIMARY KEY (`id`))
@@ -64,9 +64,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`post`
+-- Table `vaatekauppadb`.`post`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`post` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`post` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `label` VARCHAR(45) NOT NULL,
   `price` DOUBLE NOT NULL,
@@ -89,31 +89,31 @@ CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`post` (
   INDEX `fk_post_tax1_idx` (`taxId` ASC),
   CONSTRAINT `fk_jobPost_userdata1`
     FOREIGN KEY (`userId`)
-    REFERENCES `vaatekauppaDb`.`user` (`id`)
+    REFERENCES `vaatekauppadb`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_post_color2`
     FOREIGN KEY (`colorId`)
-    REFERENCES `vaatekauppaDb`.`color` (`id`)
+    REFERENCES `vaatekauppadb`.`color` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_post_size1`
     FOREIGN KEY (`sizeId`)
-    REFERENCES `vaatekauppaDb`.`size` (`id`)
+    REFERENCES `vaatekauppadb`.`size` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_post_tax1`
     FOREIGN KEY (`taxId`)
-    REFERENCES `vaatekauppaDb`.`tax` (`id`)
+    REFERENCES `vaatekauppadb`.`tax` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`province`
+-- Table `vaatekauppadb`.`province`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`province` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`province` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `provinceName` VARCHAR(100) NULL,
   PRIMARY KEY (`id`))
@@ -121,9 +121,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`city`
+-- Table `vaatekauppadb`.`city`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`city` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`city` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `cityName` VARCHAR(100) NULL,
   `provinceId` INT NOT NULL,
@@ -131,16 +131,16 @@ CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`city` (
   INDEX `fk_city_province1_idx` (`provinceId` ASC),
   CONSTRAINT `fk_city_province1`
     FOREIGN KEY (`provinceId`)
-    REFERENCES `vaatekauppaDb`.`province` (`id`)
+    REFERENCES `vaatekauppadb`.`province` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`location`
+-- Table `vaatekauppadb`.`location`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`location` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`location` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `userId` INT NOT NULL,
   `address` VARCHAR(200) NOT NULL,
@@ -152,21 +152,21 @@ CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`location` (
   INDEX `fk_location_city1_idx` (`cityId` ASC),
   CONSTRAINT `fk_location_userdata1`
     FOREIGN KEY (`userId`)
-    REFERENCES `vaatekauppaDb`.`user` (`id`)
+    REFERENCES `vaatekauppadb`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_location_city1`
     FOREIGN KEY (`cityId`)
-    REFERENCES `vaatekauppaDb`.`city` (`id`)
+    REFERENCES `vaatekauppadb`.`city` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`images`
+-- Table `vaatekauppadb`.`images`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`images` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`images` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `postId` INT NOT NULL,
   `imageLink` VARCHAR(300) NOT NULL,
@@ -174,16 +174,16 @@ CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`images` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_Images_post1`
     FOREIGN KEY (`postId`)
-    REFERENCES `vaatekauppaDb`.`post` (`id`)
+    REFERENCES `vaatekauppadb`.`post` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`ratings`
+-- Table `vaatekauppadb`.`ratings`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`ratings` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`ratings` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `postId` INT NOT NULL,
   `userId` INT NOT NULL,
@@ -194,21 +194,21 @@ CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`ratings` (
   INDEX `fk_ratings_userdata1_idx` (`userId` ASC),
   CONSTRAINT `fk_ratings_post1`
     FOREIGN KEY (`postId`)
-    REFERENCES `vaatekauppaDb`.`post` (`id`)
+    REFERENCES `vaatekauppadb`.`post` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_ratings_userdata1`
     FOREIGN KEY (`userId`)
-    REFERENCES `vaatekauppaDb`.`user` (`id`)
+    REFERENCES `vaatekauppadb`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`orderStatus`
+-- Table `vaatekauppadb`.`orderStatus`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`orderStatus` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`orderStatus` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `status` VARCHAR(60) NOT NULL,
   PRIMARY KEY (`id`))
@@ -216,9 +216,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`Orders`
+-- Table `vaatekauppadb`.`Orders`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`Orders` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`Orders` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `price` DOUBLE NOT NULL,
   `orderDate` DATETIME NOT NULL,
@@ -231,40 +231,41 @@ CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`Orders` (
   INDEX `fk_Orders_orderStatus1_idx` (`orderStatusId` ASC),
   CONSTRAINT `fk_Orders_location1`
     FOREIGN KEY (`locationId`)
-    REFERENCES `vaatekauppaDb`.`location` (`id`)
+    REFERENCES `vaatekauppadb`.`location` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Orders_user1`
     FOREIGN KEY (`userId`)
-    REFERENCES `vaatekauppaDb`.`user` (`id`)
+    REFERENCES `vaatekauppadb`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Orders_orderStatus1`
     FOREIGN KEY (`orderStatusId`)
-    REFERENCES `vaatekauppaDb`.`orderStatus` (`id`)
+    REFERENCES `vaatekauppadb`.`orderStatus` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppaDb`.`orderitem`
+-- Table `vaatekauppadb`.`orderitem`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppaDb`.`orderitem` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`orderitem` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `ordersId` INT NOT NULL,
   `postId` INT NOT NULL,
+  `amount` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_order_Orders1_idx` (`ordersId` ASC),
   INDEX `fk_order_post1_idx` (`postId` ASC),
   CONSTRAINT `fk_order_Orders1`
     FOREIGN KEY (`ordersId`)
-    REFERENCES `vaatekauppaDb`.`Orders` (`id`)
+    REFERENCES `vaatekauppadb`.`Orders` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_order_post1`
     FOREIGN KEY (`postId`)
-    REFERENCES `vaatekauppaDb`.`post` (`id`)
+    REFERENCES `vaatekauppadb`.`post` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

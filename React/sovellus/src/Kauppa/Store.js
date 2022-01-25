@@ -60,6 +60,7 @@ const Store = () => {
 
     // get user list on page load
     useEffect(() => {
+        console.log(cookies?.shoppingCart);
         getStoreData({jobPostTitle:null,priceSort:null});
     }, []);
 

@@ -11,7 +11,7 @@ const HeaderPrivate = () => {
     const [logOutModalShow, setLogOutModalShow] = useState(false);
     const [labelSearchText,setLabelSearchText] = useState("");
     const path = useLocation().pathname;
-    const [cookies, setCookie] = useCookies(['token']);
+    const [cookies, setCookie,removeCookie] = useCookies(['token']);
     let navigate = useNavigate();
 
     const searchStore =()=>{
@@ -62,6 +62,7 @@ const HeaderPrivate = () => {
                         {/*Kauppaan pääsee vain kun ei ole kirjautunut */}
                         <NavLink className="flex-header-link" activeClassName="active" to="/Kauppa">Kauppa </NavLink>
                         {/*Kirjautumiseen pääsee vain kun ei ole kirjautunut */}
+                        <a href='/Maksu'>Ostoskori: {cookies?.shoppingCart?.length}</a>
                         {/* TODO: Tähän ulos kirjautuminen */}
                         <NavLink className="flex-header-link" onClick={()=>{setLogOutModalShow(true);}} activeClassName="active" to="/">Kirjaudu ulos</NavLink>
 
@@ -88,7 +89,7 @@ const HeaderPrivate = () => {
                 </Modal.Body>
                 <Modal.Footer className="Return-Modal-Footer">
                     <div>
-                        <Button className='HeaderLogoutModalButton' onClick={() => {setLogOutModalShow(false); setCookie('token', "", { path: '/' }); setCookie('userId', "", { path: '/' }); navigate("/"); window.location.reload();}}>Sign out</Button>
+                        <Button className='HeaderLogoutModalButton' onClick={() => {setLogOutModalShow(false); removeCookie('token',{ path: '/' }); removeCookie('userId',{ path: '/' }); removeCookie('shoppingCart',{ path: '/' }); navigate("/"); window.location.reload();}}>Sign out</Button>
                         <Button onClick={() => { setLogOutModalShow(false); }}>Cancel</Button>
                     </div>
 

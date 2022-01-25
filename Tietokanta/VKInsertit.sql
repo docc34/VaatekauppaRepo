@@ -170,3 +170,4 @@ insert into orderstatus (status) values ("Order received");
 insert into orderstatus (status) values ("Order delivered");
 insert into orderstatus (status) values ("Order is being handled");
 insert into orderstatus (status) values ("Order cancelled");
+insert into orderstatus (status) values ("Order unfinished");

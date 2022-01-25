@@ -2,9 +2,12 @@ import './PostCss.css';
 import { Image, Card, Row, Col } from 'react-bootstrap';
 import { MDBRating } from 'mdbreact';
 import React,{useEffect, useRef, useState} from 'react';
+import { useCookies } from 'react-cookie';
 //Tässä on funktioita joita käytetään frontissa esim julkaisujen renderöintiin.
 {/* Tähän funktioon annetaan kaikki tietokannasta haetut ilmoitukset ja se luo jokaisesta alla olevan html mukaisen ilmoituksen */ }
 const MakePost = (p) => {
+  const [cookies,setCookie] = useCookies(['token']);
+
   //Julkaisu poisto ja muokkausnapeilla
   //#region 
   // if (p.mode == 1) {
@@ -93,10 +96,7 @@ const MakePost = (p) => {
     <div>
       <Row xs={1} sm={1} md={2}  xl={4}  className="g-4" >
         {p.data.map((e, i) => {
-          let url = "";
-          console.log(e);
           if(e!= null){
-            url = "/Maksu/?id=" + e?.id;
             return (<Col>
               <Card className="Post-Card">
                 <Card.Body>
@@ -147,7 +147,26 @@ const MakePost = (p) => {
                       <MakeRatingStars/>
                     </Card.Text>
                     <Card.Text>
-                      <a href={url} className="ProfileCardText"> Osta</a>
+                      <button onClick={()=>{if(cookies['shoppingCart'] == null || cookies['shoppingCart'] == undefined){
+                        setCookie('shoppingCart', [{PostId:e?.id}], { path: '/' })
+                      }
+                      else{
+                        var i = cookies['shoppingCart'];
+                        var t = true;
+                        i?.map((item,index)=>{
+                          if(item?.PostId == e?.id){
+                            t = false;
+                          }
+                        })
+
+                        if(t == true)
+                        {
+                          i[i.length] ={PostId:e?.id}
+                          console.log(i);
+                          setCookie('shoppingCart', JSON.stringify(i), { path: '/',expires: 0})
+                          window.location.reload(false);
+                        }
+                      }}}>Lisää ostoskoriin</button>
                     </Card.Text>
                   </div>
                 </Card.Body>
@@ -164,6 +183,78 @@ const MakePost = (p) => {
 
   // }
 }
+const MakeShoppingCartItem = (p) => {
+  const [cookies,setCookie] = useCookies(['token']);
+    if(p.data != null){
+    return (
+    <div>
+      {p.data.map((e, i) => {
+
+        if(e!= null){
+          return (
+            <div class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
+              {/* TODO:Hae tähän tuotekuvat. */}
+              <div class="d-flex flex-row"><img class="rounded" src="https://i.imgur.com/QRwjbm5.jpg" width="40"/>
+                <div class="ml-2"><span class="font-weight-bold d-block">{e?.label}</span><span class="spec">
+                  {/* Tämä on ehdollista renderöintiä, pitää määrittää kenttiin jotka voi olla tyhjiä */}
+                  {
+                  e?.material ? (
+                     e?.material
+                  ): (null)
+                  }
+                  {
+                  e?.length ? (
+                    ","+ e?.length +"cm"
+                  ):( null)
+                  }
+                  {
+                  e?.sleeveLength ? 
+                    ","+ e?.sleeveLength +"cm"
+                  : (null)
+                  }
+                  {/* TODO: Tee funktio joka laskee hintaan mukaan alennuksen ja veron ja jos alennusta on muuta tyylityksiä ehdollisella reneröinnillä */}
+                  {
+                  e?.discount ? (
+                    ","+ e?.discount +"%"
+                  ): (null)
+                  }
+                  {
+                  e?.tax ? (
+                    ","+ e?.tax +"%"
+                  ): (null)
+                  }
+                </span>
+              </div>
+              <div class="d-flex flex-row align-items-center"><span class="d-block">2</span><span class="d-block ml-5 font-weight-bold">{e?.price}</span><i class="fa fa-trash-o ml-3 text-black-50"></i> 
+              <button onClick={()=>{
+                var i = cookies['shoppingCart'];
+                i?.map((item,index)=>{
+                  if(item?.PostId == e?.id){
+                      i.splice(index, 1)
+                  }
+                })
+                
+                setCookie('shoppingCart', JSON.stringify(i), { path: '/',expires: 0})
+                
+                window.location.reload(false);
+              }}>Poista ostoskorista</button>
+              </div>
+            </div>  
+          </div>
+          )
+        }
+      })
+    }
+  </div>
+  )
+}
+    else {
+      return(<div><p>Loading</p></div>)
+    }
+
+  // }
+}
+
 //TODO: funktio joka muuttaa kuljetusarviopäivät päivämääriksi
 
 const MakeRatingStars = (o) =>{
@@ -233,12 +324,12 @@ const Paypal = (o)=>{
       method: 'GET',
       headers: {"Authorization": `Bearer ${o.token}`}
     }
-    var post = await fetch("https://localhost:44344/api/Posts/"+o.id,options);
+    
     var user = await fetch("https://localhost:44344/api/user",options)
-    if(post?.Status == "Error" ){
+    if(user?.Status == "Error" ){
     }
     else{
-      setPost(await post?.json());
+      
       setUser(await user?.json());
     }
   }
@@ -247,9 +338,18 @@ const Paypal = (o)=>{
   }
   },[]);
 
+  const purchasedUnits = o.posts.map((e,i)=>{
+    return({
+      description: e.description,
+      amount: {
+        currency_code:"EUR",
+        value: e.price
+      }
+    })
+  });
   useEffect(()=>{
     //Luodaan napille funktiot
-    if(post != ""){
+    if(o.posts != ""){
       window.paypal.Buttons({
         //Luodaan tilaus
         createOrder: (data, actions, error) =>{
@@ -275,19 +375,13 @@ const Paypal = (o)=>{
               }
             },
             purchase_units:[
-              {
-                description: post.description,
-                amount: {
-                  currency_code:"EUR",
-                  value: post.price
-                }
-              },
+              {purchasedUnits}
             ]
           })
         },
         //Jos tilaus menee läpi toteutetaan on Approve funktio
         onApprove: async (data, actions) =>{
-          //TODO: Julkaise ostoskorin sisältö ordereihin
+          //TODO: Julkaise ostoskorin sisältö ordereihin t
           //https://localhost:44344/api/Orders/OrderItem
           const order = await (actions.order.capture()) 
           console.log(order);
@@ -311,5 +405,6 @@ export {
   MakePost,
   Error,
   CheckEmptyFields,
-  Paypal
+  Paypal,
+  MakeShoppingCartItem
 }

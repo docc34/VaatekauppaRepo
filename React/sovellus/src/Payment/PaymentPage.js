@@ -9,12 +9,13 @@ import { Error } from '../Utils/Functions';
 import '@inovua/reactdatagrid-community/index.css'
 import { useCookies } from 'react-cookie';
 import {useNavigate} from 'react-router-dom';
+import {MakeShoppingCartItem} from '../Utils/Functions';
 function PaymentPage() {
   //#region 
   const search = useLocation().search;
   const [checkout, setCheckout] = useState(false);
   const [error, setError] = useState(false);
-  const [post, setPost] = useState("");
+  const [posts, setPosts] = useState("");
   const [loggedIn, setLoggedIn] = useState("");
 
   const [username, setUsername] = useState("");
@@ -40,16 +41,14 @@ function PaymentPage() {
   const [cities, setCities] = useState([]);
   
   let navigate = useNavigate();
-  const Id = new URLSearchParams(search).get('id');
+  //const Id = new URLSearchParams(search).get('id');
   const urlTabKey = new URLSearchParams(search).get('tabKey');
   const [cookies] = useCookies(['token']);
-  var x = CheckEmptyFields(["Post number"], [Id]);
+  //var x = CheckEmptyFields(["Post number"], [Id]);
   //#endregion
-
-  
-  const GetJobPostById = async () => {
-    try{
-        if(x.status != false){
+  const GetJobPosts = async () => {
+    if(posts == ""){
+      try{
           const options = {
             method: 'GET',
             headers: {"Authorization": `Bearer ${cookies.token}`}
@@ -71,18 +70,28 @@ function PaymentPage() {
             
             if(urlTabKey != null)setTabKey(urlTabKey.toString());
           }
-
-          const posts = await fetch("https://localhost:44344/api/Posts/"+Id,options);
+          
+          const posts = await fetch("https://localhost:44344/api/Orders/Posts",{
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body:JSON.stringify(cookies?.shoppingCart)
+          });
           let post = await posts.json();
-          setPost(post);
-        }
-        else{
-          setError(x.kentat);
-        }
+          
+          if(post?.status == "Error")
+          setError(post?.message);
+          else
+          setPosts(post);
+      }
+      catch(e){
+        setError(e);
+      }
     }
-    catch{
-      setError("Error");
-    }
+        // else{
+        //   setError(x.kentat);
+        // }
+    
+    
   }
   const GetTableData = async () => {
     try{
@@ -151,7 +160,7 @@ function PaymentPage() {
   }, [locationObject]);
   
   useEffect(async () => {
-    await GetJobPostById();
+    await GetJobPosts();
     await GetTableData();
   }, []);
 
@@ -159,25 +168,14 @@ function PaymentPage() {
     return(<option value={e.id}>{e.cityName}</option>);
   });
 
-  if(x.status != false && post !="" )
+
+  if(posts != "")
   {
     return (
       <div>
         <div>
           <div>
             <a href="/Kauppa">Takaisin kauppaan</a>
-            <div>
-              <h3>{post?.label}</h3>
-              <p>Hinta: {post.price}</p>
-              {post?.material ? 
-                <p>{post?.material}</p>
-                :null
-              }
-              {post?.discount ? <div>
-                <p>{post?.discount}</p>
-              </div>:null
-              }
-            </div>
             <Error error={error}/>
           </div>
 
@@ -210,7 +208,8 @@ function PaymentPage() {
                 cityId:cityId,
                 address:address,
                 postalCode:postalCode,
-                user: null
+                user: null,
+                orderItems:cookies?.shoppingCart
                 });}}>Tallenna</button>): null}
 
               {/* Jos ei ole kirjautunut */}
@@ -261,7 +260,8 @@ function PaymentPage() {
                       name: name,
                       email:email, 
                       phonenumber: phonenumber
-                    }
+                    },
+                    orderItems:cookies?.shoppingCart
                   });
                   }
                   else
@@ -310,15 +310,42 @@ function PaymentPage() {
             </Tab>
             <Tab eventKey="1" title="Maksaminen" disabled>
               <p>Tab 2 maksaminen</p>
-
-              <div>
+              <div class="container mt-5 p-3 rounded cart">
+                <div class="row no-gutters">
+                      <div class="col-md-8">
+                          <div class="product-details mr-2">
+                              <div class="d-flex flex-row align-items-center"><i class="fa fa-long-arrow-left"></i><span class="ml-2">Maksaminen</span></div>
+                              <hr/>
+                              <h6 class="mb-0">Ostoskori</h6>
+                              <div class="d-flex justify-content-between"><span>Sinulla on {posts?.length} tuotetta ostoskorissa</span>
+                                  {/* <div class="d-flex flex-row align-items-center"><span class="text-black-50">Sort by:</span>
+                                      <div class="price ml-2"><span class="mr-1">price</span><i class="fa fa-angle-down"></i></div>
+                                  </div> */}
+                              </div>
+                              <MakeShoppingCartItem data={posts} />
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="payment-info">
+                              <div class="d-flex justify-content-between align-items-center"><span>Card details</span></div>
+                              <Paypal posts={posts} token={cookies.token}/>
+                              <hr class="line"/>
+                              {/* TODO: Laske tähän hinnat äläkä käytä staattisia arvoja. */}
+                              <div class="d-flex justify-content-between information"><span>Subtotal</span><span>$3000.00</span></div>
+                              <div class="d-flex justify-content-between information"><span>Shipping</span><span>$20.00</span></div>
+                              <div class="d-flex justify-content-between information"><span>Total(Incl. taxes)</span><span>$3020.00</span></div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              {/* <div>
                 {checkout ? (
-                    <Paypal id={Id} token={cookies.token}/>
+                    <Paypal posts={posts} token={cookies.token}/>
                 ):(
                 <Button onClick={()=>{setCheckout(true);}}>Checkout</Button>
                 )}
               
-              </div>
+              </div> */}
             <button onClick={()=>{setTabKey("0")}}>Peruuta</button>
             {/* TODO: */}
             <p>HUOM POISTA OIKEALLE NAPPI </p>
@@ -339,7 +366,15 @@ function PaymentPage() {
   }
   else{
     return(<div>
-    <p>Loading</p>
+    {error != "" ? 
+    (
+      <p>{error}</p>
+    ):
+    (
+      <p>Loading</p>
+    )}
+    
+
     </div>)
   }
 }

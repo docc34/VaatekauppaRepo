@@ -5,12 +5,14 @@ import ReactDataGrid from '@inovua/reactdatagrid-community'
 import '@inovua/reactdatagrid-community/index.css'
 import { Image, Overlay } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
+import moment from 'moment'
 
 //Renderöidään perus profiili
 function Profiili() {
 
   const [profileData, setProfileData] = useState([]);
   const [profileLocation, setProfileLocation] = useState([]);
+  const [profileOrders, setProfileOrders] = useState([]);
   const [error, setError] = useState("");
   // const [show, setShow] = useState(false);
   const target = useRef(null);
@@ -33,7 +35,8 @@ function Profiili() {
     else{
       var i = await result.json();
       setProfileData(i);
-      setProfileLocation(i?.location)
+      setProfileLocation(i?.location);
+      setProfileOrders(i.orders);
     }
     //let post = posts.data;
 
@@ -53,25 +56,40 @@ function Profiili() {
   }, []);
 
 
-  const OtsikotTyot = [
-    { name: 'profile_userId', type: 'number', header: 'profile_userId', defaultVisible: false },
-    { name: 'jobsId', type: 'number', header: 'jobsId', defaultVisible: false },
-    { name: 'workplace', defaultFlex: 1, header: 'Työpaikka' },
-    { name: 'profession', defaultFlex: 1, header: 'Ammatti' },
-    { name: 'startDate', defaultFlex: 1, header: 'Alkupäivä' },
-    { name: 'endDate', defaultFlex: 1, header: 'Loppupäivä' },
+  const TitlesOrders = [
+    { name: 'id', type: 'number', header: 'id', defaultVisible: false },
+    { name: 'price', defaultFlex: 1,type: 'number', header: 'Hinta'},
+    {
+      name: 'orderDate',
+      header: 'Päivämäärä',
+      defaultWidth: 165,
+      // need to specify dateFormat 
+      dateFormat: 'YYYY-MM-DD, HH:mm',
+      //filterEditor: DateFilter,
+      filterEditorProps: (props, { index }) => {
+        // for range and notinrange operators, the index is 1 for the after field
+        return {
+          dateFormat: 'MM-DD-YYYY, HH:mm',
+          placeholder: index == 1 ? 'Created date is before...': 'Created date is after...'
+        }
+      },
+      //Momentjs formats the date
+      render: ({ value, cellProps: { dateFormat } }) =>
+        moment(value).format(dateFormat),
+    },
+    { name: 'status', defaultFlex: 1, header: 'Tilauksen tila'}
   ]
   //, border: "none"
-  const gridStyleKoulutukset = { height: "auto" }
+  const gridStyleOrders = { height: "auto" }
 
-  const checkProfileImage = () => {
-    if (profileData?.image == null || profileData?.image == undefined || profileData?.image == "") {
-      return (<Image className="img-thumbnail" src={"http://127.0.0.1:3100/images/DefaultImage.png"}></Image>)
-    }
-    else {
-      return (<Image className="img-thumbnail" src={"http://127.0.0.1:3100/images/" + profileData.image}></Image>)
-    }
-  }
+  // const checkProfileImage = () => {
+  //   if (profileData?.image == null || profileData?.image == undefined || profileData?.image == "") {
+  //     return (<Image className="img-thumbnail" src={"http://127.0.0.1:3100/images/DefaultImage.png"}></Image>)
+  //   }
+  //   else {
+  //     return (<Image className="img-thumbnail" src={"http://127.0.0.1:3100/images/" + profileData.image}></Image>)
+  //   }
+  // }
 
     return (
       <div className="Profiili-Main">
@@ -79,17 +97,32 @@ function Profiili() {
           <div className="Profiili-Esittely">
             <h1 className="Profiili-NimiOtsikko"> {profileData?.name}</h1>
 
-              {checkProfileImage()}
+              {/* {checkProfileImage()} */}
               <h3>Yhteystiedot</h3>
               <p> email: {profileData?.email}</p>
               <p> puhelinnumero: {profileData?.phonenumber}</p>
               <h3>Osoitetiedot</h3>
-              <p> kaupunki: {profileLocation?.city}</p>
+              <p> kaupunki: {profileData?.city}</p>
               <p> osoite: {profileLocation?.address}</p>
               <p> postinumero: {profileLocation?.postalCode}</p>
             </div>
           <div className="Profiili-Tekstit">
-            <p>Tähän haetaan tehdyt tilaukset datagridissä</p>
+
+          <h3>Tilaukset</h3>
+          <ReactDataGrid
+            showColumnMenuTool={false}
+            rowHeight={25}
+            idProperty="id"
+            toggleRowSelectOnClick={false}
+            //defaultSelected={1}
+            //onSelectionChange={(e) => {setSelectedUser(e); IsDeleteButtonDisabled();}}
+            style={gridStyleOrders}
+            columns={TitlesOrders}
+            //defaultFilterValue={UserFilterValue}
+            dataSource={profileOrders}
+            //enableFiltering={enableFiltering}
+            />
+            
             {error}
           </div>
           <div className="Profiili-valikko">

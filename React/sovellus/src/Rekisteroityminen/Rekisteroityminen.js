@@ -3,6 +3,7 @@ import { Button, Form } from 'react-bootstrap';
 import {useNavigate} from 'react-router-dom';
 import './Rekisteroityminen.css'
 import { NavLink } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 
 //Renderöi rekisteröitymissivun
 const Rekisteroityminen = ()=>{
@@ -10,11 +11,12 @@ const Rekisteroityminen = ()=>{
     const username = useFormInput('');
     const password = useFormInput('');
     const passwordAgain = useFormInput('');
-    const name = useFormInput('');
+    const firstName = useFormInput('');
+    const lastName = useFormInput('');
     const email = useFormInput('');
     const phonenumber = useFormInput('');
     const [error, setError] = useState(null);
-
+    const [cookies,setCookie] = useCookies(['loginModal']);
     //TODO: Avaa kirjautuminen
     let navigate = useNavigate();
     //Kutsutaan rekisteröitymisen backendiä
@@ -24,15 +26,19 @@ const Rekisteroityminen = ()=>{
             
             method:'POST',
             headers: { 'Content-Type': 'application/json' },
-            body:JSON.stringify({username: username.value, password: password.value,  name: name.value,email:email.value , phonenumber: phonenumber.value})
+            body:JSON.stringify({username: username.value, password: password.value,  firstName: firstName, lastName: lastName.value,email:email.value , phonenumber: phonenumber.value})
             });
             let tarkistus = await post.json();
-            if( tarkistus.status == "NOT OK"){
-                setError(tarkistus.msg);
+            console.log(tarkistus);
+            if(tarkistus.type != ""){
+              setError(tarkistus.title);
             } 
+            else if(tarkistus.status =="Error")setError(tarkistus.Message);
             else{
               setError("");
-              navigate("/");
+              //navigate("/");
+              setCookie('loginModal', "true", { path: '/' ,expires: 0});
+              window.location.reload();
             }
             setLoading(false);
          }
@@ -50,8 +56,13 @@ return(
     </Form.Group>
 
     <Form.Group controlId="formBasicName">
-      <Form.Label>Nimi</Form.Label>
-      <Form.Control   placeholder="Nimi" {...name}/>
+      <Form.Label>Etunimi</Form.Label>
+      <Form.Control   placeholder="Etunimi"{...firstName}/>
+    </Form.Group>
+
+    <Form.Group controlId="formBasicName">
+      <Form.Label>Sukunimi</Form.Label>
+      <Form.Control   placeholder="Sukunimi" {...lastName}/>
     </Form.Group>
 
     <Form.Group controlId="formBasicPassword">

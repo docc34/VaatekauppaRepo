@@ -19,7 +19,9 @@ function PaymentPage() {
   const [loggedIn, setLoggedIn] = useState("");
 
   const [username, setUsername] = useState("");
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
   const [email, setEmail] = useState("");
@@ -43,7 +45,7 @@ function PaymentPage() {
   let navigate = useNavigate();
   //const Id = new URLSearchParams(search).get('id');
   const urlTabKey = new URLSearchParams(search).get('tabKey');
-  const [cookies] = useCookies(['token']);
+  const [cookies,setCookie] = useCookies(['token']);
   //var x = CheckEmptyFields(["Post number"], [Id]);
   //#endregion
   const GetJobPosts = async () => {
@@ -79,7 +81,10 @@ function PaymentPage() {
           let post = await posts.json();
           
           if(post?.status == "Error")
-          setError(post?.message);
+            setError(post?.message);
+          else if(post?.status == 400){
+            setError(post?.title);
+          }
           else
           setPosts(post);
       }
@@ -149,6 +154,8 @@ function PaymentPage() {
         
         setError(parsedAnswer?.message);
         if(parsedAnswer?.message == "Location created succesfully")window.location.reload();
+        else if(parsedAnswer?.message == "User created succesfully"){
+        setCookie('loginModal', "true", { path: '/' ,expires: 0});window.location.reload();}
       }
       else{
         setError(parsedAnswer?.message);
@@ -224,8 +231,13 @@ function PaymentPage() {
                   </Form.Group>
 
                   <Form.Group controlId="formBasicName">
-                    <Form.Label>Nimi</Form.Label>
-                    <Form.Control   placeholder="Nimi" onChange={(e)=>{setName(e.target.value); }}/>
+                    <Form.Label>Etunimi</Form.Label>
+                    <Form.Control   placeholder="Nimi" onChange={(e)=>{setFirstName(e.target.value); }}/>
+                  </Form.Group>
+
+                  <Form.Group controlId="formBasicName">
+                    <Form.Label>Sukunimi</Form.Label>
+                    <Form.Control   placeholder="Nimi" onChange={(e)=>{setLastName(e.target.value); }}/>
                   </Form.Group>
 
                   <Form.Group controlId="formBasicPassword">
@@ -257,7 +269,8 @@ function PaymentPage() {
                     user:{
                       userName:username, 
                       password: password,  
-                      name: name,
+                      firstname: firstName,
+                      lastname: lastName,
                       email:email, 
                       phonenumber: phonenumber
                     },

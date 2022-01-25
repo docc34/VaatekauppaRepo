@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navbar, InputGroup, FormControl, Form, Modal, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Header.css'
@@ -17,7 +17,7 @@ const HeaderPublic = () => {
     const username = useFormInput('');
     const password = useFormInput('');
     const path = useLocation().pathname;
-    const [cookies, setCookie] = useCookies(['token']);
+    const [cookies, setCookie,removeCookie] = useCookies(['token']);
     
     // handle button click of login form
     //TODO:Handel login
@@ -34,6 +34,7 @@ const HeaderPublic = () => {
                     setError(result.Message);
                 }
                 else{
+                resetValues();
                 setCookie('token', result.token, { path: '/' ,expires: 0})
                 setCookie('userId', result.id, { path: '/' ,expires: 0})
                   setError("");
@@ -44,11 +45,20 @@ const HeaderPublic = () => {
         }
             
     }
+    useEffect(()=>{
+        if(cookies?.loginModal == "true"){
+            setLoginModalShow(true);
+        }
+        else{
+            setLoginModalShow(false);
+        }
+    },[]);
 
     const resetValues = () => {
         setLoginModalShow(false);
         username.value = "";
         password.value = "";
+        removeCookie('loginModal', { path: '/' });
     }
 
     const searchStore =()=>{

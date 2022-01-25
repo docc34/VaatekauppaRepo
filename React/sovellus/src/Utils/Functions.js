@@ -164,7 +164,7 @@ const MakePost = (p) => {
                           i[i.length] ={PostId:e?.id}
                           console.log(i);
                           setCookie('shoppingCart', JSON.stringify(i), { path: '/',expires: 0})
-                          window.location.reload(false);
+                          window.location.reload();
                         }
                       }}}>Lisää ostoskoriin</button>
                     </Card.Text>
@@ -236,7 +236,7 @@ const MakeShoppingCartItem = (p) => {
                 
                 setCookie('shoppingCart', JSON.stringify(i), { path: '/',expires: 0})
                 
-                window.location.reload(false);
+                window.location.reload();
               }}>Poista ostoskorista</button>
               </div>
             </div>  

@@ -39,7 +39,10 @@ function PaymentPage() {
   const [locationObjectPut, setLocationObjectPut] = useState("");
   const [currentLocationId, setCurrentLocationId] = useState("");
   const [putEnabled, setPutEnabled] = useState(true);
-
+  const [paypalResponseObject, setPaypalResponseObject] = useState("");
+  const [orderObject, setOrderObject] = useState("");
+  const [price, setPrice] = useState("");
+  
   const [cities, setCities] = useState([]);
   
   let navigate = useNavigate();
@@ -87,16 +90,18 @@ function PaymentPage() {
           }
           else
           setPosts(post);
+
+          var price = await fetch("https://localhost:44344/api/Orders/price/"+1,{//TODO:Lisää tähän tuotteiden määrä kun teet sen
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body:JSON.stringify(post)
+          });
+          setPrice( await price.json());
       }
       catch(e){
         setError(e);
       }
     }
-        // else{
-        //   setError(x.kentat);
-        // }
-    
-    
   }
   const GetTableData = async () => {
     try{
@@ -175,6 +180,42 @@ function PaymentPage() {
     return(<option value={e.id}>{e.cityName}</option>);
   });
 
+  const RecieveOrder = (object)=>{
+    //TODO: Määritä että paypal maksu on mennyt läpi
+    if(object != null && object != undefined){
+      setPaypalResponseObject(object);
+      setTabKey("2");
+      //Tyhjentää ostoskorin ostoksen jälkeen
+      //TODO: Ota käyttöön
+      //removeCookie('shoppingCart',{ path: '/' });
+    }
+  }
+
+  useEffect(async ()=>{
+    if(paypalResponseObject != ""){
+      try{const options = {
+        method:'POST',
+        headers: { 'Content-Type': 'application/json' ,"Authorization": `Bearer ${cookies.token}`},
+        body:JSON.stringify({
+          LocationId:currentLocationId,
+          Posts:posts,
+          Amount:1 //TODO: laita tähän tuotteiden määrä kun otat sen käyttöön.
+        })
+      }
+      let answer = await fetch("https://localhost:44344/api/Orders",options);
+      let parsedAnswer = await answer.json();
+
+      if(parsedAnswer?.status == "Error"){
+        setError(parsedAnswer?.message);
+      }
+      else{
+        setError("Order created succesfully");
+      }}
+      catch(e){
+        setError(e);
+      }
+    }
+  },[paypalResponseObject]);
 
   if(posts != "")
   {
@@ -273,8 +314,7 @@ function PaymentPage() {
                       lastname: lastName,
                       email:email, 
                       phonenumber: phonenumber
-                    },
-                    orderItems:cookies?.shoppingCart
+                    }
                   });
                   }
                   else
@@ -341,12 +381,13 @@ function PaymentPage() {
                       <div class="col-md-4">
                           <div class="payment-info">
                               <div class="d-flex justify-content-between align-items-center"><span>Card details</span></div>
-                              <Paypal posts={posts} token={cookies.token}/>
+                              <Paypal recieveOrder={RecieveOrder} posts={posts} token={cookies.token}/>
                               <hr class="line"/>
                               {/* TODO: Laske tähän hinnat äläkä käytä staattisia arvoja. */}
                               <div class="d-flex justify-content-between information"><span>Subtotal</span><span>$3000.00</span></div>
-                              <div class="d-flex justify-content-between information"><span>Shipping</span><span>$20.00</span></div>
-                              <div class="d-flex justify-content-between information"><span>Total(Incl. taxes)</span><span>$3020.00</span></div>
+                              <div class="d-flex justify-content-between information"><span>Verot</span><span>24%</span></div>
+                              {/* TODO:Hae tähän tuotteiden oikea veroprosentti */}
+                              <div class="d-flex justify-content-between information"><span>Kokonaishinta</span><span>{price}€</span></div>
                           </div>
                       </div>
                   </div>
@@ -366,6 +407,9 @@ function PaymentPage() {
             </Tab>
             <Tab eventKey="2" title="Tilaus valmis" disabled>
               <p>Tab 3 Tilaus valmis!</p>
+              {paypalResponseObject?.status}
+              {error}
+              {console.log(paypalResponseObject)}
             {/* TODO: */}
             <p>HUOM POISTA VASEMMALLE NAPPI </p>
             <button onClick={()=>{setTabKey("1")}}>Vasemmalle</button>

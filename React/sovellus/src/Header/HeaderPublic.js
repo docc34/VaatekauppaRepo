@@ -34,10 +34,11 @@ const HeaderPublic = () => {
                     setError(result.Message);
                 }
                 else{
-                resetValues();
-                setCookie('token', result.token, { path: '/' ,expires: 0})
-                setCookie('userId', result.id, { path: '/' ,expires: 0})
-                  setError("");
+                    resetValues();
+                    setCookie('token', result.token, { path: '/' ,expires: 0})
+                    setCookie('userId', result.id, { path: '/' ,expires: 0})
+                    setError("");
+                    window.location.reload();
                 }
         }
         catch{

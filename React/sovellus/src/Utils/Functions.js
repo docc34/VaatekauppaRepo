@@ -293,6 +293,7 @@ const MakeRatingStars = (o) =>{
 const Error = (props) => {
   return (<p className="errorText">{props.error}</p>)
 }
+
 const CheckEmptyFields = (tarkistusKentat, tarkistettavatTiedot)=>{
 
   let tarkistusStatus = { status: true, kentat: "" };
@@ -314,7 +315,6 @@ const CheckEmptyFields = (tarkistusKentat, tarkistettavatTiedot)=>{
 }
 
 const Paypal = (o)=>{
-
   const paypal = useRef();
   const [post, setPost] = useState("");
   const [user, setUser] = useState("");
@@ -329,7 +329,6 @@ const Paypal = (o)=>{
     if(user?.Status == "Error" ){
     }
     else{
-      
       setUser(await user?.json());
     }
   }
@@ -337,63 +336,87 @@ const Paypal = (o)=>{
 
   }
   },[]);
-
-  const purchasedUnits = o.posts.map((e,i)=>{
-    return({
-      description: e.description,
-      amount: {
-        currency_code:"EUR",
-        value: e.price
-      }
-    })
-  });
-  useEffect(()=>{
-    //Luodaan napille funktiot
-    if(o.posts != ""){
-      window.paypal.Buttons({
-        //Luodaan tilaus
-        createOrder: (data, actions, error) =>{
-          return actions.order.create({
-            intent: "CAPTURE",
-            payer:{
-              email_address:user.email,
-              name:{
-                given_name:user.firstName,
-                surname:user.lastName
-              },
-              phone_with_type:{
-                phone_number:{
-                  national_number:user.phonenumber
+    useEffect(()=>{
+      //Luodaan napille funktiot
+      if(o.posts != "" && user != ""&& user != null){
+        window.paypal.Buttons({
+          //Luodaan tilaus
+          createOrder: (data, actions, error) =>{
+            console.log(o.posts);
+            console.log(user);
+            if(o.posts != "" && user != ""&& user != null){
+            var i = {
+              intent: "CAPTURE",
+              payer:{
+                email_address:user.email,
+                name:{
+                  given_name:user.firstName,
+                  surname:user.lastName
+                },
+                phone_with_type:{
+                  phone_number:{
+                    national_number:user.phonenumber
+                  }
+                },
+                address_portable:{
+                  address_line_1:user?.location?.address,
+                  postal_code:user?.location?.postalCode,
+                  country_code:"FI",
+                  admin_area_1:user?.province,
+                  admin_area_2:user?.city
                 }
               },
-              address_portable:{
-                address_line_1:user?.location?.address,
-                postal_code:user?.location?.postalCode,
-                country_code:"FI",
-                admin_area_1:user?.province,
-                admin_area_2:user?.city
-              }
-            },
-            purchase_units:[
-              {purchasedUnits}
-            ]
-          })
-        },
-        //Jos tilaus menee läpi toteutetaan on Approve funktio
-        onApprove: async (data, actions) =>{
-          //TODO: Julkaise ostoskorin sisältö ordereihin t
-          //https://localhost:44344/api/Orders/OrderItem
-          const order = await (actions.order.capture()) 
-          console.log(order);
-        },
-        //Jos tilaus kaatuu tehdään onError funktio
-        onError: (err) =>{
-          console.log(err);
-        }
-        
-      }).render(paypal.current)
-    }
-  },[post]);
+              purchase_units:
+                o.posts.map((e,i)=>{
+                  console.log(e);
+                  return({
+                    description: e.description,
+                    reference_id: e.id,
+                    amount: {
+                      currency_code:"EUR",
+                      value: e.price
+                      //, breakdown:{
+                      //   tax_total:{
+                      //     currency_code:"EUR",
+                      //     value: e.tax
+                      //   },
+                      //   discount:{
+                      //     currency_code:"EUR",
+                      //     value: e?.discount
+                      //   }
+                      // }
+                    }
+                  })
+                })
+                // TODO määritä shipping asetukset
+              // ,application_context: {
+              //   shipping_preference: 'NO_SHIPPING' 
+              //   }
+            };
+            console.log(o.posts);
+            console.log(i);
+            return actions.order.create(i)
+            }
+            else{
+              return null;
+            }
+          },
+          //Jos tilaus menee läpi toteutetaan on Approve funktio
+          onApprove: async (data, actions) =>{
+            //TODO: Julkaise ostoskorin sisältö ordereihin t
+            //https://localhost:44344/api/Orders/OrderItem
+            const order = await (actions.order.capture()) 
+            console.log(order);
+            o.recieveOrder(order);
+          },
+          //Jos tilaus kaatuu tehdään onError funktio
+          onError: (err) =>{
+            console.log(err);
+          }
+          
+        }).render(paypal.current)
+      }
+    },[user]);
 
   return(
   <div>

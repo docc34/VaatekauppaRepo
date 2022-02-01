@@ -10,6 +10,8 @@ import '@inovua/reactdatagrid-community/index.css'
 import { useCookies } from 'react-cookie';
 import {useNavigate} from 'react-router-dom';
 import {MakeShoppingCartItem} from '../Utils/Functions';
+import {ResponsePage} from './ResponsePage';
+
 function PaymentPage() {
   //#region 
   const search = useLocation().search;
@@ -40,7 +42,7 @@ function PaymentPage() {
   const [currentLocationId, setCurrentLocationId] = useState("");
   const [putEnabled, setPutEnabled] = useState(true);
   const [paypalResponseObject, setPaypalResponseObject] = useState("");
-  const [orderObject, setOrderObject] = useState("");
+  const [order, setOrder] = useState("");
   const [price, setPrice] = useState("");
   
   const [cities, setCities] = useState([]);
@@ -52,7 +54,7 @@ function PaymentPage() {
   //var x = CheckEmptyFields(["Post number"], [Id]);
   //#endregion
   const GetJobPosts = async () => {
-    if(posts == ""){
+    if(posts == "" && cookies?.shoppingCart != null){
       try{
           const options = {
             method: 'GET',
@@ -76,6 +78,7 @@ function PaymentPage() {
             if(urlTabKey != null)setTabKey(urlTabKey.toString());
           }
           
+          //Hakee julkaisut ostoskorin sisällön mukaan, keho ottaa listan juilkaisujen ideitä [2,4] jne
           const posts = await fetch("https://localhost:44344/api/Orders/Posts",{
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -91,10 +94,17 @@ function PaymentPage() {
           else
           setPosts(post);
 
-          var price = await fetch("https://localhost:44344/api/Orders/price/"+1,{//TODO:Lisää tähän tuotteiden määrä kun teet sen
+          var orderItems = post.map((e,i)=>{
+            return{
+              PostId:e?.id,
+              Amount:1
+            }//TODO: laita tähän tuotteiden määrä kun otat sen käyttöön.
+          });
+  
+          var price = await fetch("https://localhost:44344/api/Orders/price",{
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body:JSON.stringify(post)
+          body:JSON.stringify(orderItems)
           });
           setPrice( await price.json());
       }
@@ -193,15 +203,23 @@ function PaymentPage() {
 
   useEffect(async ()=>{
     if(paypalResponseObject != ""){
-      try{const options = {
+      try{
+        var orderItems = posts.map((e,i)=>{
+          return{
+            PostId:e?.id,
+            Amount:1
+          }//TODO: laita tähän tuotteiden määrä kun otat sen käyttöön.
+        });
+
+        var options = {
         method:'POST',
         headers: { 'Content-Type': 'application/json' ,"Authorization": `Bearer ${cookies.token}`},
         body:JSON.stringify({
           LocationId:currentLocationId,
-          Posts:posts,
-          Amount:1 //TODO: laita tähän tuotteiden määrä kun otat sen käyttöön.
+          OrderItems:orderItems
         })
-      }
+        }
+
       let answer = await fetch("https://localhost:44344/api/Orders",options);
       let parsedAnswer = await answer.json();
 
@@ -209,7 +227,14 @@ function PaymentPage() {
         setError(parsedAnswer?.message);
       }
       else{
-        setError("Order created succesfully");
+        options = {
+          method:'GET',
+          headers: { 'Content-Type': 'application/json' ,"Authorization": `Bearer ${cookies.token}`}
+        }
+        //Post palauttaa id:n jolla haetaan juuri luotu order
+        answer = await fetch("https://localhost:44344/api/Orders/"+parsedAnswer,options);
+        parsedAnswer = await answer.json();
+        setOrder(parsedAnswer);
       }}
       catch(e){
         setError(e);
@@ -375,7 +400,7 @@ function PaymentPage() {
                                       <div class="price ml-2"><span class="mr-1">price</span><i class="fa fa-angle-down"></i></div>
                                   </div> */}
                               </div>
-                              <MakeShoppingCartItem data={posts} />
+                              <MakeShoppingCartItem shoppingCart={true} data={posts} />
                           </div>
                       </div>
                       <div class="col-md-4">
@@ -406,9 +431,7 @@ function PaymentPage() {
             <button onClick={()=>{setTabKey("2")}}>Oikealle</button>
             </Tab>
             <Tab eventKey="2" title="Tilaus valmis" disabled>
-              <p>Tab 3 Tilaus valmis!</p>
-              {paypalResponseObject?.status}
-              {error}
+              <ResponsePage price={price} posts={posts} order={order} paypalResponseObject={paypalResponseObject} />
               {console.log(paypalResponseObject)}
             {/* TODO: */}
             <p>HUOM POISTA VASEMMALLE NAPPI </p>

@@ -185,65 +185,112 @@ const MakePost = (p) => {
 }
 const MakeShoppingCartItem = (p) => {
   const [cookies,setCookie] = useCookies(['token']);
-    if(p.data != null){
+  if(p.data != null && p.data != ""){
     return (
     <div>
       {p.data.map((e, i) => {
-
-        if(e!= null){
-          return (
-            <div class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
-              {/* TODO:Hae tähän tuotekuvat. */}
-              <div class="d-flex flex-row"><img class="rounded" src="https://i.imgur.com/QRwjbm5.jpg" width="40"/>
-                <div class="ml-2"><span class="font-weight-bold d-block">{e?.label}</span><span class="spec">
-                  {/* Tämä on ehdollista renderöintiä, pitää määrittää kenttiin jotka voi olla tyhjiä */}
-                  {
-                  e?.material ? (
-                     e?.material
-                  ): (null)
-                  }
-                  {
-                  e?.length ? (
-                    ","+ e?.length +"cm"
-                  ):( null)
-                  }
-                  {
-                  e?.sleeveLength ? 
-                    ","+ e?.sleeveLength +"cm"
-                  : (null)
-                  }
-                  {/* TODO: Tee funktio joka laskee hintaan mukaan alennuksen ja veron ja jos alennusta on muuta tyylityksiä ehdollisella reneröinnillä */}
-                  {
-                  e?.discount ? (
-                    ","+ e?.discount +"%"
-                  ): (null)
-                  }
-                  {
-                  e?.tax ? (
-                    ","+ e?.tax +"%"
-                  ): (null)
-                  }
-                </span>
-              </div>
-              <div class="d-flex flex-row align-items-center"><span class="d-block">2</span><span class="d-block ml-5 font-weight-bold">{e?.price}</span><i class="fa fa-trash-o ml-3 text-black-50"></i> 
-              <button onClick={()=>{
-                var i = cookies['shoppingCart'];
-                i?.map((item,index)=>{
-                  if(item?.PostId == e?.id){
-                      i.splice(index, 1)
-                  }
-                })
-                
-                setCookie('shoppingCart', JSON.stringify(i), { path: '/',expires: 0})
-                
-                window.location.reload();
-              }}>Poista ostoskorista</button>
-              </div>
-            </div>  
-          </div>
-          )
+        if(p?.shoppingCart == true){
+          if(e!= null){
+            return (
+              <div class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
+                {/* TODO:Hae tähän tuotekuvat. */}
+                <div class="d-flex flex-row"><img class="rounded" src="https://i.imgur.com/QRwjbm5.jpg" width="40"/>
+                  <div class="ml-2"><span class="font-weight-bold d-block">{e?.label}</span><span class="spec">
+                    {/* Tämä on ehdollista renderöintiä, pitää määrittää kenttiin jotka voi olla tyhjiä */}
+                    {
+                    e?.material ? (
+                      e?.material
+                    ): (null)
+                    }
+                    {
+                    e?.length ? (
+                      ","+ e?.length +"cm"
+                    ):( null)
+                    }
+                    {
+                    e?.sleeveLength ? 
+                      ","+ e?.sleeveLength +"cm"
+                    : (null)
+                    }
+                    {/* TODO: Tee funktio joka laskee hintaan mukaan alennuksen ja veron ja jos alennusta on muuta tyylityksiä ehdollisella reneröinnillä */}
+                    {
+                    e?.discount ? (
+                      ","+ e?.discount +"%"
+                    ): (null)
+                    }
+                    {
+                    e?.tax ? (
+                      ","+ e?.tax +"%"
+                    ): (null)
+                    }
+                  </span>
+                </div>
+                <div class="d-flex flex-row align-items-center"><span class="d-block">2</span><span class="d-block ml-5 font-weight-bold">{e?.price}</span><i class="fa fa-trash-o ml-3 text-black-50"></i> 
+                <button onClick={()=>{
+                  var i = cookies['shoppingCart'];
+                  i?.map((item,index)=>{
+                    if(item?.PostId == e?.id){
+                        i.splice(index, 1)
+                    }
+                  })
+                  
+                  setCookie('shoppingCart', JSON.stringify(i), { path: '/',expires: 0})
+                  
+                  window.location.reload();
+                }}>Poista ostoskorista</button>
+                </div>
+              </div>  
+            </div>
+            )
+          }
         }
-      })
+        else{
+          if(e!= null){
+            return (
+              <div class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
+                {/* TODO:Hae tähän tuotekuvat. */}
+                <div class="d-flex flex-row"><img class="rounded" src="https://i.imgur.com/QRwjbm5.jpg" width="40"/>
+                  <div class="ml-2"><span class="font-weight-bold d-block">{e?.label}</span><span class="spec">
+                    {/* Tämä on ehdollista renderöintiä, pitää määrittää kenttiin jotka voi olla tyhjiä */}
+                    {
+                    e?.material ? (
+                      e?.material
+                    ): (null)
+                    }
+                    {
+                    e?.length ? (
+                      ","+ e?.length +"cm"
+                    ):( null)
+                    }
+                    {
+                    e?.sleeveLength ? 
+                      ","+ e?.sleeveLength +"cm"
+                    : (null)
+                    }
+                    {/* TODO: Tee funktio joka laskee hintaan mukaan alennuksen ja veron ja jos alennusta on muuta tyylityksiä ehdollisella reneröinnillä */}
+                    {
+                    e?.discount ? (
+                      ","+ e?.discount +"%"
+                    ): (null)
+                    }
+                    {
+                    e?.tax ? (
+                      ","+ e?.tax +"%"
+                    ): (null)
+                    }
+                  </span>
+                </div>
+                  <div class="d-flex flex-row align-items-center">
+                    <span class="d-block">2</span>
+                    <span class="d-block ml-5 font-weight-bold">{e?.price}</span>
+                    <i class="fa fa-trash-o ml-3 text-black-50"></i> 
+                </div>
+              </div>  
+            </div>
+            )
+          }
+        }
+    })
     }
   </div>
   )

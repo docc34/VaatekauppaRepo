@@ -1,0 +1,124 @@
+import React,{useEffect, useState} from "react";
+import { useCookies } from 'react-cookie';
+import {Error, MakeShoppingCartItem} from '../Utils/Functions';
+const paypalResponseObject = {
+    "id":"7TF79262PP128420G",
+    "intent":"CAPTURE",
+    "status":"COMPLETED",
+    "purchase_units":[
+        {"reference_id":"1",
+        "amount":{"currency_code":"EUR","value":"25.50"},
+        "payee":{
+            "email_address":"sb-doxy48783494@business.example.com",
+            "merchant_id":"2T8SCRWHVEMCQ"
+            },
+        "description":"Perus t-paita täysin musta",
+        "shipping":{
+            "name":{
+                "full_name":"John Doe"
+                },
+            "address":{
+                "address_line_1":"Pursimiehenkatu 12",
+                "admin_area_2":"Helsinki"
+                ,"admin_area_1":"Suomi"
+                ,"postal_code":"00150"
+                ,"country_code":"FI"
+                }
+            },
+        "payments":
+            {
+                "captures":[
+                    {
+                        "id":"9P431492LE322043H",
+                        "status":"COMPLETED",
+                        "amount":{
+                            "currency_code":"EUR",
+                            "value":"25.50"
+                            },
+                        "final_capture":true,
+                        "seller_protection":{
+                            "status":"ELIGIBLE",
+                            "dispute_categories":[
+                                "ITEM_NOT_RECEIVED","UNAUTHORIZED_TRANSACTION"
+                                ]
+                            },
+                        "create_time":"2022-01-26T13:20:13Z",
+                        "update_time":"2022-01-26T13:20:13Z"}
+                    ]
+            }
+        },
+        {"reference_id":"2","amount":{"currency_code":"EUR","value":"26.00"},"payee":{"email_address":"sb-doxy48783494@business.example.com","merchant_id":"2T8SCRWHVEMCQ"},"description":"Perus hyvä t-paita","shipping":{"name":{"full_name":"John Doe"},"address":{"address_line_1":"Pursimiehenkatu 12","admin_area_2":"Helsinki","admin_area_1":"Suomi","postal_code":"00150","country_code":"FI"}},"payments":{"captures":[{"id":"76470539VL397271H","status":"COMPLETED","amount":{"currency_code":"EUR","value":"26.00"},"final_capture":true,"seller_protection":{"status":"ELIGIBLE","dispute_categories":["ITEM_NOT_RECEIVED","UNAUTHORIZED_TRANSACTION"]},"create_time":"2022-01-26T13:20:01Z","update_time":"2022-01-26T13:20:01Z"}]}}],"payer":{"name":{"given_name":"John","surname":"Doe"},"email_address":"sb-xybis7895175@personal.example.com","payer_id":"XXRRV9ULGHDGG","address":{"country_code":"FI"}},"create_time":"2022-01-26T13:20:13Z","update_time":"2022-01-26T13:20:13Z",
+        "links":[{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/7TF79262PP128420G","rel":"self","method":"GET"}
+    ]};
+    
+    const ResponsePage = (o)=>{
+        const [posts, setPosts] = useState("");
+        const [price, setPrice] = useState("");
+        const [error, setError] = useState("");
+        const [cookies,setCookie] = useCookies(['token']);
+        
+        // useEffect(async ()=>{
+        //     if(posts != ""){
+        //         try{
+        //             var ids = o.paypalResponseObject.purchase_units.map(function(i) {
+        //                 return i.reference_id;
+        //               });
+
+        //             const answer = await fetch("https://localhost:44344/api/Orders/Posts",{
+        //                 method: 'POST',
+        //                 headers: {'Content-Type': 'application/json'},
+        //                 body:JSON.stringify(ids)
+        //             });
+        //             let posts = await answer.json();
+        //         if(posts?.status == "Error"){
+        //             setError(posts?.message);
+        //         }
+        //         else{
+        //             setPosts(posts);
+
+        //             var orderItems = posts.map((e,i)=>{
+        //                 return{
+        //                   PostId:e?.id,
+        //                   Amount:1
+        //                 }//TODO: laita tähän tuotteiden määrä kun otat sen käyttöön.
+        //               });
+        //             var price = await fetch("https://localhost:44344/api/Orders/price",{//TODO:Lisää tähän tuotteiden määrä kun teet sen
+        //             method: 'POST',
+        //             headers: {'Content-Type': 'application/json'},
+        //             body:JSON.stringify(orderItems)
+        //             });
+        //             setPrice( await price.json());
+        //         }
+                
+        //         }
+        //         catch(e){
+        //             setError(e);
+        //         }
+                
+        //       }
+        // },[o.order])
+        //if(o.paypalResponseObject != null && o.paypalResponseObject != ""&& o.paypalResponseObject != undefined && o != null){
+            return(<div>
+                <h3>Tilaus tehty</h3>
+                <p>Ostetut tuotteet</p>
+                <MakeShoppingCartItem data={o.posts} />
+                <p>Kokonaishinta:{o.price}</p>
+                {/* TODO: Muotoile aika oikein */}
+                <p>Aika:{o.order?.orderDate}</p> 
+                <p>Tilauksen status: {o.order?.status}</p>
+                <p>Osoite:{o.order.location?.address}</p>
+                <p>Postinumero:{o.order?.location?.postalCode}</p>
+                <p>Kaupunki:{o.order?.location?.city.cityName}</p>
+
+                <Error error={error}/>
+                {/* {o?.paypalResponseObject?.id} */}
+            </div>)
+        //}
+        //else{
+            // return(<div>
+            //     <p>Vastaus ei palautunut</p>
+            // </div>)
+        //}
+    }
+
+    export{ResponsePage}

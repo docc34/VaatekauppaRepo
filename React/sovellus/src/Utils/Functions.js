@@ -3,6 +3,7 @@ import { Image, Card, Row, Col } from 'react-bootstrap';
 import { MDBRating } from 'mdbreact';
 import React,{useEffect, useRef, useState} from 'react';
 import { useCookies } from 'react-cookie';
+import moment from 'moment';
 //Tässä on funktioita joita käytetään frontissa esim julkaisujen renderöintiin.
 {/* Tähän funktioon annetaan kaikki tietokannasta haetut ilmoitukset ja se luo jokaisesta alla olevan html mukaisen ilmoituksen */ }
 const MakePost = (p) => {
@@ -97,10 +98,11 @@ const MakePost = (p) => {
       <Row xs={1} sm={1} md={2}  xl={4}  className="g-4" >
         {p.data.map((e, i) => {
           if(e!= null){
+            var url ="http://localhost:3000/Tuote?id="+e?.id;
             return (<Col>
               <Card className="Post-Card">
                 <Card.Body>
-                  <Card.Title>{e?.label}</Card.Title>
+                  <Card.Title><a href={url}class="font-weight-bold d-block">{e?.label}</a></Card.Title>
                   <Card.Text className=""> 
                     <div className="ProfileCardTitleContainer">
                       <div>
@@ -180,8 +182,6 @@ const MakePost = (p) => {
     else {
       return(<div><p>Loading</p></div>)
     }
-
-  // }
 }
 const MakeShoppingCartItem = (p) => {
   const [cookies,setCookie] = useCookies(['token']);
@@ -298,12 +298,23 @@ const MakeShoppingCartItem = (p) => {
     else {
       return(<div><p>Loading</p></div>)
     }
-
-  // }
 }
 
-//TODO: funktio joka muuttaa kuljetusarviopäivät päivämääriksi
+const FormatDeliveryEstimateToDate = (v)=>{
+  if(CheckEmptyFields(["1","2"],[v.deliveryDaysEstimateStarting,v.deliveryDaysEstimateEnding]).status == true && v.deliveryDaysEstimateStarting < v.deliveryDaysEstimateEnding){
+    var d = new Date();
+    var starting = d.setDate(d.getDate() + v.deliveryDaysEstimateStarting);
+    var ending = d.setDate(d.getDate() + v.deliveryDaysEstimateEnding);
 
+    starting = moment(starting).format('DD.MM.YYYY');//, HH:mm Jos haluaisi ottaa tunnit ja minuutit käyttöön.
+    ending = moment(ending).format('DD.MM.YYYY');
+
+    return starting +"-"+ending
+  }
+  else{
+    return null
+  }
+}
 const MakeRatingStars = (o) =>{
   //Tällä voi antaa tähdille custom tekstit
   // const [basic] = useState([
@@ -476,5 +487,6 @@ export {
   Error,
   CheckEmptyFields,
   Paypal,
-  MakeShoppingCartItem
+  MakeShoppingCartItem,
+  FormatDeliveryEstimateToDate
 }

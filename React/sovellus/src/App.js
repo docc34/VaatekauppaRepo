@@ -21,10 +21,10 @@ import { Profiili } from './Profiili/Profiili';
 import { ProfiiliMuokkaus } from './Profiili/ProfiiliMuokkaus';
 
 import { Store } from './Kauppa/Store';
-import { ProfilePublic } from './Profiili/ProfiiliPublic';
 
 import { PostManager } from './postManager/jobPostManager';
-import {PaymentPage} from './Payment/PaymentPage';
+import { PaymentPage} from './Payment/PaymentPage';
+import { ProductPage } from './ProductPage/ProductPage';
 //Tää tiedosto renderöidään index.js:ssä. 
 //Täällä hoidetaan sivun reititys 
 //Kaikille sivuille renderöidään footer ja joko julkinen tai yksityinen header
@@ -70,7 +70,6 @@ function App() {
             <Route path="/" element={<EtusivuTekstit />} />
             <Route path="/Kauppa" element={<Store />}/>
             <Route path="/Maksu" element={<PaymentPage />} />
-            <Route path="/ProfiiliPublic" element={<ProfilePublic />}/>
             <Route path="/Profiili" element={<Profiili />}/>
             <Route path="/ProfiiliMuokkaus" element={<ProfiiliMuokkaus />}/>
             <Route path="/Maksu" element={<PaymentPage />}/>
@@ -98,6 +97,7 @@ function App() {
         <Routes>
           <Route path="/" element={<EtusivuTekstit />} />
           <Route path="/Kauppa" element={<Store />}/>
+          <Route path="/Tuote" element={<ProductPage />}/>
           <Route path="/Maksu" element={<PaymentPage />} />
           <Route path="/Rekisteroityminen" element={<Rekisteroityminen />}/>
         </Routes>

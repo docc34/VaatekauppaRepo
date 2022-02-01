@@ -44,6 +44,7 @@ function PaymentPage() {
   const [paypalResponseObject, setPaypalResponseObject] = useState("");
   const [order, setOrder] = useState("");
   const [price, setPrice] = useState("");
+  const [register, setRegister] = useState(false);
   
   const [cities, setCities] = useState([]);
   
@@ -291,29 +292,15 @@ function PaymentPage() {
                 <p>Tämä renderöi jos et ole kirjautunut tai sinulla ei ole laitettuna sijaintitietoja vielä</p>
                 
                 <div>
-                  <Form.Group controlId="formBasicUsername">
-                    <Form.Label>Käyttäjänimi</Form.Label>
-                    <Form.Control  placeholder="Käyttäjänimi" onChange={(e)=>{setUsername(e.target.value); }} />
-                  </Form.Group>
 
                   <Form.Group controlId="formBasicName">
                     <Form.Label>Etunimi</Form.Label>
-                    <Form.Control   placeholder="Nimi" onChange={(e)=>{setFirstName(e.target.value); }}/>
+                    <Form.Control   placeholder="Etunimi" onChange={(e)=>{setFirstName(e.target.value); }}/>
                   </Form.Group>
 
                   <Form.Group controlId="formBasicName">
                     <Form.Label>Sukunimi</Form.Label>
-                    <Form.Control   placeholder="Nimi" onChange={(e)=>{setLastName(e.target.value); }}/>
-                  </Form.Group>
-
-                  <Form.Group controlId="formBasicPassword">
-                    <Form.Label>Salasana</Form.Label>
-                    <Form.Control type="password" placeholder="Salasana"onChange={(e)=>{setPassword(e.target.value); }}/>
-                  </Form.Group>
-
-                  <Form.Group controlId="formBasicPassword">
-                    <Form.Label>Salasana uudestaan</Form.Label>
-                    <Form.Control type="password" placeholder="Salasana uudestaan"onChange={(e)=>{setPasswordAgain(e.target.value);}}/>
+                    <Form.Control   placeholder="Sukunimi" onChange={(e)=>{setLastName(e.target.value); }}/>
                   </Form.Group>
 
                   <Form.Group controlId="formBasicEmail">
@@ -325,28 +312,67 @@ function PaymentPage() {
                     <Form.Label>Puhelinnumero</Form.Label>
                     <Form.Control placeholder="Puhelinnumero"onChange={(e)=>{setPhonenumber(e.target.value);}}/>
                   </Form.Group>
+
+                  <label htmlFor='setRegisterInput'>Haluatko luoda käyttäjän tilauksen yhteydessä</label>
+                  <input id="setRegisterInput" type="checkbox" onClick={(e)=>{setRegister(e.target.checked);console.log(e.target.checked)}}/>
+                  {register == true ? (
+                  <div>
+                    <Form.Group controlId="formBasicUsername">
+                      <Form.Label>Käyttäjänimi</Form.Label>
+                      <Form.Control  placeholder="Käyttäjänimi" onChange={(e)=>{setUsername(e.target.value); }} />
+                    </Form.Group>
+
+                    <Form.Group controlId="formBasicPassword">
+                      <Form.Label>Salasana</Form.Label>
+                      <Form.Control type="password" placeholder="Salasana"onChange={(e)=>{setPassword(e.target.value); }}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="formBasicPassword">
+                      <Form.Label>Salasana uudestaan</Form.Label>
+                      <Form.Control type="password" placeholder="Salasana uudestaan"onChange={(e)=>{setPasswordAgain(e.target.value);}}/>
+                    </Form.Group>
+                  </div>) : (null)}
+                  
                 </div>
-                <input type="Button" onClick={()=>{if(passwordAgain.value == password.value){
-                  setLocationObject({
-                    userId:cookies.UserId,
-                    cityId:cityId,
-                    address:address,
-                    postalCode:postalCode,
-                    user:{
-                      userName:username, 
-                      password: password,  
-                      firstname: firstName,
-                      lastname: lastName,
-                      email:email, 
-                      phonenumber: phonenumber
-                    }
-                  });
+                <input type="Button" onClick={()=>{
+                  if(register == true){
+                    if(passwordAgain.value == password.value){
+                      setLocationObject({
+                        userId:cookies.UserId,
+                        cityId:cityId,
+                        address:address,
+                        postalCode:postalCode,
+                        user:{
+                          userName:username, 
+                          password: password,  
+                          firstname: firstName,
+                          lastname: lastName,
+                          email:email, 
+                          phonenumber: phonenumber
+                        }
+                      });
+                      }
+                      else
+                      {
+                        setError("Salasanat eivät täsmää");
+                      }
                   }
-                  else
-                  {
-                    setError("Salasanat eivät täsmää");
-                  }
-                  }} value={'Rekisteröidy'} variant="primary"/>
+                  else{
+                    setLocationObject({
+                      userId:cookies.UserId,
+                      cityId:cityId,
+                      address:address,
+                      postalCode:postalCode,
+                      user:{
+                        userName:null, 
+                        password:null,  
+                        firstname: firstName,
+                        lastname: lastName,
+                        email:email, 
+                        phonenumber: phonenumber
+                      }
+                  })
+                  }}} value={'Rekisteröidy'} variant="primary"/>
               </div>) : null}
 
                 {/* Jos on kirjautunut ja on sijaintitiedot */}

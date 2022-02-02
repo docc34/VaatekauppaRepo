@@ -12,7 +12,7 @@ const HeaderPublic = () => {
     let [loginModalShow, setLoginModalShow] = useState(false);
     
     const [labelSearchText,setLabelSearchText] = useState("");
-    const [error,setError] = useState("");
+    const [message,setMessage] = useState("");
 
     const username = useFormInput('');
     const password = useFormInput('');
@@ -31,18 +31,18 @@ const HeaderPublic = () => {
                 });
                 let result = await data.json();
                 if (result?.Status == "Error") {
-                    setError(result.Message);
+                    setMessage(result.Message);
                 }
                 else{
                     resetValues();
                     setCookie('token', result.token, { path: '/' ,expires: 0})
                     setCookie('userId', result.id, { path: '/' ,expires: 0})
-                    setError("");
+                    setMessage("");
                     window.location.reload();
                 }
         }
         catch{
-            setError("Error");
+            setMessage("Error");
         }
             
     }
@@ -138,7 +138,7 @@ const HeaderPublic = () => {
                             </Form.Group>
                             {/*<Button type="Submit"  defaultValue={loading ? 'Loading...' : 'Login'} onClick={handleLogin} disabled={loading} variant="primary" >Kirjaudu</Button>*/}
                             </Form>
-                            <Error error={error}/>
+                            <Error message={message}/>
                         </div>
                     </div>
 

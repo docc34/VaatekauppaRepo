@@ -42,7 +42,7 @@ const ProfiiliMuokkaus = () => {
   const [jobsStartDate, setJobsStartDate] = useState("");
   const [jobsEndDate, setJobsEndDate] = useState("");
   const [jobsData, setJobsData] = useState("");
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [selectedRowJobs, setSelectedRowJobs] = useState("");
   const [sentImgFile, setSentImgFile] = useState("");
 
@@ -109,7 +109,7 @@ const ProfiiliMuokkaus = () => {
       if (result.statusText == "OK") {
 
         resetValues();
-        setError("");
+        setMessage("");
         setEducationData("");
         getProfileData();
       }
@@ -126,7 +126,7 @@ const ProfiiliMuokkaus = () => {
       if (result.statusText == "OK") {
         getProfileData();
         resetValues();
-        setError("");
+        setMessage("");
         setJobsData("");
       }
     }
@@ -227,7 +227,7 @@ const ProfiiliMuokkaus = () => {
       if (result.statusText == "OK") {
         getProfileData();
         resetValues();
-        setError("");
+        setMessage("");
         setSentImgFile("");
       }
     }
@@ -318,13 +318,13 @@ const ProfiiliMuokkaus = () => {
              <div> <label htmlFor="Degree">Koulutus <input type="text" value={educationDegree} id="Degree" onChange={(e) => { setEducationDegree(e.target.value); }}></input></label></div>
              <div> <label htmlFor="educationStartDateInput">Aloitus päivämäärä <input id="educationStartDateInput" value={educationStartDate} type='date' dateformat={"yyyy/MM/dd"} onChange={e => setEducationStartDate(e.target.value)}></input></label></div>
              <div> <label htmlFor="educationEndDateInput">Lopetus päivämäärä <input id="educationEndDateInput" value={educationEndDate} type='date' dateformat={"yyyy/MM/dd"} onChange={e => setEducationEndDate(e.target.value)}></input></label></div>
-              <Error error={error} />
+              <Error message={message} />
 
             </Modal.Body>
             <Modal.Footer>
               {/* Ilmoituksen footteri */}
               <Button onClick={() => { setEducationData({ userId: profileId, schoolName: educationSchoolName, degree: educationDegree, startDate: educationStartDate, endDate: educationEndDate }); }}>Tallenna</Button>
-              <Button onClick={() => { resetValues(); setError(""); }}>Peruuta</Button>
+              <Button onClick={() => { resetValues(); setMessage(""); }}>Peruuta</Button>
             </Modal.Footer>
           </Modal>
           {/* custom taulukko: reactdatagrid */}
@@ -367,7 +367,7 @@ const ProfiiliMuokkaus = () => {
               <div><label htmlFor="jobsStartDateInput">Aloitus päivämäärä <input id="jobsStartDateInput" value={jobsStartDate} type='date' dateformat={"yyyy/MM/dd"} onChange={e => setJobsStartDate(e.target.value)}></input></label></div>
               <div><label htmlFor="jobsEndDateInput">Lopetus päivämäärä <input id="jobsEndDateInput" value={jobsEndDate} type='date' dateformat={"yyyy/MM/dd"} onChange={e => setJobsEndDate(e.target.value)}></input></label></div>
 
-              <Error error={error} />
+              <Error message={message} />
             </Modal.Body>
             <Modal.Footer>
               {/* Ilmoituksen footteri */}

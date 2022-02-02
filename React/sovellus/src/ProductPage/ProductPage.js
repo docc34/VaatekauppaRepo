@@ -13,7 +13,7 @@ import { MakePost, Error ,FormatDeliveryEstimateToDate} from '../Utils/Functions
 import { useCookies } from 'react-cookie';
 const ProductPage = () => {
     const [post, setPost] = useState("");
-    const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
     
     const search = useLocation().search;
     const postId = new URLSearchParams(search).get('id');
@@ -28,15 +28,15 @@ const ProductPage = () => {
             });
             let post = await data.json();
             if (post?.Status == "Error") {
-                setError(post.Message);
+                setMessage(post.Message);
             }
             else{
-                setError("");
+                setMessage("");
                 setPost(post);
             }
         }
         catch{
-            setError("Fatal Error");
+            setMessage("Fatal Error");
         }
     }
 
@@ -49,7 +49,7 @@ const ProductPage = () => {
     return (
     <div className="Store-Post-Main-Box">
         <h1> {post?.label}</h1>
-        <Error error={error}/>
+        <Error message={message}/>
         <p>Tuotteen arvioitu kuljetusaika:<FormatDeliveryEstimateToDate deliveryDaysEstimateStarting={post?.deliveryDaysEstimateStarting} deliveryDaysEstimateEnding={post?.deliveryDaysEstimateEnding}/></p>
         <button onClick={()=>{
             if(cookies['shoppingCart'] == null || cookies['shoppingCart'] == undefined){

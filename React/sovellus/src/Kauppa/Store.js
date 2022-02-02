@@ -14,7 +14,7 @@ import { useCookies } from 'react-cookie';
 const Store = () => {
     const [storePostsData, setStorePostsData] = useState([]);
     const [labelSearchText, setLabelSearchText] = useState([]);
-    const [error, setError] = useState([]);
+    const [message, setMessage] = useState([]);
     
     const [searchObject, setSearchObject] = useState({jobPostTitle:null,priceSort:null});
     
@@ -45,15 +45,15 @@ const Store = () => {
                 let data = await fetch(url,options);
                 let posts = await data.json();
                 if (posts?.Status == "Error") {
-                    setError(posts.Message);
+                    setMessage(posts.Message);
                 }
                 else{
-                    setError("");
+                    setMessage("");
                     setStorePostsData(posts);
                 }
             }
             catch{
-                setError("Fatal Error");
+                setMessage("Fatal Error");
             }
         }
     }
@@ -79,7 +79,7 @@ const Store = () => {
                 </InputGroup.Prepend>
                     <FormControl onChange={(e) => { setLabelSearchText(e.target.value); }} placeholder="Hae" aria-label="Search" aria-describedby="basic-addon1" />
                 </InputGroup>
-                <Error error={error}/>
+                <Error message={message}/>
             </div>
             {/* Outobugi ei näytä nappeja jos ovat tässä */}
             <div>

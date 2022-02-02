@@ -110,6 +110,7 @@ const MakePost = (p) => {
                       </div>
                     </div>
                   </Card.Text>
+                  <img className='ReviewLinkedImage' src={e?.imageLink}/>
                   {/* Tämä on ehdollista renderöintiä, pitää määrittää kenttiin jotka voi olla tyhjiä */}
                   {
                   e?.material ? (<Card.Text>
@@ -349,7 +350,7 @@ const MakeRatingStars = (o) =>{
 
 //Näyttää tälle funktiolle annetun viestin käytän tätä errorien näyttämiseen
 const Error = (props) => {
-  return (<p className="errorText">{props.error}</p>)
+  return (<p className="errorText">{props.message}</p>)
 }
 
 const CheckEmptyFields = (tarkistusKentat, tarkistettavatTiedot)=>{

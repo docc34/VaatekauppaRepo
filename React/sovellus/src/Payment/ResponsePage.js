@@ -54,7 +54,7 @@ const paypalResponseObject = {
     const ResponsePage = (o)=>{
         const [posts, setPosts] = useState("");
         const [price, setPrice] = useState("");
-        const [error, setError] = useState("");
+        const [message, setMessage] = useState("");
         const [cookies,setCookie] = useCookies(['token']);
         
         // useEffect(async ()=>{
@@ -71,7 +71,7 @@ const paypalResponseObject = {
         //             });
         //             let posts = await answer.json();
         //         if(posts?.status == "Error"){
-        //             setError(posts?.message);
+        //             setMessage(posts?.message);
         //         }
         //         else{
         //             setPosts(posts);
@@ -92,7 +92,7 @@ const paypalResponseObject = {
                 
         //         }
         //         catch(e){
-        //             setError(e);
+        //             setMessage(e);
         //         }
                 
         //       }
@@ -121,7 +121,7 @@ const paypalResponseObject = {
                 <p>Postinumero:{o.order?.location?.postalCode}</p>
                 <p>Kaupunki:{o.order?.location?.city.cityName}</p>
                  <FormatDeliveryEstimateToDate deliveryDaysEstimateStarting={Starting} deliveryDaysEstimateEnding={Ending}/> 
-                <Error error={error}/>
+                <Error message={message}/>
                 {/* {o?.paypalResponseObject?.id} */}
             </div>)
         //}

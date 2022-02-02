@@ -16,7 +16,7 @@ function PaymentPage() {
   //#region 
   const search = useLocation().search;
   const [checkout, setCheckout] = useState(false);
-  const [error, setError] = useState(false);
+  const [message, setMessage] = useState(false);
   const [posts, setPosts] = useState("");
   const [loggedIn, setLoggedIn] = useState("");
 
@@ -88,9 +88,9 @@ function PaymentPage() {
           let post = await posts.json();
           
           if(post?.status == "Error")
-            setError(post?.message);
+            setMessage(post?.message);
           else if(post?.status == 400){
-            setError(post?.title);
+            setMessage(post?.title);
           }
           else
           setPosts(post);
@@ -110,7 +110,7 @@ function PaymentPage() {
           setPrice( await price.json());
       }
       catch(e){
-        setError(e);
+        setMessage(e);
       }
     }
   }
@@ -127,7 +127,7 @@ function PaymentPage() {
       }
     }
     catch{
-      setError("Error");
+      setMessage("Error");
     }
   }
   
@@ -143,15 +143,15 @@ function PaymentPage() {
         let parsedAnswer = await answer.json();
 
         if(parsedAnswer?.status != "Error"){
-          setError(parsedAnswer?.message);
+          setMessage(parsedAnswer?.message);
           setPutEnabled(true);
         }
         else{
-          setError(parsedAnswer?.message);
+          setMessage(parsedAnswer?.message);
         }
       }
       catch{
-        setError("Error");
+        setMessage("Error");
       }
     }
   }, [locationObjectPut]);
@@ -168,16 +168,16 @@ function PaymentPage() {
 
       if(parsedAnswer?.status != "Error"){
         
-        setError(parsedAnswer?.message);
+        setMessage(parsedAnswer?.message);
         if(parsedAnswer?.message == "Location created succesfully")window.location.reload();
         else if(parsedAnswer?.message == "User created succesfully"){
         setCookie('loginModal', "true", { path: '/' ,expires: 0});window.location.reload();}
       }
       else{
-        setError(parsedAnswer?.message);
+        setMessage(parsedAnswer?.message);
       }}
       catch{
-        setError("Error");
+        setMessage("Error");
       }
     }
   }, [locationObject]);
@@ -225,7 +225,7 @@ function PaymentPage() {
       let parsedAnswer = await answer.json();
 
       if(parsedAnswer?.status == "Error"){
-        setError(parsedAnswer?.message);
+        setMessage(parsedAnswer?.message);
       }
       else{
         options = {
@@ -238,7 +238,7 @@ function PaymentPage() {
         setOrder(parsedAnswer);
       }}
       catch(e){
-        setError(e);
+        setMessage(e);
       }
     }
   },[paypalResponseObject]);
@@ -250,7 +250,7 @@ function PaymentPage() {
         <div>
           <div>
             <a href="/Kauppa">Takaisin kauppaan</a>
-            <Error error={error}/>
+            <Error message={message}/>
           </div>
 
           <Tabs activeKey={tabKey} id="uncontrolled-tab-example" className="mb-3">
@@ -354,7 +354,7 @@ function PaymentPage() {
                       }
                       else
                       {
-                        setError("Salasanat eivät täsmää");
+                        setMessage("Salasanat eivät täsmää");
                       }
                   }
                   else{
@@ -472,9 +472,9 @@ function PaymentPage() {
   }
   else{
     return(<div>
-    {error != "" ? 
+    {message != "" ? 
     (
-      <p>{error}</p>
+      <p>{message}</p>
     ):
     (
       <p>Loading</p>

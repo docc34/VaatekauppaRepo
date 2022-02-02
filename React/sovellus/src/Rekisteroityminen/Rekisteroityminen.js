@@ -15,7 +15,7 @@ const Rekisteroityminen = ()=>{
     const lastName = useFormInput('');
     const email = useFormInput('');
     const phonenumber = useFormInput('');
-    const [error, setError] = useState(null);
+    const [message, setMessage] = useState(null);
     const [cookies,setCookie] = useCookies(['loginModal']);
     //TODO: Avaa kirjautuminen
     let navigate = useNavigate();
@@ -31,11 +31,11 @@ const Rekisteroityminen = ()=>{
             let tarkistus = await post.json();
             console.log(tarkistus);
             if(tarkistus.type != ""){
-              setError(tarkistus.title);
+              setMessage(tarkistus.title);
             } 
-            else if(tarkistus.status =="Error")setError(tarkistus.Message);
+            else if(tarkistus.status =="Error")setMessage(tarkistus.Message);
             else{
-              setError("");
+              setMessage("");
               //navigate("/");
               setCookie('loginModal', "true", { path: '/' ,expires: 0});
               window.location.reload();
@@ -88,19 +88,19 @@ return(
       setLoading(true)}
       else
       {
-        setError("Salasanat eivät täsmää");
+        setMessage("Salasanat eivät täsmää");
       }
       }} value={'Rekisteröidy'} disabled={loading} variant="primary"/><br />
 
   </Form>
   <p>Onko sinulla jo käyttäjä. Voit kirjautua sisään  <NavLink  to="/Kirjautuminen">Täältä</NavLink> </p>
-    <Error error={error}/>
+    <Error message={message}/>
   </div>
 </div>
   )
 }
 const Error=(props)=>{
-return(<p className="errorText">{props.error}</p>)
+return(<p className="errorText">{props.message}</p>)
 }
 const useFormInput = initialValue => {
   const [value, setValue] = useState(initialValue);

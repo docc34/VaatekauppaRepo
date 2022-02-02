@@ -13,6 +13,7 @@ import { MakePost, Error } from '../Utils/Functions';
 import { postPostService, postDeleteService, postModifyService } from '../services/postManager';
 
 import './jobPostManager.css';
+import { useCookies } from 'react-cookie';
 
 const PostManager = () => {
     var user = null;
@@ -27,15 +28,17 @@ const PostManager = () => {
     const [idJobPost, setIdJobPost] = useState("");
     const [postData, setPostData] = useState("");
     //TODO:User objekti pitää ottaa käyttöön
-    const [profileId] = useState(user.userId);
-    const [error, setError] = useState("");
+    //const [profileId] = useState(user.userId);
+    const [message, setMessage] = useState("");
     const [userPosts, setUserPosts] = useState([]);
     const [postModifyData, setPostModifyData] = useState([]);
+    const [file, setFile] = useState(null);
+    const [errors, setErrors] = useState([]);
+    const [cookies] = useCookies(['token']);
 
 
     {/* nollaa kaikki ponnahdusikkunoiden arvot ja sulkee pnnahdusikkunat */ }
     const resetValues = () => {
-
         setPostModalShow(false);
         setModifyDataModal(false);
         setPostLabel("");
@@ -44,54 +47,53 @@ const PostManager = () => {
         setPostHourEstimate("");
         setPostDescription("");
 
+        setFile(null);
     }
     // get user profile data
-    const getUserPosts = async () => {
+    // const getUserPosts = async () => {
 
-        const posts = null;
-        if (posts.error) {
-        //TODO:Error
-        }
+    //     const posts = null;
+    //     if (posts.error) {
+    //     //TODO:Error
+    //     }
 
-        let post = posts.data;
+    //     let post = posts.data;
 
-        setUserPosts(post.posts);
-    }
-    useEffect(async () => {
-        if (postData != "") {
-            const posts = await postPostService(postData);
-            if (posts.error) {
-                           //TODO:Error
+    //     setUserPosts(post.posts);
+    // }
+    // useEffect(async () => {
+    //     if (postData != "") {
+    //         const posts = await postPostService(postData);
+    //         if (posts.error) {
+    //             //TODO:Error
+    //         }
+    //         let post = posts.data;
 
-            }
+    //         resetValues();
+    //         setMessage("");
+    //     }
+    // }, [postData]);
 
-            let post = posts.data;
-
-            resetValues();
-            setError("");
-        }
-    }, [postData]);
-
-    useEffect(() => {
-        getUserPosts();
-    }, []);
+    // useEffect(() => {
+    //     getUserPosts();
+    // }, []);
 
 
-    const receivePostDeleteData = async (data) => {
+    // const receivePostDeleteData = async (data) => {
 
-        if (window.confirm("Haluatko varmasti poistaa julkaisun")) {
-            if (data != undefined && data != null) {
-                const posts = await postDeleteService({ selectedPost: data, userId: profileId });
-                if (posts.error) {
-                                //TODO:Error
+    //     if (window.confirm("Haluatko varmasti poistaa julkaisun")) {
+    //         if (data != undefined && data != null) {
+    //             const posts = await postDeleteService({ selectedPost: data, userId: profileId });
+    //             if (posts.error) {
+    //                             //TODO:Error
 
-                }
-                let post = posts.data;
-                resetValues();
-                getUserPosts();
-            }
-        }
-    }
+    //             }
+    //             let post = posts.data;
+    //             resetValues();
+    //             getUserPosts();
+    //         }
+    //     }
+    // }
     const receivePostModifyData = async (data) => {
 
         if (data != undefined && data != null) {
@@ -114,14 +116,83 @@ const PostManager = () => {
             }
             let post = posts.data;
             resetValues();
-            getUserPosts();
+            //getUserPosts();
         }
 
     }, [postModifyData]);
 
+    const addOrEdit = async (formData)=>{
+        if (formData != "" && formData != null) {
+
+            const options = {
+                method: 'POST',
+                headers: { "Authorization": `Bearer ${cookies?.token}` },
+                body: formData
+            }
+            //, 'Content-Type': 'application/x-www-form-urlencoded'
+            //, 'Content-Type': 'image/png'
+            try {
+                let data = await fetch("https://localhost:44344/api/Posts/image", options)
+                let j = await data.json();
+                if (j?.status != "Error") {
+                    setMessage("Image added successfully.");
+                    resetValues();
+                }
+                else {
+                    setMessage(j?.message);
+                }
+            } catch {
+                setMessage("Error!");
+            }
+        }
+    }
+
+    const handleFormSubmit = e =>{
+        
+        e.preventDefault();
+        if( file != null){
+        
+        const formData = new FormData();
+        formData.append("ImageLink", "imageName")
+        formData.append("imageFile", file)
+        formData.append("postId", 1)//TODO:Lisää tähän valitun julkaisun id
+        //formData.append("description", attachmentDescription)
+        addOrEdit(formData);
+
+        }
+    }
+    // const validate=()=>{
+    //     let temp = {};
+    //     //temp.imageSource = imageSource ==defaultImageSource?false:true;
+    //     //temp.description = attachmentDescription ==""?false:true;
+    //     setErrors(temp);
+    //     return Object.values(temp).every(x=>x==true)
+    // }
+    const setFileFromInput = e =>{
+        if(e.target.files && e.target.files[0]){
+        let imageFile = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = x=>{
+            setFile(imageFile);
+
+        }
+        reader.readAsDataURL(imageFile);
+        }
+        else{
+            setFile(null);
+        }
+    }
+    const applyErrorClass= field =>((field in errors && errors[field] == false)?' invalid-field':'')
+
     return (<div className="PostManagerMainBox">
         <h1> Hae työilmoituksia</h1>
-
+        <h3>Lisää kuva julkaisuun</h3>
+        <form onSubmit={handleFormSubmit}>
+            {/* <label htmlFor='attachmentDescription'>Picture description<input id="attachmentDescription" onChange={(e)=>{setAttachmentDescription(e.target.value);}} className="form-control"/></label> */}
+            {/*onChange={showPreview}*/}
+            <input onChange={setFileFromInput} type="file" accept='image/*' id="image-uploader" className={"form-control"+applyErrorClass("imageSource")}/>
+            <Button type="submit">Save</Button>
+        </form>
         <Button onClick={() => { setPostModalShow(true) }}>Tee työilmoitus</Button>
         {/* <Button onClick={() => { deleteSelectedPosts();}}>Poista valitut</Button> */}
         <a href="/Profiili">Profiiliin</a>
@@ -152,13 +223,13 @@ const PostManager = () => {
                     <FormControl as="textarea" value={postDescription}  onChange={(e) => { setPostDescription(e.target.value); }} />
                 </InputGroup></div>
                
-                <Error error={error} />
+                <Error message={message} />
 
             </Modal.Body>
             <Modal.Footer>
                 {/* Ilmoituksen footteri */}
-                <Button onClick={() => { setPostData({ userId: profileId, label: postLabel, priceStartingAt: postPriceStartingAt,priceEndingAt: postPriceEndingAt , hourEstimate: postHourEstimate, description: postDescription }); }}>Tallenna</Button>
-                <Button onClick={() => { resetValues(); setError(""); }}>Peruuta</Button>
+                {/* <Button onClick={() => { setPostData({ userId: profileId, label: postLabel, priceStartingAt: postPriceStartingAt,priceEndingAt: postPriceEndingAt , hourEstimate: postHourEstimate, description: postDescription }); }}>Tallenna</Button> */}
+                <Button onClick={() => { resetValues(); setMessage(""); }}>Peruuta</Button>
             </Modal.Footer>
         </Modal>
 
@@ -188,18 +259,18 @@ const PostManager = () => {
                     
                     <FormControl as="textarea" value={postDescription}  onChange={(e) => { setPostDescription(e.target.value); }} />
                 </InputGroup>
-                <Error error={error} /></div>
+                <Error message={message} /></div>
 
             </Modal.Body>
             <Modal.Footer>
                 {/* Ilmoituksen footteri */}
-                <Button onClick={() => { setPostModifyData({ idJobPost: idJobPost, userId: profileId, label: postLabel, priceStartingAt: postPriceStartingAt,priceEndingAt: postPriceEndingAt, hourEstimate: postHourEstimate, description: postDescription }); }}>Tallenna</Button>
-                <Button onClick={() => { resetValues(); setError(""); }}>Peruuta</Button>
+                {/* <Button onClick={() => { setPostModifyData({ idJobPost: idJobPost, userId: profileId, label: postLabel, priceStartingAt: postPriceStartingAt,priceEndingAt: postPriceEndingAt, hourEstimate: postHourEstimate, description: postDescription }); }}>Tallenna</Button> */}
+                <Button onClick={() => { resetValues(); setMessage(""); }}>Peruuta</Button>
             </Modal.Footer>
         </Modal>
 
         <CardColumns  className="Job-Post-CardColumns"> 
-            <MakePost data={userPosts} mode={1} receivePostDeleteData={receivePostDeleteData} receivePostModifyData={receivePostModifyData} />
+            {/* <MakePost data={userPosts} mode={1} receivePostDeleteData={receivePostDeleteData} receivePostModifyData={receivePostModifyData} /> */}
         </CardColumns>
     </div>)
 }

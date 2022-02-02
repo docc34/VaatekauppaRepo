@@ -13,7 +13,7 @@ function Profiili() {
   const [profileData, setProfileData] = useState([]);
   const [profileLocation, setProfileLocation] = useState([]);
   const [profileOrders, setProfileOrders] = useState([]);
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   // const [show, setShow] = useState(false);
   const target = useRef(null);
   const [cookies] = useCookies(['token']);
@@ -30,7 +30,7 @@ function Profiili() {
     const result = await fetch("https://localhost:44344/api/user",options)
     //const posts = await getProfilePostsService(cookies?.userId);
     if (result?.Status == "Error") {
-      setError(result.Message);
+      setMessage(result.Message);
     }
     else{
       var i = await result.json();
@@ -95,7 +95,7 @@ function Profiili() {
       <div className="Profiili-Main">
         <div className="Profiili-UpperPartMain">
           <div className="Profiili-Esittely">
-            <h1 className="Profiili-NimiOtsikko"> {profileData?.name}</h1>
+            <h1 className="Profiili-NimiOtsikko"> {profileData?.username}</h1>
 
               {/* {checkProfileImage()} */}
               <h3>Yhteystiedot</h3>
@@ -123,7 +123,7 @@ function Profiili() {
             //enableFiltering={enableFiltering}
             />
             
-            {error}
+            {message}
           </div>
           <div className="Profiili-valikko">
             <h2>Asetukset</h2>

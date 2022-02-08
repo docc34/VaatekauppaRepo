@@ -45,9 +45,9 @@ function PaymentPage() {
   const [order, setOrder] = useState("");
   const [price, setPrice] = useState("");
   const [register, setRegister] = useState(false);
+  const [locationGuid, setLocationGuid] = useState("");
   
   const [cities, setCities] = useState([]);
-  
   let navigate = useNavigate();
   //const Id = new URLSearchParams(search).get('id');
   const urlTabKey = new URLSearchParams(search).get('tabKey');
@@ -62,22 +62,47 @@ function PaymentPage() {
             headers: {"Authorization": `Bearer ${cookies.token}`}
           }
 
-          var check = await fetch("https://localhost:44344/api/Locations/user",options);
-          var i = await check.json();
-          if(i.status == "UserError") {
-            setLoggedIn(1);}
-          else if(i.status == "LocationError") {
-            setLoggedIn(2);
+          if(cookies?.currentLocationId != 0 && cookies?.currentLocationId != null && cookies?.currentLocationId != undefined ){
+            //Jos käyttäjällä ei ole käyttäjätiliä mutta sijainti on jo annettu aikaisemmin ja on vielä cookiessa tallella.
+            var check = await fetch("https://localhost:44344/api/Locations/"+cookies?.currentLocationId,options);
+            var i = await check.json();
+            if(i.status != "Error") {
+              setPostalCodePut(i.postalCode);
+              setAddressPut(i.address);
+              setCityPutId(i.cityId);
+              setCookie('currentLocationId', i.id, { path: '/Maksu'});
+              // setCurrentLocationId(i.id);
+              setLoggedIn(3);
+              
+              if(urlTabKey != null)setTabKey(urlTabKey.toString());
+            }
+            else{
+              setMessage("Error");
+            }
+            
           }
           else{
-            setPostalCodePut(i.postalCode);
-            setAddressPut(i.address);
-            setCityPutId(i.cityId);
-            setCurrentLocationId(i.id);
-            setLoggedIn(3);
+
+            var check = await fetch("https://localhost:44344/api/Locations/user",options);
+            var i = await check.json();
+            if(i.status == "UserError") {
+              setLoggedIn(1);}
+            else if(i.status == "LocationError") {
+              setLoggedIn(2);
+            }
+            else{
+              setPostalCodePut(i.postalCode);
+              setAddressPut(i.address);
+              setCityPutId(i.cityId);
+              setCookie('currentLocationId', i.id, { path: '/Maksu'});
+              // setCurrentLocationId(i.id);
+              setLoggedIn(3);
+              
+              if(urlTabKey != null)setTabKey(urlTabKey.toString());
+            }
             
-            if(urlTabKey != null)setTabKey(urlTabKey.toString());
           }
+          
           
           //Hakee julkaisut ostoskorin sisällön mukaan, keho ottaa listan juilkaisujen ideitä [2,4] jne
           const posts = await fetch("https://localhost:44344/api/Orders/Posts",{
@@ -139,7 +164,7 @@ function PaymentPage() {
           headers: { 'Content-Type': 'application/json' ,"Authorization": `Bearer ${cookies.token}`},
           body:JSON.stringify(locationObjectPut)
         }
-        let answer = await fetch("https://localhost:44344/api/Locations/"+currentLocationId,options);
+        let answer = await fetch("https://localhost:44344/api/Locations/"+cookies.currentLocationId,options);
         let parsedAnswer = await answer.json();
 
         if(parsedAnswer?.status != "Error"){
@@ -158,27 +183,61 @@ function PaymentPage() {
 
   useEffect(async() => {
     if(locationObject != ""){
-      try{const options = {
-        method:'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:JSON.stringify(locationObject)
+      if(register == true){
+        try{const options = {
+          method:'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:JSON.stringify(locationObject)
+        }
+        let answer = await fetch("https://localhost:44344/api/Locations",options);
+        let parsedAnswer = await answer.json();
+  
+        if(parsedAnswer?.status != "Error"){
+          
+          setMessage(parsedAnswer?.message);
+          if(parsedAnswer?.message == "Location created succesfully")window.location.reload();
+          else if(parsedAnswer?.message == "User created succesfully"){
+          setCookie('loginModal', "true", { path: '/' ,expires: 0});window.location.reload();}
+        }
+        else{
+          setMessage(parsedAnswer?.message);
+        }}
+        catch{
+          setMessage("Error");
+        }
       }
-      let answer = await fetch("https://localhost:44344/api/Locations",options);
-      let parsedAnswer = await answer.json();
-
-      if(parsedAnswer?.status != "Error"){
-        
-        setMessage(parsedAnswer?.message);
-        if(parsedAnswer?.message == "Location created succesfully")window.location.reload();
-        else if(parsedAnswer?.message == "User created succesfully"){
-        setCookie('loginModal', "true", { path: '/' ,expires: 0});window.location.reload();}
+      else if(register == false){
+        try{const options = {
+          method:'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:JSON.stringify(locationObject)
+        }
+        let answer = await fetch("https://localhost:44344/api/Locations",options);
+        let parsedAnswer = await answer.json();
+  
+        if(parsedAnswer?.status != "Error"){
+          
+          setMessage(parsedAnswer?.message);
+          if(parsedAnswer?.message == "Location created succesfully")
+            window.location.reload();
+          else if(parsedAnswer?.message == "User created succesfully"){
+            setCookie('loginModal', "true", { path: '/' ,expires: 0});
+            window.location.reload();}
+        }
+        else if(parsedAnswer?.message != null && parsedAnswer?.message != ""){
+          setMessage(parsedAnswer?.message);
+        }
+        else{
+          //Tallenetaan sijainnin luonnin yhteydessä luotu guid cookiehen
+          setCookie('locationGuid', parsedAnswer, { path: '/Maksu' });
+          //setLocationGuid(parsedAnswer);
+        }
       }
-      else{
-        setMessage(parsedAnswer?.message);
-      }}
-      catch{
-        setMessage("Error");
+        catch{
+          setMessage("Error");
+        }
       }
+      
     }
   }, [locationObject]);
   
@@ -202,6 +261,7 @@ function PaymentPage() {
     }
   }
 
+  //Aktivoituu kun paypal maksu menee läpi ja luo tilauksen
   useEffect(async ()=>{
     if(paypalResponseObject != ""){
       try{
@@ -216,8 +276,9 @@ function PaymentPage() {
         method:'POST',
         headers: { 'Content-Type': 'application/json' ,"Authorization": `Bearer ${cookies.token}`},
         body:JSON.stringify({
-          LocationId:currentLocationId,
-          OrderItems:orderItems
+          LocationId: cookies.currentLocationId,
+          OrderItems: orderItems,
+          Guid: cookies.locationGuid
         })
         }
 
@@ -232,9 +293,13 @@ function PaymentPage() {
           method:'GET',
           headers: { 'Content-Type': 'application/json' ,"Authorization": `Bearer ${cookies.token}`}
         }
-        //Post palauttaa id:n jolla haetaan juuri luotu order
+        //Post palauttaa Guid:n jolla haetaan juuri luotu order
         answer = await fetch("https://localhost:44344/api/Orders/"+parsedAnswer,options);
         parsedAnswer = await answer.json();
+        //Poistetaan cookiet joihin tallennettiin juuri luodun sijainnin
+        //Voi ottaa käyttöön että poista cookiehin tallennetut sijaintitiedot.
+        // removeCookie('locationGuid',{ path: '/Maksu' });
+        // removeCookie('currentLocationId',{ path: '/Maksu' });
         setOrder(parsedAnswer);
       }}
       catch(e){
@@ -292,10 +357,9 @@ function PaymentPage() {
                 <p>Tämä renderöi jos et ole kirjautunut tai sinulla ei ole laitettuna sijaintitietoja vielä</p>
                 
                 <div>
-
                   <Form.Group controlId="formBasicName">
                     <Form.Label>Etunimi</Form.Label>
-                    <Form.Control   placeholder="Etunimi" onChange={(e)=>{setFirstName(e.target.value); }}/>
+                    <Form.Control  placeholder="Etunimi" onChange={(e)=>{setFirstName(e.target.value); }}/>
                   </Form.Group>
 
                   <Form.Group controlId="formBasicName">
@@ -314,6 +378,7 @@ function PaymentPage() {
                   </Form.Group>
 
                   <label htmlFor='setRegisterInput'>Haluatko luoda käyttäjän tilauksen yhteydessä</label>
+
                   <input id="setRegisterInput" type="checkbox" onClick={(e)=>{setRegister(e.target.checked);console.log(e.target.checked)}}/>
                   {register == true ? (
                   <div>
@@ -400,7 +465,7 @@ function PaymentPage() {
                       <Form.Control disabled={putEnabled} value={postalCodePut}placeholder="Postinumero"onChange={(e)=>{setPostalCodePut(e.target.value);}}/>
                     </Form.Group>
                     <button disabled={putEnabled} type='button' onClick={()=>{setLocationObjectPut({
-                      Id:currentLocationId,
+                      Id:cookies.currentLocationId,
                       userId:cookies.userId,
                       cityId:cityPutId,
                       address:addressPut,

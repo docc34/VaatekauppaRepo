@@ -110,7 +110,7 @@ const paypalResponseObject = {
 
             });
             return(<div>
-                <h3>Tilaus tehty</h3>
+                <h3>Tilaus {o.order?.guid} tehty</h3>
                 <p>Ostetut tuotteet</p>
                 <MakeShoppingCartItem data={o.posts} />
                 <p>Kokonaishinta:{o.price}</p>

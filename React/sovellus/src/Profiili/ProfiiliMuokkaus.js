@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Modal, Image , InputGroup, FormControl,CardColumns} from 'react-bootstrap';
+import { Button, Modal, Image , InputGroup, FormControl,CardGroup as CardColumns} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { getProfileListService, setProfileListService, postProfileEducationAddService, postProfileJobsAddService, deleteProfileJobsService, deleteProfileEducationService, postProfilePictureService } from '../services/profile';

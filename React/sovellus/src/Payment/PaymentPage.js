@@ -429,15 +429,15 @@ function PaymentPage() {
                       address:address,
                       postalCode:postalCode,
                       user:{
-                        userName:null, 
-                        password:null,  
+                        userName:"0", 
+                        password:"0",  
                         firstname: firstName,
                         lastname: lastName,
                         email:email, 
                         phonenumber: phonenumber
                       }
                   })
-                  }}} value={'Rekisteröidy'} variant="primary"/>
+                  }}} value={'Tallenna'} variant="primary"/>
               </div>) : null}
 
                 {/* Jos on kirjautunut ja on sijaintitiedot */}

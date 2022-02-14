@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 
-import { Button, InputGroup, FormControl, Modal,CardColumns } from 'react-bootstrap';
+import { Button, InputGroup, FormControl, Modal,CardGroup as CardColumns } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 

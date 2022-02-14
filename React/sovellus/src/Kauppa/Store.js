@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Store.css';
 
-import {  Button, InputGroup, FormControl,  Modal, CardColumns } from 'react-bootstrap';
+import {  Button, InputGroup, FormControl,  Modal, CardGroup as CardColumns } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { useLocation } from "react-router-dom";
@@ -37,7 +37,7 @@ const Store = () => {
                 else if(jobPostTitle != null && jobPostTitle != undefined){
                     url += "&title="+jobPostTitle;
                 }
-                if(i?.priceSort == "" || i?.priceSort == null || i?.priceSort == undefined){
+                if(i?.priceSort != "" && i?.priceSort != null && i?.priceSort != undefined){
                     url += "&sortPrice="+i?.priceSort;
                 }
 

@@ -217,9 +217,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppadb`.`Orders`
+-- Table `vaatekauppadb`.`orders`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`Orders` (
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`orders` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `price` DOUBLE NOT NULL,
   `orderDate` DATETIME NOT NULL,
@@ -262,12 +262,29 @@ CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`orderitem` (
   INDEX `fk_order_post1_idx` (`postId` ASC),
   CONSTRAINT `fk_order_Orders1`
     FOREIGN KEY (`ordersId`)
-    REFERENCES `vaatekauppadb`.`Orders` (`id`)
+    REFERENCES `vaatekauppadb`.`orders` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_order_post1`
     FOREIGN KEY (`postId`)
     REFERENCES `vaatekauppadb`.`post` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `vaatekauppadb`.`returnPassword`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`returnPassword` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `PasswordReturnCode` VARCHAR(60) NOT NULL,
+  PRIMARY KEY (`id`, `user_id`),
+  INDEX `fk_returnPassword_user1_idx` (`user_id` ASC),
+  CONSTRAINT `fk_returnPassword_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `vaatekauppadb`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

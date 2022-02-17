@@ -1,0 +1,13 @@
+sendgrind testapi apikey.
+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
+
+sendgrind apitestkey
+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
+
+Encodetus komento apiavaimelle käyttäen coreutils paketin työkaluja
+certutil -privatekey -encode not.txt encodedtest.txt
+Huom tulostiedosto ei saa olla olemassa.
+not.txt tiedoston sisältö encodetettiin
+
+Decodetus
+certutil -privatekey -decode encodedtest.txt test.txt

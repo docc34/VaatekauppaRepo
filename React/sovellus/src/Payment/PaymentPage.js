@@ -51,7 +51,7 @@ function PaymentPage() {
   let navigate = useNavigate();
   //const Id = new URLSearchParams(search).get('id');
   const urlTabKey = new URLSearchParams(search).get('tabKey');
-  const [cookies,setCookie] = useCookies(['token']);
+  const [cookies,setCookie,removeCookie] = useCookies(['token']);
   //var x = CheckEmptyFields(["Post number"], [Id]);
   //#endregion
   const GetJobPosts = async () => {
@@ -141,7 +141,6 @@ function PaymentPage() {
   }
   const GetTableData = async () => {
     try{
-      
       const options = {
         method: 'GET'
       }
@@ -216,6 +215,9 @@ function PaymentPage() {
         let parsedAnswer = await answer.json();
   
         if(parsedAnswer?.status != "Error"){
+          setCookie('userEmail', locationObject.user.email, { path: '/Maksu'});
+          setCookie('userFirstname', locationObject.user.firstname, { path: '/Maksu'});
+          setCookie('userLastname', locationObject.user.lastname, { path: '/Maksu'});
           
           setMessage(parsedAnswer?.message);
           if(parsedAnswer?.message == "Location created succesfully")
@@ -278,7 +280,10 @@ function PaymentPage() {
         body:JSON.stringify({
           LocationId: cookies.currentLocationId,
           OrderItems: orderItems,
-          Guid: cookies.locationGuid
+          Guid: cookies.locationGuid,
+          Email: cookies.userEmail,
+          firstName: cookies.userFirstname,
+          lastName: cookies.userLastname
         })
         }
 
@@ -296,7 +301,10 @@ function PaymentPage() {
         //Post palauttaa Guid:n jolla haetaan juuri luotu order
         answer = await fetch("https://localhost:44344/api/Orders/"+parsedAnswer,options);
         parsedAnswer = await answer.json();
-        //Poistetaan cookiet joihin tallennettiin juuri luodun sijainnin
+        //Poistetaan cookiet joihin tallennettiin ei kirjautuneen käyttäjän tiedot
+        removeCookie('userEmail',{ path: '/Maksu' });
+        removeCookie('userFirstname',{ path: '/Maksu' });
+        removeCookie('userLastname',{ path: '/Maksu' });
         //Voi ottaa käyttöön että poista cookiehin tallennetut sijaintitiedot.
         // removeCookie('locationGuid',{ path: '/Maksu' });
         // removeCookie('currentLocationId',{ path: '/Maksu' });

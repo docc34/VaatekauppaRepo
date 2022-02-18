@@ -150,6 +150,7 @@ const HeaderPublic = () => {
                     {/* Ilmoituksen footteri */}
                     <div>
                         <p>Eikö sinulla ole käyttäjää. Voit rekisteröityä <NavLink onClick={() => { resetValues(); }} to="/Rekisteroityminen">Täältä</NavLink> </p>
+                        <p>Voit palauttaa salasanan <NavLink onClick={() => { resetValues(); }} to="/SalasananPalautus">täältä</NavLink> </p>
                     </div>
                 </Modal.Footer>
             </Modal>

@@ -15,8 +15,7 @@ const Store = () => {
     const [storePostsData, setStorePostsData] = useState([]);
     const [labelSearchText, setLabelSearchText] = useState([]);
     const [message, setMessage] = useState([]);
-    const [emailObject, setEmailObject] = useState("");
-    const [emailTo, setEmailTo] = useState("");
+
     
     const [searchObject, setSearchObject] = useState({jobPostTitle:null,priceSort:null});
     
@@ -24,16 +23,6 @@ const Store = () => {
     const jobPostTitle = new URLSearchParams(search).get('title');
     const [cookies] = useCookies(['token']);
     
-    useEffect(async()=>{
-        if(emailObject != ""){
-            const options = {
-                method: 'GET',
-                headers: {"Authorization": `Bearer ${cookies.token}`}
-            }
-            var i = await fetch("https://localhost:44344/api/Email/Send?toAddress="+emailObject,options);
-            console.log(i);
-        }
-    },[emailObject]);
     // haetaan kaikki ilmoitukset 
     const getStoreData = async (i) => {
         if(i != null){
@@ -80,9 +69,6 @@ const Store = () => {
     return (
     <div className="Store-Post-Main-Box">
         <h1> Hae tuotteita</h1>
-        <input onChange={(e)=>{setEmailTo(e.target.value)}}></input>
-        {emailTo}
-        <button onClick={()=>{setEmailObject(emailTo)}}>Lähetä gmail</button>
         {/* Hakukenttä */}
         <div className="Store-Search-Options-Container">
             <div>

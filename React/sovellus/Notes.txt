@@ -11,3 +11,11 @@ not.txt tiedoston sisältö encodetettiin
 
 Decodetus
 certutil -privatekey -decode encodedtest.txt test.txt
+
+Modeleista tietokannan luonti ensin luodaan datamigraatio
+add-migration Initial -Context ApplicationDbContext
+
+Pitää korvata varchar(767) => varchar(100)
+
+Sitten päivitetään tietokanta
+update-database -Context ApplicationDbContext

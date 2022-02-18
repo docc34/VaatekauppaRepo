@@ -1,0 +1,164 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema logindb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema logindb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `logindb` DEFAULT CHARACTER SET utf8mb4 ;
+USE `logindb` ;
+
+-- -----------------------------------------------------
+-- Table `logindb`.`__efmigrationshistory`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `logindb`.`__efmigrationshistory` (
+  `MigrationId` VARCHAR(150) NOT NULL,
+  `ProductVersion` VARCHAR(32) NOT NULL,
+  PRIMARY KEY (`MigrationId`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
+-- Table `logindb`.`aspnetroles`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `logindb`.`aspnetroles` (
+  `Id` VARCHAR(100) NOT NULL,
+  `Name` VARCHAR(256) NULL DEFAULT NULL,
+  `NormalizedName` VARCHAR(256) NULL DEFAULT NULL,
+  `ConcurrencyStamp` TEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`Id`),
+  UNIQUE INDEX `RoleNameIndex` (`NormalizedName` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
+-- Table `logindb`.`aspnetroleclaims`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `logindb`.`aspnetroleclaims` (
+  `Id` INT(11) NOT NULL AUTO_INCREMENT,
+  `RoleId` VARCHAR(100) NOT NULL,
+  `ClaimType` TEXT NULL DEFAULT NULL,
+  `ClaimValue` TEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`Id`),
+  INDEX `IX_AspNetRoleClaims_RoleId` (`RoleId` ASC),
+  CONSTRAINT `FK_AspNetRoleClaims_AspNetRoles_RoleId`
+    FOREIGN KEY (`RoleId`)
+    REFERENCES `logindb`.`aspnetroles` (`Id`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
+-- Table `logindb`.`aspnetusers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `logindb`.`aspnetusers` (
+  `Id` VARCHAR(100) NOT NULL,
+  `UserName` VARCHAR(256) NULL DEFAULT NULL,
+  `NormalizedUserName` VARCHAR(256) NULL DEFAULT NULL,
+  `Email` VARCHAR(256) NULL DEFAULT NULL,
+  `NormalizedEmail` VARCHAR(256) NULL DEFAULT NULL,
+  `EmailConfirmed` TINYINT(1) NOT NULL,
+  `PasswordHash` TEXT NULL DEFAULT NULL,
+  `SecurityStamp` TEXT NULL DEFAULT NULL,
+  `ConcurrencyStamp` TEXT NULL DEFAULT NULL,
+  `PhoneNumber` TEXT NULL DEFAULT NULL,
+  `PhoneNumberConfirmed` TINYINT(1) NOT NULL,
+  `TwoFactorEnabled` TINYINT(1) NOT NULL,
+  `LockoutEnd` TIMESTAMP NULL DEFAULT NULL,
+  `LockoutEnabled` TINYINT(1) NOT NULL,
+  `AccessFailedCount` INT(11) NOT NULL,
+  PRIMARY KEY (`Id`),
+  UNIQUE INDEX `UserNameIndex` (`NormalizedUserName` ASC),
+  INDEX `EmailIndex` (`NormalizedEmail` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
+-- Table `logindb`.`aspnetuserclaims`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `logindb`.`aspnetuserclaims` (
+  `Id` INT(11) NOT NULL AUTO_INCREMENT,
+  `UserId` VARCHAR(100) NOT NULL,
+  `ClaimType` TEXT NULL DEFAULT NULL,
+  `ClaimValue` TEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`Id`),
+  INDEX `IX_AspNetUserClaims_UserId` (`UserId` ASC),
+  CONSTRAINT `FK_AspNetUserClaims_AspNetUsers_UserId`
+    FOREIGN KEY (`UserId`)
+    REFERENCES `logindb`.`aspnetusers` (`Id`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
+-- Table `logindb`.`aspnetuserlogins`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `logindb`.`aspnetuserlogins` (
+  `LoginProvider` VARCHAR(100) NOT NULL,
+  `ProviderKey` VARCHAR(100) NOT NULL,
+  `ProviderDisplayName` TEXT NULL DEFAULT NULL,
+  `UserId` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`LoginProvider`, `ProviderKey`),
+  INDEX `IX_AspNetUserLogins_UserId` (`UserId` ASC),
+  CONSTRAINT `FK_AspNetUserLogins_AspNetUsers_UserId`
+    FOREIGN KEY (`UserId`)
+    REFERENCES `logindb`.`aspnetusers` (`Id`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
+-- Table `logindb`.`aspnetuserroles`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `logindb`.`aspnetuserroles` (
+  `UserId` VARCHAR(100) NOT NULL,
+  `RoleId` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`UserId`, `RoleId`),
+  INDEX `IX_AspNetUserRoles_RoleId` (`RoleId` ASC),
+  CONSTRAINT `FK_AspNetUserRoles_AspNetRoles_RoleId`
+    FOREIGN KEY (`RoleId`)
+    REFERENCES `logindb`.`aspnetroles` (`Id`)
+    ON DELETE CASCADE,
+  CONSTRAINT `FK_AspNetUserRoles_AspNetUsers_UserId`
+    FOREIGN KEY (`UserId`)
+    REFERENCES `logindb`.`aspnetusers` (`Id`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
+-- Table `logindb`.`aspnetusertokens`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `logindb`.`aspnetusertokens` (
+  `UserId` VARCHAR(100) NOT NULL,
+  `LoginProvider` VARCHAR(100) NOT NULL,
+  `Name` VARCHAR(100) NOT NULL,
+  `Value` TEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`UserId`, `LoginProvider`, `Name`),
+  CONSTRAINT `FK_AspNetUserTokens_AspNetUsers_UserId`
+    FOREIGN KEY (`UserId`)
+    REFERENCES `logindb`.`aspnetusers` (`Id`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

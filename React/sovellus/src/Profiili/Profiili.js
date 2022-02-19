@@ -18,8 +18,7 @@ function Profiili() {
   const target = useRef(null);
   const [cookies] = useCookies(['token']);
 
-  var user = null;
-  //TODO:User.userId pitää ottaa cookiesta
+  
   // get user profile data
   const getProfileData = async () => {
     const options = {
@@ -36,7 +35,7 @@ function Profiili() {
       var i = await result.json();
       setProfileData(i);
       setProfileLocation(i?.location);
-      setProfileOrders(i.orders);
+      setProfileOrders(i?.orders);
     }
     //let post = posts.data;
 

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Modal, Image , InputGroup, FormControl,CardGroup as CardColumns} from 'react-bootstrap';
+import {  Button,Form } from 'react-bootstrap';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { getProfileListService, setProfileListService, postProfileEducationAddService, postProfileJobsAddService, deleteProfileJobsService, deleteProfileEducationService, postProfilePictureService } from '../services/profile';
+
+import moment from 'moment'
 
 
 import './Profiili.css';
@@ -12,384 +14,186 @@ import ReactDataGrid from '@inovua/reactdatagrid-community'
 import '@inovua/reactdatagrid-community/index.css'
 
 import { Error, MakePost } from '../Utils/Functions';
+import { useCookies } from 'react-cookie';
 
 //Renderöidään profiilin muokkaus
 const ProfiiliMuokkaus = () => {
   //Muuttujat
-  const [userData, setUserData] = useState([]);
   const [profileFirstLoad, setProfileFirstLoad] = useState(0);
-  const [profileInfo, setProfileInfo] = useState("");
-  const [profileEducation, setProfileEducation] = useState([]);
-  const [profileJobs, setProfileJobs] = useState([]);
-  const [profileId, setProfileId] = useState([]);
   const [profileEmail, setprofileEmail] = useState([]);
   const [profilePhonenumber, setProfilePhonenumber] = useState([]);
-  const [profileImage, setProfileImage] = useState({ image: "" });
+  const [userName, setUserName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
+  const [cityId, setCityId] = useState("");
+  const [address, setAddress] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [locationObject, setLocationObject] = useState("");
+  const [cities, setCities] = useState([]);
 
-  const [educationModalShow, setEducationModalShow] = useState(false);
-  const [educationSchoolName, setEducationSchoolName] = useState("");
-  const [educationDegree, setEducationDegree] = useState("");
-  const [educationStartDate, setEducationStartDate] = useState("");
-  const [educationEndDate, setEducationEndDate] = useState("");
-  const [educationData, setEducationData] = useState("");
-  const [selectedRowEducation, setSelectedRowEducation] = useState("");
-
-
-  const [jobsModalShow, setJobsModalShow] = useState(false);
-  const [jobsName, setJobsName] = useState("");
-  const [jobsProfession, setjobsProfession] = useState("");
-  const [jobsStartDate, setJobsStartDate] = useState("");
-  const [jobsEndDate, setJobsEndDate] = useState("");
-  const [jobsData, setJobsData] = useState("");
   const [message, setMessage] = useState("");
-  const [selectedRowJobs, setSelectedRowJobs] = useState("");
-  const [sentImgFile, setSentImgFile] = useState("");
 
-  const [profilePosts, setProfilePosts] = useState([]);
+  const [profileLocation, setProfileLocation] = useState([]);
+  const [profileOrders, setProfileOrders] = useState([]);
 
-  var user = null;
+  const [cookies] = useCookies(['token']);
+
   let navigate = useNavigate();
   function redirect() {
     navigate("/Profiili");
   }
-  // get user list
-  const getUserList = async () => {
-    const result = null;
-    if (result.error) {
-      //TODO:Error
-    }
-    setUserData(result?.data.userList[0]);
-  }
 
-  //TODO:User objektiin nykyinen user
-  // Hakee profiilin taulukkodatat
-  const getProfileData = async () => {
-    const result = await getProfileListService(0);
-    //const posts = await getProfilePostsService(0);
-    const posts = null;
-    if (result.error || posts.error) {
-      //TODO:Error
+   // get user profile data
+   const getProfileData = async () => {
+      const options = {
+        method: 'GET',
+        headers: {"Authorization": `Bearer ${cookies.token}`}
       }
-    let datat = result.data;
-    let post = posts.data;
-    
-    if (datat.tiedot != null & datat.tiedot != undefined) {
-      setProfileId(datat.tiedot.userId);
-      setProfileInfo(datat.tiedot.userInfo);
-      setprofileEmail(datat.tiedot.email);
-      setProfilePhonenumber(datat.tiedot.phonenumber);
-      setProfileImage(datat.tiedot.image);
-      setProfileEducation(datat.opinnot);
-      setProfileJobs(datat.tyot);
-      setProfilePosts(post.posts);
 
-    }
-
-  }
-
-  // modify user profile data
-  const modifyProfileData = async () => {
-    const result = await setProfileListService({ userId: profileId, userInfo: profileInfo, email: profileEmail, phonenumber: profilePhonenumber, fileName: sentImgFile.name });
-    if (result.error) {
-     //TODO:Error
-    }
-    if (result.statusText == "OK") {
-      redirect();
-    }
-  }
-  // Lisää koulutus
-  useEffect(async () => {
-    if (educationData != "") {
-      const result = await postProfileEducationAddService(educationData);
-      if (result.error) {
-
-        //TODO:Error
+      const result = await fetch("https://localhost:44344/api/user",options)
+      //const posts = await getProfilePostsService(cookies?.userId);
+      if (result?.Status == "Error") {
+        setMessage(result.Message);
       }
-      if (result.statusText == "OK") {
+      else{
+        var i = await result.json();
+        console.log(i);
 
-        resetValues();
-        setMessage("");
-        setEducationData("");
-        getProfileData();
+        setprofileEmail(i?.email);
+        setProfilePhonenumber(i?.phonenumber);
+        setUserName(i.username);
+        setFirstName(i.firstName);
+        setLastName(i.lastName);
+        setProfileLocation(i?.location);
+        setProfileOrders(i?.orders);
+        setCityId(i?.location?.cityId);
+        setAddress(i?.location?.address);
+        setPostalCode(i?.location?.postalCode);
+        // setProfileData(i);
+        // setProfileLocation(i?.location);
+        // setProfileOrders(i?.orders);
       }
     }
-  }, [educationData]);
 
-  // Lisää työpaikka
-  useEffect(async () => {
-    if (jobsData != "") {
-      const result = await postProfileJobsAddService(jobsData);
-      if (result.error) {
-        //TODO:Error
+    const GetTableData = async () => {
+      try{
+        const options = {
+          method: 'GET'
+        }
+        if(cities.length == 0){
+          var i = await fetch("https://localhost:44344/api/Cities",options);
+          var data = await i.json();
+          setCities(data);
+        }
       }
-      if (result.statusText == "OK") {
-        getProfileData();
-        resetValues();
-        setMessage("");
-        setJobsData("");
-      }
-    }
-  }, [jobsData]);
-
-
-  const deleteEducationRow = async () => {
-
-    if (selectedRowEducation.selected != null || selectedRowEducation != "") {
-      const result = await deleteProfileEducationService({ educationId: selectedRowEducation.data.educationId, userId: profileId });
-      if (result.error) {
-        //TODO:Error
-      }
-      if (result.statusText == "OK") {
-        setSelectedRowEducation("");
-        getProfileData();
+      catch{
+        setMessage("Error");
       }
     }
-  }
-  // Poista työpaikka
-  const deleteJobRow = async () => {
-
-    if (selectedRowJobs.selected != null || selectedRowJobs != "") {
-      const result = await deleteProfileJobsService({ jobsId: selectedRowJobs.data.jobsId, userId: profileId });
-      if (result.error) {
-        //TODO:Error
+  
+     // get user profile data
+     const modifyProfileData = async () => {
+      const options = {
+        method: 'GET',
+        headers: {"Authorization": `Bearer ${cookies.token}`}
       }
-      if (result.statusText == "OK") {
-        setSelectedRowJobs("");
-        getProfileData();
+  
+      const result = await fetch("https://localhost:44344/api/user",options)
+      //const posts = await getProfilePostsService(cookies?.userId);
+      if (result?.Status == "Error") {
+        setMessage(result.Message);
+      }
+      else{
+        var i = await result.json();
+        console.log(i);
+
+        setprofileEmail(i?.email);
+        setProfilePhonenumber(i?.phonenumber);
+        setProfileLocation(i?.location);
+        setProfileOrders(i?.orders);
+        // setProfileData(i);
+        // setProfileLocation(i?.location);
+        // setProfileOrders(i?.orders);
       }
     }
-  }
+  
+ 
 
-  // hakee taulukkodatat sivun ladatessa
-  useEffect(() => {
+  const TitlesOrders = [
+    { name: 'id', type: 'number', header: 'id', defaultVisible: false },
+    { name: 'price', defaultFlex: 1,type: 'number', header: 'Hinta'},
+    {
+      name: 'orderDate',
+      header: 'Päivämäärä',
+      defaultWidth: 165,
+      // need to specify dateFormat 
+      dateFormat: 'YYYY-MM-DD, HH:mm',
+      //filterEditor: DateFilter,
+      filterEditorProps: (props, { index }) => {
+        // for range and notinrange operators, the index is 1 for the after field
+        return {
+          dateFormat: 'MM-DD-YYYY, HH:mm',
+          placeholder: index == 1 ? 'Created date is before...': 'Created date is after...'
+        }
+      },
+      //Momentjs formats the date
+      render: ({ value, cellProps: { dateFormat } }) =>
+        moment(value).format(dateFormat),
+    },
+    { name: 'status', defaultFlex: 1, header: 'Tilauksen tila'}
+  ]
+  //, border: "none"
+  const gridStyleOrders = { height: "auto" }
+
+  const citiesToSelect = cities.map((e,i)=>{
+    return(<option value={e.id}>{e.cityName}</option>);
+  });
+
+   // hakee taulukkodatat sivun ladatessa
+   useEffect(() => {
     if (profileFirstLoad == 0) {
-      getUserList();
+      GetTableData();
       getProfileData();
       setProfileFirstLoad(1);
     }
   }, []);
 
-  //Määritetään otsikot 
-  //HUOM! otsikoiden name kentän pitää olla sama kun dataSource json objektin kenttien nimet muuten taulukko ei näytä dataa
-  //defaultWidth: 72,
-  const OtsikotKoulutukset = [
-    { name: 'profile_userId', type: 'number', header: 'profile_userId', defaultVisible: false },
-    { name: 'educationId', type: 'number', header: 'educationId', defaultVisible: false },
-    { name: 'schoolName', defaultFlex: 1, header: 'Koulu' },
-    { name: 'degree', defaultFlex: 1, header: 'Koulutus' },
-    { name: 'startDate', defaultFlex: 1, header: 'Alkupäivä' },
-    { name: 'endDate', defaultFlex: 1, header: 'Loppupäivä' },
-  ]
-  const OtsikotTyot = [
-    { name: 'profile_userId', type: 'number', header: 'profile_userId', defaultVisible: false },
-    { name: 'jobsId', type: 'number', header: 'jobsId', defaultVisible: false },
-    { name: 'workplace', defaultFlex: 1, header: 'Työpaikka' },
-    { name: 'profession', defaultFlex: 1, header: 'Ammatti' },
-    { name: 'startDate', defaultFlex: 1, header: 'Alkupäivä' },
-    { name: 'endDate', defaultFlex: 1, header: 'Loppupäivä' },
-  ]
-  //, border: "none"
-
-  {/* tällähetkellä turhaa paskaa jota ehkä käytän jos toteutan koulutusten/töiden muokkauksen*/ }
-  const gridStyleKoulutukset = { height: "auto" }
-  const gridStyleTyot = { height: "auto" }
-
-
-  {/* nollaa kaikki ponnahdusikkunoiden arvot ja sulkee pnnahdusikkunat */ }
-  const resetValues = () => {
-
-    setEducationModalShow(false);
-    setEducationDegree("");
-    setEducationSchoolName("");
-    setEducationStartDate("");
-    setEducationEndDate("");
-
-    setJobsModalShow(false);
-    setJobsName("");
-    setjobsProfession("");
-    setJobsStartDate("");
-    setJobsEndDate("");
-
-  }
-  // Lähettää kuvatiedoston
-  useEffect(async () => {
-    if (sentImgFile != "" && sentImgFile != null && sentImgFile.type == "image/jpeg" || sentImgFile.type == "image/png") {
-
-      const formData = new FormData();
-      formData.append('dataFile', sentImgFile, sentImgFile.name);
-
-
-      const result = await postProfilePictureService(formData, profileId);
-      if (result.error) {
-        //TODO:Error
-      }
-      if (result.statusText == "OK") {
-        getProfileData();
-        resetValues();
-        setMessage("");
-        setSentImgFile("");
-      }
-    }
-  }, [sentImgFile]);
-
-  const ilmoitukset = () => {
-    if (profilePosts.length < 1 || profilePosts == undefined || profilePosts == null) {
-      return (
-        <div><h3>ilmoitukset</h3>
-          <p>Et ole vielä tehnyt ilmoitusta</p>
-        </div>
-      )
-    }
-    else {
-      <div><h3>ilmoitukset</h3>
-        <p>Et ole vielä tehnyt ilmoitusta</p>
-        <MakePost data={profilePosts} />
-      </div>
-    }
-  }
-
-  const checkProfileImage = ()=>{
-    if( profileImage == null || profileImage == undefined ||  profileImage == ""){
-      return(<Image className="img-thumbnail" src={"http://127.0.0.1:3100/images/DefaultImage.png"}></Image>)
-    }
-    else{
-      return(<Image className="img-thumbnail" src={"http://127.0.0.1:3100/images/" + profileImage}></Image>)
-    }
-  }
-
   return (
     <div className="Profiili-Main">
       <div className="Profiili-UpperPartMain">
         <div className="Profiili-Esittely">
-          <h1 className="Profiili-NimiOtsikko"> {userData.name}</h1>
-          {checkProfileImage()}
-
-          <div className="Profiili-Kuvan-Input">
-            <input type="file" accept="image/png, image/jpeg" onChange={(e) => { setSentImgFile(e.target.files[0]); }} /> </div>
+          <h1 className="Profiili-NimiOtsikko"> {userName}</h1>
 
           <div>
-            <h3>Yhteystiedot</h3>
-            <p> email: </p>
+            <h4>Yhteystiedot</h4>
+            <p> Etunimi: </p>
+            <input type="text" value={firstName} onChange={(e) => { setFirstName(e.target.value); }}></input>
+            <p> Sukunimi: </p>
+            <input type="text" value={lastName} onChange={(e) => { setLastName(e.target.value); }}></input>
+            <p> Sähköposti: </p>
             <input type="text" value={profileEmail} onChange={(e) => { setprofileEmail(e.target.value); }}></input>
-            <p> puhelinnumero: </p>
+            <p> Puhelinnumero: </p>
             <input type="text" value={profilePhonenumber} onChange={(e) => { setProfilePhonenumber(e.target.value); }}></input>
-            <h3>Kuvaus</h3>
-            <InputGroup>
-            {/* <InputGroup.Text>Kuvaus</InputGroup.Text>
-            Mahdollista lisätä tekstiotsikko */}
-            <FormControl as="textarea"  value={profileInfo} onChange={(e) => { setProfileInfo(e.target.value); }} />
-            </InputGroup>
           </div>
 
         </div>
         <div className="Profiili-Tekstit">
-
-          {/* <h3>Kuvaus</h3>
+        <h3>Tilaukset</h3>
+          <ReactDataGrid
+            showColumnMenuTool={false}
+            rowHeight={25}
+            idProperty="id"
+            toggleRowSelectOnClick={false}
+            //defaultSelected={1}
+            //onSelectionChange={(e) => {setSelectedUser(e); IsDeleteButtonDisabled();}}
+            style={gridStyleOrders}
+            columns={TitlesOrders}
+            //defaultFilterValue={UserFilterValue}
+            dataSource={profileOrders}
+            //enableFiltering={enableFiltering}
+            />
           
-          <InputGroup> */}
-          {/* <InputGroup.Text>Kuvaus</InputGroup.Text>
-          Mahdollista lisätä tekstiotsikko */}
-          {/* <FormControl as="textarea"  value={profileInfo} onChange={(e) => { setProfileInfo(e.target.value); }} />
-          </InputGroup> */}
-
-          <h3>Koulutukset</h3>
-          {/* Avaa koulutusten ponnahdusikkunan */}
-          <Button variant="primary" onClick={() => setEducationModalShow(true)}> Lisää koulutus</Button>
-          <Button variant="primary" disabled={selectedRowEducation.selected == null} onClick={() => deleteEducationRow()}> Poista</Button>
-
-
-          {/* modalin asetukset määritetään tässä */}
-          <Modal
-            show={educationModalShow}
-            size="lg"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-          >
-            <Modal.Header closeButton>
-              <Modal.Title id="contained-modal-title-vcenter">
-                {/* Otsikko */}
-                Lisää koulutus
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              {/* Tässä on ponnahdusikkunan kehon sisältö */}
-             <div> <label htmlFor="SchoolName">Koulun nimi <input type="text" value={educationSchoolName} id="SchoolName" onChange={(e) => { setEducationSchoolName(e.target.value); }}></input></label></div>
-             <div> <label htmlFor="Degree">Koulutus <input type="text" value={educationDegree} id="Degree" onChange={(e) => { setEducationDegree(e.target.value); }}></input></label></div>
-             <div> <label htmlFor="educationStartDateInput">Aloitus päivämäärä <input id="educationStartDateInput" value={educationStartDate} type='date' dateformat={"yyyy/MM/dd"} onChange={e => setEducationStartDate(e.target.value)}></input></label></div>
-             <div> <label htmlFor="educationEndDateInput">Lopetus päivämäärä <input id="educationEndDateInput" value={educationEndDate} type='date' dateformat={"yyyy/MM/dd"} onChange={e => setEducationEndDate(e.target.value)}></input></label></div>
-              <Error message={message} />
-
-            </Modal.Body>
-            <Modal.Footer>
-              {/* Ilmoituksen footteri */}
-              <Button onClick={() => { setEducationData({ userId: profileId, schoolName: educationSchoolName, degree: educationDegree, startDate: educationStartDate, endDate: educationEndDate }); }}>Tallenna</Button>
-              <Button onClick={() => { resetValues(); setMessage(""); }}>Peruuta</Button>
-            </Modal.Footer>
-          </Modal>
-          {/* custom taulukko: reactdatagrid */}
-          <ReactDataGrid
-            showColumnMenuTool={false}
-            sortable={false}
-            rowHeight={25}
-            style={gridStyleKoulutukset}
-            idProperty="educationId"
-            toggleRowSelectOnClick={true}
-            defaultSelected={1}
-            onSelectionChange={(e) => { setSelectedRowEducation(e) }}
-            columns={OtsikotKoulutukset}
-            dataSource={profileEducation}
-          />
-
-          <h3>Työt</h3>
-          {/* Avaa töiden ponnahdusikkunan */}
-          <Button variant="primary" onClick={() => setJobsModalShow(true)}> Lisää työpaikka</Button>
-          <Button variant="primary" disabled={selectedRowJobs.selected == null} onClick={() => deleteJobRow()}> Poista</Button>
-
-          {/*   modalin asetukset määritetään tässä */}
-          <Modal
-            show={jobsModalShow}
-            size="lg"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-          >
-
-            <Modal.Header closeButton>
-              <Modal.Title id="contained-modal-title-vcenter">
-                {/* Otsikko */}
-                Lisää työpaikka
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              {/* Tässä on ponnahdusikkunan kehon sisältö */}
-              <div><label htmlFor="workplaceName">Työpaikan nimi <input type="text" value={jobsName} id="workplaceName" onChange={(e) => { setJobsName(e.target.value); }}></input></label></div>
-              <div><label htmlFor="profession">Ammatti <input type="text" value={jobsProfession} id="profession" onChange={(e) => { setjobsProfession(e.target.value); }}></input></label></div>
-              <div><label htmlFor="jobsStartDateInput">Aloitus päivämäärä <input id="jobsStartDateInput" value={jobsStartDate} type='date' dateformat={"yyyy/MM/dd"} onChange={e => setJobsStartDate(e.target.value)}></input></label></div>
-              <div><label htmlFor="jobsEndDateInput">Lopetus päivämäärä <input id="jobsEndDateInput" value={jobsEndDate} type='date' dateformat={"yyyy/MM/dd"} onChange={e => setJobsEndDate(e.target.value)}></input></label></div>
-
-              <Error message={message} />
-            </Modal.Body>
-            <Modal.Footer>
-              {/* Ilmoituksen footteri */}
-              <Button onClick={() => { setJobsData({ userId: profileId, workplace: jobsName, profession: jobsProfession, startDate: jobsStartDate, endDate: jobsEndDate }); }}>Tallenna</Button>
-              <Button onClick={() => { resetValues(); }}>Peruuta</Button>
-            </Modal.Footer>
-          </Modal>
-
-          {/* custom taulukko: reactdatagrid */}
-          <ReactDataGrid
-            showColumnMenuTool={false}
-            sortable={false}
-            rowHeight={25}
-            style={gridStyleTyot}
-            idProperty="jobsId"
-            defaultSelected={1}
-            toggleRowSelectOnClick={true}
-            onSelectionChange={(e) => { setSelectedRowJobs(e) }}
-            columns={OtsikotTyot}
-            dataSource={profileJobs}
-          />
-
         </div>
 
         {/* Asetukset osio */}
@@ -402,9 +206,24 @@ const ProfiiliMuokkaus = () => {
         </div>
       </div>
       <div>
-        <CardColumns  className="Profile-CardColumns">
-        {ilmoitukset()}
-        </CardColumns>
+        <div>
+          {/* TODO: Tähän kaupungin autofill ja hae kaupungit backendista*/}
+          <Form.Group controlId="formBasicCity">
+          <select value={cityId} onChange={(e)=>{setCityId(e.target.value);}}>
+            <option value="">Valitse kaupunki</option>
+            {citiesToSelect}
+          </select>
+          </Form.Group>
+          <Form.Group controlId="formBasicAddress">
+            <Form.Label>osoite</Form.Label>
+            <Form.Control placeholder="Osoite" value={address} onChange={(e)=>{setAddress(e.target.value);}}/>
+          </Form.Group>
+          <Form.Group controlId="formBasicPhonenumber">
+            <Form.Label>Postinumero</Form.Label>
+            <Form.Control placeholder="Postinumero" value={postalCode} onChange={(e)=>{setPostalCode(e.target.value);}}/>
+          </Form.Group>
+        </div>
+        <p>Jee ala osa profiilia</p>
       </div>
     </div>
   );

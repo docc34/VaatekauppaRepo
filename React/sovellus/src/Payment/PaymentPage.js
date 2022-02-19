@@ -103,36 +103,38 @@ function PaymentPage() {
             
           }
           
-          
+          // if(){
+            
+          // }
           //Hakee julkaisut ostoskorin sisällön mukaan, keho ottaa listan juilkaisujen ideitä [2,4] jne
-          const posts = await fetch("https://localhost:44344/api/Orders/Posts",{
+          const fetchPosts = await fetch("https://localhost:44344/api/Orders/Posts",{
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body:JSON.stringify(cookies?.shoppingCart)
           });
-          let post = await posts.json();
+          let post = await fetchPosts.json();
           
-          if(post?.status == "Error")
+          
+          if(post.status == "Error" || fetchPosts.status == 400){
             setMessage(post?.message);
-          else if(post?.status == 400){
-            setMessage(post?.title);
+            setPosts([]);
           }
-          else
-          setPosts(post);
-
-          var orderItems = post.map((e,i)=>{
-            return{
-              PostId:e?.id,
-              Amount:1
-            }//TODO: laita tähän tuotteiden määrä kun otat sen käyttöön.
-          });
+          else{ 
+            setPosts(post);
+            var orderItems = post.map((e,i)=>{
+              return{
+                PostId:e?.id,
+                Amount:1
+              }//TODO: laita tähän tuotteiden määrä kun otat sen käyttöön.
+            });
   
-          var price = await fetch("https://localhost:44344/api/Orders/price",{
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body:JSON.stringify(orderItems)
-          });
-          setPrice( await price.json());
+            var price = await fetch("https://localhost:44344/api/Orders/price",{
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body:JSON.stringify(orderItems)
+            });
+            setPrice( await price.json());
+        }
       }
       catch(e){
         setMessage(e);
@@ -328,7 +330,8 @@ function PaymentPage() {
 
           <Tabs activeKey={tabKey} id="uncontrolled-tab-example" className="mb-3">
             <Tab eventKey="0" title="Tilaustiedot" disabled>
-              <p>Tab 1 tiedot</p>
+              <h3>Ostoskori</h3>
+              <MakeShoppingCartItem shoppingCart={true} data={posts} />
               {/* TODO: Laita tietojen anto/Maksaminen vaiheistettuun tabiin */}
               {loggedIn == 1 || loggedIn == 2 ?(
               <div>

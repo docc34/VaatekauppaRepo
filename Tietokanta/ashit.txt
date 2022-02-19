@@ -143,7 +143,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`location` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `userId` INT NULL,
-  `address` VARCHAR(200) NOT NULL,
+  `address` VARCHAR(150) NOT NULL,
   `postalCode` INT NOT NULL,
   `cityId` INT NOT NULL,
   `houseNumber` VARCHAR(45) NULL,
@@ -189,7 +189,7 @@ CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`ratings` (
   `postId` INT NOT NULL,
   `userId` INT NOT NULL,
   `stars` DOUBLE NOT NULL,
-  `review` VARCHAR(200) NULL,
+  `review` VARCHAR(150) NULL,
   INDEX `fk_ratings_post1_idx` (`postId` ASC),
   PRIMARY KEY (`id`),
   INDEX `fk_ratings_userdata1_idx` (`userId` ASC),

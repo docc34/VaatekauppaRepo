@@ -152,6 +152,7 @@ const MakePost = (p) => {
                     <Card.Text>
                       <button onClick={()=>{if(cookies['shoppingCart'] == null || cookies['shoppingCart'] == undefined){
                         setCookie('shoppingCart', [{PostId:e?.id}], { path: '/' })
+                        window.location.reload();
                       }
                       else{
                         var i = cookies['shoppingCart'];

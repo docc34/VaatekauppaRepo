@@ -98,12 +98,15 @@ function Profiili() {
 
               {/* {checkProfileImage()} */}
               <h3>Yhteystiedot</h3>
+              <p> etunimi: {profileData?.firstName}</p>
+              <p> sukunimi: {profileData?.lastName}</p>
               <p> email: {profileData?.email}</p>
               <p> puhelinnumero: {profileData?.phonenumber}</p>
               <h3>Osoitetiedot</h3>
               <p> kaupunki: {profileData?.city}</p>
               <p> osoite: {profileLocation?.address}</p>
               <p> postinumero: {profileLocation?.postalCode}</p>
+              <p> talonnumero: {profileLocation?.houseNumber}</p>
             </div>
           <div className="Profiili-Tekstit">
 

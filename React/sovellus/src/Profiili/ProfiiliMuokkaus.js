@@ -1,47 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import {  Button,Form } from 'react-bootstrap';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-
 import moment from 'moment'
-
 
 import './Profiili.css';
 import ReactDataGrid from '@inovua/reactdatagrid-community'
 import '@inovua/reactdatagrid-community/index.css'
 
-import { Error, MakePost } from '../Utils/Functions';
+import { Error, CheckEmptyFields,handleInputChange } from '../Utils/Functions';
 import { useCookies } from 'react-cookie';
 
 //Renderöidään profiilin muokkaus
 const ProfiiliMuokkaus = () => {
   //Muuttujat
   const [profileFirstLoad, setProfileFirstLoad] = useState(0);
-  const [profileEmail, setprofileEmail] = useState([]);
-  const [profilePhonenumber, setProfilePhonenumber] = useState([]);
+  const [email, setEmail] = useState([]);
+  const [phoneNumber, setPhoneNumber] = useState([]);
   const [userName, setUserName] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [houseNumber, setHouseNumber] = useState("");
 
   const [cityId, setCityId] = useState("");
   const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
-  const [locationObject, setLocationObject] = useState("");
   const [cities, setCities] = useState([]);
 
   const [message, setMessage] = useState("");
 
   const [profileLocation, setProfileLocation] = useState([]);
   const [profileOrders, setProfileOrders] = useState([]);
-
+  const [modifyUserObject, setModifyUserObject] = useState("");
+  
   const [cookies] = useCookies(['token']);
 
   let navigate = useNavigate();
   function redirect() {
-    navigate("/Profiili");
+    //navigate("/Profiili");
   }
 
    // get user profile data
@@ -60,8 +56,8 @@ const ProfiiliMuokkaus = () => {
         var i = await result.json();
         console.log(i);
 
-        setprofileEmail(i?.email);
-        setProfilePhonenumber(i?.phonenumber);
+        setEmail(i?.email);
+        setPhoneNumber(i?.phonenumber);
         setUserName(i.username);
         setFirstName(i.firstName);
         setLastName(i.lastName);
@@ -108,8 +104,8 @@ const ProfiiliMuokkaus = () => {
         var i = await result.json();
         console.log(i);
 
-        setprofileEmail(i?.email);
-        setProfilePhonenumber(i?.phonenumber);
+        setEmail(i?.email);
+        setPhoneNumber(i?.phonenumber);
         setProfileLocation(i?.location);
         setProfileOrders(i?.orders);
         // setProfileData(i);
@@ -118,7 +114,27 @@ const ProfiiliMuokkaus = () => {
       }
     }
   
- 
+    useEffect( async ()=>{
+      if(CheckEmptyFields([modifyUserObject])){
+        const options = {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json' ,"Authorization": `Bearer ${cookies.token}`},
+          body:JSON.stringify(modifyUserObject)
+        }
+    
+        const result = await fetch("https://localhost:44344/api/user",options);
+        //const posts = await getProfilePostsService(cookies?.userId);
+        if (result?.Status == "Error") {
+          setMessage(result.Message);
+        }
+        else{
+          navigate("/Profiili");
+        }
+      }
+      else{
+
+      }
+    },[modifyUserObject]);
 
   const TitlesOrders = [
     { name: 'id', type: 'number', header: 'id', defaultVisible: false },
@@ -164,22 +180,30 @@ const ProfiiliMuokkaus = () => {
       <div className="Profiili-UpperPartMain">
         <div className="Profiili-Esittely">
           <h1 className="Profiili-NimiOtsikko"> {userName}</h1>
-
+            {message}
           <div>
             <h4>Yhteystiedot</h4>
-            <p> Etunimi: </p>
-            <input type="text" value={firstName} onChange={(e) => { setFirstName(e.target.value); }}></input>
-            <p> Sukunimi: </p>
-            <input type="text" value={lastName} onChange={(e) => { setLastName(e.target.value); }}></input>
-            <p> Sähköposti: </p>
-            <input type="text" value={profileEmail} onChange={(e) => { setprofileEmail(e.target.value); }}></input>
-            <p> Puhelinnumero: </p>
-            <input type="text" value={profilePhonenumber} onChange={(e) => { setProfilePhonenumber(e.target.value); }}></input>
+            <Form.Group controlId="formBasicEtunimi">
+              <Form.Label>Etunimi:</Form.Label>
+              <Form.Control onBlur={(e)=>{handleInputChange(e)}} value={firstName} placeholder="Etunimi"onChange={(e)=>{setFirstName(handleInputChange(e));}}/>
+            </Form.Group>
+            <Form.Group controlId="formBasicSukunimi">
+              <Form.Label>Sukunimi:</Form.Label>
+              <Form.Control onBlur={(e)=>{handleInputChange(e)}} value={lastName} placeholder="Sukunimi"onChange={(e)=>{setLastName(handleInputChange(e));}}/>
+            </Form.Group>
+            <Form.Group controlId="formBasicSahkoposti">
+              <Form.Label>Sähköposti:</Form.Label>
+              <Form.Control onBlur={(e)=>{handleInputChange(e)}} value={email} placeholder="Sähköposti"onChange={(e)=>{setEmail(handleInputChange(e));}}/>
+            </Form.Group>
+            <Form.Group controlId="formBasicPuhelinnumero">
+              <Form.Label>Puhelinnumero:</Form.Label>
+              <Form.Control onBlur={(e)=>{handleInputChange(e)}} value={phoneNumber} placeholder="Puhelinnumero"onChange={(e)=>{setPhoneNumber(handleInputChange(e));}}/>
+            </Form.Group>
           </div>
 
         </div>
         <div className="Profiili-Tekstit">
-        <h3>Tilaukset</h3>
+          <h3>Tilaukset</h3>
           <ReactDataGrid
             showColumnMenuTool={false}
             rowHeight={25}
@@ -193,16 +217,28 @@ const ProfiiliMuokkaus = () => {
             dataSource={profileOrders}
             //enableFiltering={enableFiltering}
             />
-          
         </div>
 
         {/* Asetukset osio */}
         <div className="Profiili-valikko">
           <h2>Asetukset</h2>
          <div><a href="/ProfiiliMuokkaus">Muokkaa profiilia</a></div> 
-         <div><a href="/Tyoilmoitukset">Hallinnoi työilmoituksia</a></div>
-         <div> <button type="button" onClick={()=>{redirect();}}>Peruuta</button></div> 
-         <div> <button type="button" onClick={() => { modifyProfileData(); }}>Tallenna</button></div> 
+         
+         <div> <button type="button" onClick={()=>{navigate("/Profiili");}}>Peruuta</button></div> 
+         <div> 
+           <button type="button" onClick={() => { setModifyUserObject({
+                firstname: firstName,
+                lastname: lastName,
+                email:email, 
+                phonenumber: phoneNumber,
+                userName:"0",
+                password:"0",
+                location:{
+                  address:address,
+                  postalCode:postalCode,
+                  houseNumber:houseNumber
+                }
+            }) }}>Tallenna</button></div> 
         </div>
       </div>
       <div>
@@ -215,12 +251,16 @@ const ProfiiliMuokkaus = () => {
           </select>
           </Form.Group>
           <Form.Group controlId="formBasicAddress">
-            <Form.Label>osoite</Form.Label>
+            <Form.Label>Osoite:</Form.Label>
             <Form.Control placeholder="Osoite" value={address} onChange={(e)=>{setAddress(e.target.value);}}/>
           </Form.Group>
           <Form.Group controlId="formBasicPhonenumber">
-            <Form.Label>Postinumero</Form.Label>
+            <Form.Label>Postinumero:</Form.Label>
             <Form.Control placeholder="Postinumero" value={postalCode} onChange={(e)=>{setPostalCode(e.target.value);}}/>
+          </Form.Group>
+          <Form.Group controlId="formBasicHouseNumber">
+            <Form.Label>Talonnumero:</Form.Label>
+            <Form.Control placeholder="Talonnumero" value={houseNumber} onChange={(e)=>{setHouseNumber(e.target.value);}}/>
           </Form.Group>
         </div>
         <p>Jee ala osa profiilia</p>

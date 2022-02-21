@@ -303,7 +303,7 @@ const MakeShoppingCartItem = (p) => {
 }
 
 const FormatDeliveryEstimateToDate = (v)=>{
-  if(CheckEmptyFields(["1","2"],[v.deliveryDaysEstimateStarting,v.deliveryDaysEstimateEnding]).status == true && v.deliveryDaysEstimateStarting < v.deliveryDaysEstimateEnding){
+  if(CheckEmptyFields([v.deliveryDaysEstimateStarting,v.deliveryDaysEstimateEnding]) && v.deliveryDaysEstimateStarting < v.deliveryDaysEstimateEnding){
     var d = new Date();
     var starting = d.setDate(d.getDate() + v.deliveryDaysEstimateStarting);
     var ending = d.setDate(d.getDate() + v.deliveryDaysEstimateEnding);
@@ -367,7 +367,7 @@ const handleInputChange = (o)=>{
 
 //Can also check objects but dosent tell what fields failed
 const CheckEmptyFields = ( tarkistettavatTiedot)=>{
-  let tarkistusStatus = { status: true, kentat: "" };
+  let tarkistusStatus = true;
   //Object.values(obj) returns the objects values in an array
   //Tarkistaa onko tiedot tyhjiä ja palauttaa mitkä kentät on tyhjiä 
   try{
@@ -375,13 +375,13 @@ const CheckEmptyFields = ( tarkistettavatTiedot)=>{
       if(typeof(e) == 'object'){
         Object.values(e).map((oe, oi) => {
           if (oe == null  || oe == "") {
-            tarkistusStatus = { status: false, viesti: "Pakolliset kentät ei ole täytetty" }
+            tarkistusStatus = false
           }
         });
       } 
       else{
         if (e == null || e == "") {
-          tarkistusStatus = { status: false, viesti: "Pakolliset kentät ei ole täytetty"}
+          tarkistusStatus = false
         }
       }
     });

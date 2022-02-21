@@ -294,7 +294,7 @@ function PaymentPage() {
       else{
         options = {
           method:'GET',
-          headers: { 'Content-Type': 'application/json' ,"Authorization": `Bearer ${cookies.token}`}
+          headers: { "Authorization": `Bearer ${cookies.token}`}
         }
         //Post palauttaa Guid:n jolla haetaan juuri luotu order
         answer = await fetch("https://localhost:44344/api/Orders/"+parsedAnswer,options);

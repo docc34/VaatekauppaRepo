@@ -19,3 +19,6 @@ Pitää korvata varchar(767) => varchar(100)
 
 Sitten päivitetään tietokanta
 update-database -Context ApplicationDbContext
+
+Tuo normi tietokannan pöydät ef modeleiksi
+Scaffold-DbContext 'Data Source=localhost;Initial Catalog=vaatekauppadb; user=root; password=;' Microsoft.EntityFrameworkCore.SqlServer -OutputDir NewModels -Force

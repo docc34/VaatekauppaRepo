@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
 import {  Button,Form,Tabs,Tab } from 'react-bootstrap';
 
-import {CheckEmptyFields, Paypal} from '../Utils/Functions';
+import {CheckEmptyFields, Paypal,handleInputChange} from '../Utils/Functions';
 import './PaymentPage.css';
 import { Error } from '../Utils/Functions';
 
@@ -45,7 +45,7 @@ function PaymentPage() {
   const [order, setOrder] = useState("");
   const [price, setPrice] = useState("");
   const [register, setRegister] = useState(false);
-  const [locationGuid, setLocationGuid] = useState("");
+  const [testErrors, setTestErrors] = useState([]);
   
   const [cities, setCities] = useState([]);
   let navigate = useNavigate();
@@ -102,10 +102,6 @@ function PaymentPage() {
             }
             
           }
-          
-          // if(){
-            
-          // }
           //Hakee julkaisut ostoskorin sisällön mukaan, keho ottaa listan juilkaisujen ideitä [2,4] jne
           const fetchPosts = await fetch("https://localhost:44344/api/Orders/Posts",{
             method: 'POST',
@@ -137,7 +133,7 @@ function PaymentPage() {
         }
       }
       catch(e){
-        setMessage(e);
+        console.log(e);
       }
     }
   }
@@ -156,9 +152,9 @@ function PaymentPage() {
       setMessage("Error");
     }
   }
-  
+
   useEffect(async() => {
-    if(locationObjectPut != "" && putEnabled == false){
+    if(locationObjectPut != "" && putEnabled == false && CheckEmptyFields([locationObjectPut])){
       try{
         const options = {
           method:'PUT',
@@ -183,7 +179,7 @@ function PaymentPage() {
   }, [locationObjectPut]);
 
   useEffect(async() => {
-    if(locationObject != ""){
+    if(locationObject != "" && CheckEmptyFields([locationObject])){
       if(register == true){
         try{const options = {
           method:'POST',
@@ -318,6 +314,8 @@ function PaymentPage() {
     }
   },[paypalResponseObject]);
 
+
+
   if(posts != "")
   {
     return (
@@ -337,18 +335,18 @@ function PaymentPage() {
               <div>
                 {/* TODO: Tähän kaupungin autofill ja hae kaupungit backendista*/}
                 <Form.Group controlId="formBasicCity">
-                <select onChange={(e)=>{setCityId(e.target.value);}}>
+                <select onBlur={(e)=>{handleInputChange(e)}} onChange={(e)=>{setCityId(handleInputChange(e));}}>
                   <option value="">Valitse kaupunki</option>
                   {citiesToSelect}
                 </select>
                 </Form.Group>
                 <Form.Group controlId="formBasicAddress">
                   <Form.Label>osoite</Form.Label>
-                  <Form.Control placeholder="Osoite"onChange={(e)=>{setAddress(e.target.value);}}/>
+                  <Form.Control onBlur={(e)=>{handleInputChange(e)}} placeholder="Osoite"onChange={(e)=>{setAddress(handleInputChange(e));}}/>
                 </Form.Group>
                 <Form.Group controlId="formBasicPhonenumber">
                   <Form.Label>Postinumero</Form.Label>
-                  <Form.Control placeholder="Postinumero"onChange={(e)=>{setPostalCode(e.target.value);}}/>
+                  <Form.Control onBlur={(e)=>{handleInputChange(e)}} placeholder="Postinumero"onChange={(e)=>{setPostalCode(handleInputChange(e));}}/>
                 </Form.Group>
               </div>):null}
 
@@ -370,22 +368,22 @@ function PaymentPage() {
                 <div>
                   <Form.Group controlId="formBasicName">
                     <Form.Label>Etunimi</Form.Label>
-                    <Form.Control  placeholder="Etunimi" onChange={(e)=>{setFirstName(e.target.value); }}/>
+                    <Form.Control onBlur={(e)=>{handleInputChange(e)}} placeholder="Etunimi" onChange={(e)=>{setFirstName(handleInputChange(e)); }}/>
                   </Form.Group>
 
                   <Form.Group controlId="formBasicName">
                     <Form.Label>Sukunimi</Form.Label>
-                    <Form.Control   placeholder="Sukunimi" onChange={(e)=>{setLastName(e.target.value); }}/>
+                    <Form.Control  onBlur={(e)=>{handleInputChange(e)}} placeholder="Sukunimi" onChange={(e)=>{setLastName(handleInputChange(e)); }}/>
                   </Form.Group>
 
                   <Form.Group controlId="formBasicEmail">
                     <Form.Label>Email</Form.Label>
-                    <Form.Control type="email"  placeholder="Email" onChange={(e)=>{setEmail(e.target.value);}}/>
+                    <Form.Control onBlur={(e)=>{handleInputChange(e)}} type="email"  placeholder="Email" onChange={(e)=>{setEmail(handleInputChange(e));}}/>
                   </Form.Group>
 
                   <Form.Group controlId="formBasicPhonenumber">
                     <Form.Label>Puhelinnumero</Form.Label>
-                    <Form.Control placeholder="Puhelinnumero"onChange={(e)=>{setPhonenumber(e.target.value);}}/>
+                    <Form.Control onBlur={(e)=>{handleInputChange(e)}} placeholder="Puhelinnumero"onChange={(e)=>{setPhonenumber(handleInputChange(e));}}/>
                   </Form.Group>
 
                   <label htmlFor='setRegisterInput'>Haluatko luoda käyttäjän tilauksen yhteydessä</label>
@@ -395,17 +393,17 @@ function PaymentPage() {
                   <div>
                     <Form.Group controlId="formBasicUsername">
                       <Form.Label>Käyttäjänimi</Form.Label>
-                      <Form.Control  placeholder="Käyttäjänimi" onChange={(e)=>{setUsername(e.target.value); }} />
+                      <Form.Control onBlur={(e)=>{handleInputChange(e)}} placeholder="Käyttäjänimi" onChange={(e)=>{setUsername(handleInputChange(e)); }} />
                     </Form.Group>
 
                     <Form.Group controlId="formBasicPassword">
                       <Form.Label>Salasana</Form.Label>
-                      <Form.Control type="password" placeholder="Salasana"onChange={(e)=>{setPassword(e.target.value); }}/>
+                      <Form.Control onBlur={(e)=>{handleInputChange(e)}} type="password" placeholder="Salasana"onChange={(e)=>{setPassword(handleInputChange(e)); }}/>
                     </Form.Group>
 
                     <Form.Group controlId="formBasicPassword">
                       <Form.Label>Salasana uudestaan</Form.Label>
-                      <Form.Control type="password" placeholder="Salasana uudestaan"onChange={(e)=>{setPasswordAgain(e.target.value);}}/>
+                      <Form.Control onBlur={(e)=>{handleInputChange(e)}} type="password" placeholder="Salasana uudestaan"onChange={(e)=>{setPasswordAgain(handleInputChange(e));}}/>
                     </Form.Group>
                   </div>) : (null)}
                   
@@ -460,20 +458,19 @@ function PaymentPage() {
                   <button disabled={putEnabled} onClick={()=>{setPutEnabled(true);}}>Peruuta</button>
                   <div>
                     {/* TODO: Tähän kaupungin autofill. */}
-                    
                     <Form.Group controlId="formBasicCity">
-                    <select disabled={putEnabled} value={cityPutId} onChange={(e)=>{setCityPutId(e.target.value);}}>
+                    <select disabled={putEnabled} value={cityPutId} onBlur={(e)=>{handleInputChange(e)}} onChange={(e)=>{setCityPutId(handleInputChange(e));}}>
                       <option value="">Valitse kaupunki</option>
                       {citiesToSelect}
                     </select>
                     </Form.Group>
                     <Form.Group controlId="formBasicAddress">
                       <Form.Label>osoite</Form.Label>
-                      <Form.Control disabled={putEnabled}value={addressPut}placeholder="Osoite"onChange={(e)=>{setAddressPut(e.target.value);}}/>
+                      <Form.Control onBlur={(e)=>{handleInputChange(e)}} disabled={putEnabled}value={addressPut}placeholder="Osoite"onChange={(e)=>{setAddressPut(handleInputChange(e));}}/>
                     </Form.Group>
                     <Form.Group controlId="formBasicPhonenumber">
                       <Form.Label>Postinumero</Form.Label>
-                      <Form.Control disabled={putEnabled} value={postalCodePut}placeholder="Postinumero"onChange={(e)=>{setPostalCodePut(e.target.value);}}/>
+                      <Form.Control onBlur={(e)=>{handleInputChange(e)}} disabled={putEnabled} value={postalCodePut}placeholder="Postinumero"onChange={(e)=>{setPostalCodePut(handleInputChange(e));}}/>
                     </Form.Group>
                     <button disabled={putEnabled} type='button' onClick={()=>{setLocationObjectPut({
                       Id:cookies.currentLocationId,
@@ -534,7 +531,6 @@ function PaymentPage() {
             </Tab>
             <Tab eventKey="2" title="Tilaus valmis" disabled>
               <ResponsePage price={price} posts={posts} order={order} paypalResponseObject={paypalResponseObject} />
-              {console.log(paypalResponseObject)}
             {/* TODO: */}
             <p>HUOM POISTA VASEMMALLE NAPPI </p>
             <button onClick={()=>{setTabKey("1")}}>Vasemmalle</button>

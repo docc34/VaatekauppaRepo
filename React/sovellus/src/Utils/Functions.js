@@ -354,25 +354,75 @@ const Error = (props) => {
   return (<p className="errorText">{props.message}</p>)
 }
 
-const CheckEmptyFields = (tarkistusKentat, tarkistettavatTiedot)=>{
-
-  let tarkistusStatus = { status: true, kentat: "" };
-  let l = 0;
-  //Tarkistaa onko tiedot tyhjiä ja palauttaa mitkä kentät on tyhjiä
-  tarkistettavatTiedot.map((e, i) => {
-      
-      if (e == null && l == 0 || e == "" && l == 0) {
-          l++;
-          tarkistusStatus = { status: false, kentat: "Seuraavat kentät puuttuvat: "+ tarkistusKentat[i] }
-      }
-       else if(e == null && l == 1 || e == "" && l == 1){
-      
-          tarkistusStatus = { status: false, kentat: tarkistusStatus.kentat + "," + tarkistusKentat[i] }
-      }
-
-  });
-  return tarkistusStatus
+const handleInputChange = (o)=>{
+  if(o.target.value == null  || o.target.value == ""|| o.target.value == 0){
+    o.target.setAttribute('style','border-color: #8f37aa; border-width: 2px')
+    return null;
+  }
+  else{
+    o.target.setAttribute('style','')
+    return o.target.value;
+  }
 }
+
+//Can also check objects but dosent tell what fields failed
+const CheckEmptyFields = ( tarkistettavatTiedot)=>{
+  let tarkistusStatus = { status: true, kentat: "" };
+  //Object.values(obj) returns the objects values in an array
+  //Tarkistaa onko tiedot tyhjiä ja palauttaa mitkä kentät on tyhjiä 
+  try{
+    tarkistettavatTiedot.map((e, i) => {
+      if(typeof(e) == 'object'){
+        Object.values(e).map((oe, oi) => {
+          if (oe == null  || oe == "") {
+            tarkistusStatus = { status: false, viesti: "Pakolliset kentät ei ole täytetty" }
+          }
+        });
+      } 
+      else{
+        if (e == null || e == "") {
+          tarkistusStatus = { status: false, viesti: "Pakolliset kentät ei ole täytetty"}
+        }
+      }
+    });
+    return tarkistusStatus
+  }catch(e){
+    console.log(e);
+  }
+  
+}
+
+// const CheckEmptyFieldsWithMessage = (tarkistusKentat, tarkistettavatTiedot)=>{
+
+//   let tarkistusStatus = { status: true, kentat: "" };
+//   let l = 0;
+//   //Object.values(obj)
+
+//   //Tarkistaa onko tiedot tyhjiä ja palauttaa mitkä kentät on tyhjiä
+//   tarkistettavatTiedot.map((e, i) => {
+//     if(typeof(e) == 'object'){
+//       Object.values(e).map((oe, oi) => {
+//         if (oe == null && l == 0 || oe == "" && l == 0) {
+//           l++;
+//           tarkistusStatus = { status: false, kentat: "Seuraavat kentät puuttuvat: "+ tarkistusKentat[i] }
+//         }
+//         else if(oe == null && l == 1 || oe == "" && l == 1){
+//           tarkistusStatus = { status: false, kentat: tarkistusStatus.kentat + "," + tarkistusKentat[i] }
+//         }
+//       });
+//     }
+//       if (e == null && l == 0 || e == "" && l == 0) {
+//           l++;
+//           tarkistusStatus = { status: false, kentat: "Seuraavat kentät puuttuvat: "+ tarkistusKentat[i] }
+//       }
+//        else if(e == null && l == 1 || e == "" && l == 1){
+      
+//           tarkistusStatus = { status: false, kentat: tarkistusStatus.kentat + "," + tarkistusKentat[i] }
+//       }
+
+//   });
+//   return tarkistusStatus
+// }
 
 const Paypal = (o)=>{
   const paypal = useRef();
@@ -490,5 +540,6 @@ export {
   CheckEmptyFields,
   Paypal,
   MakeShoppingCartItem,
-  FormatDeliveryEstimateToDate
+  FormatDeliveryEstimateToDate,
+  handleInputChange
 }

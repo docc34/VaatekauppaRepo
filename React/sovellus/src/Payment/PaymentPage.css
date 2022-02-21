@@ -10,8 +10,14 @@
     padding: 10px
 }
 
-
-
+.test{
+    border-color: #8f37aa;
+    border-width: 2px;
+}
+.form-control{
+    border-color: #8f37aa;
+    border-width: 2px;
+}
 .cart {
     background: #fff
 }

@@ -102,7 +102,7 @@ const MakePost = (p) => {
             return (<Col>
               <Card className="Post-Card">
                 <Card.Body>
-                  <Card.Title><a href={url}class="font-weight-bold d-block">{e?.label}</a></Card.Title>
+                  <Card.Title><a href={url}className="font-weight-bold d-block">{e?.label}</a></Card.Title>
                   <Card.Text className=""> 
                     <div className="ProfileCardTitleContainer">
                       <div>
@@ -110,6 +110,7 @@ const MakePost = (p) => {
                       </div>
                     </div>
                   </Card.Text>
+                  {console.log(e?.imageLink)}
                   <img className='ReviewLinkedImage' src={e?.imageLink}/>
                   {/* Tämä on ehdollista renderöintiä, pitää määrittää kenttiin jotka voi olla tyhjiä */}
                   {
@@ -185,6 +186,7 @@ const MakePost = (p) => {
       return(<div><p>Loading</p></div>)
     }
 }
+
 const MakeShoppingCartItem = (p) => {
   const [cookies,setCookie] = useCookies(['token']);
   if(p.data != null && p.data != ""){
@@ -194,10 +196,10 @@ const MakeShoppingCartItem = (p) => {
         if(p?.shoppingCart == true){
           if(e!= null){
             return (
-              <div class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
+              <div className="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
                 {/* TODO:Hae tähän tuotekuvat. */}
-                <div class="d-flex flex-row"><img class="rounded" src="https://i.imgur.com/QRwjbm5.jpg" width="40"/>
-                  <div class="ml-2"><span class="font-weight-bold d-block">{e?.label}</span><span class="spec">
+                <div className="d-flex flex-row"><img className="rounded" src="https://i.imgur.com/QRwjbm5.jpg" width="40"/>
+                  <div className="ml-2"><span className="font-weight-bold d-block">{e?.label}</span><span className="spec">
                     {/* Tämä on ehdollista renderöintiä, pitää määrittää kenttiin jotka voi olla tyhjiä */}
                     {
                     e?.material ? (
@@ -227,7 +229,7 @@ const MakeShoppingCartItem = (p) => {
                     }
                   </span>
                 </div>
-                <div class="d-flex flex-row align-items-center"><span class="d-block">2</span><span class="d-block ml-5 font-weight-bold">{e?.price}</span><i class="fa fa-trash-o ml-3 text-black-50"></i> 
+                <div className="d-flex flex-row align-items-center"><span className="d-block">2</span><span className="d-block ml-5 font-weight-bold">{e?.price}</span><i className="fa fa-trash-o ml-3 text-black-50"></i> 
                 <button onClick={()=>{
                   var i = cookies['shoppingCart'];
                   i?.map((item,index)=>{
@@ -249,10 +251,10 @@ const MakeShoppingCartItem = (p) => {
         else{
           if(e!= null){
             return (
-              <div class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
+              <div className="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
                 {/* TODO:Hae tähän tuotekuvat. */}
-                <div class="d-flex flex-row"><img class="rounded" src="https://i.imgur.com/QRwjbm5.jpg" width="40"/>
-                  <div class="ml-2"><span class="font-weight-bold d-block">{e?.label}</span><span class="spec">
+                <div className="d-flex flex-row"><img className="rounded" src="https://i.imgur.com/QRwjbm5.jpg" width="40"/>
+                  <div className="ml-2"><span className="font-weight-bold d-block">{e?.label}</span><span className="spec">
                     {/* Tämä on ehdollista renderöintiä, pitää määrittää kenttiin jotka voi olla tyhjiä */}
                     {
                     e?.material ? (
@@ -282,8 +284,8 @@ const MakeShoppingCartItem = (p) => {
                     }
                   </span>
                 </div>
-                  <div class="d-flex flex-row align-items-center">
-                    <span class="d-block">2</span>
+                  <div className="d-flex flex-row align-items-center">
+                    <span className="d-block">2</span>
                     <span class="d-block ml-5 font-weight-bold">{e?.price}</span>
                     <i class="fa fa-trash-o ml-3 text-black-50"></i> 
                 </div>
@@ -436,10 +438,13 @@ const Paypal = (o)=>{
     }
     
     var user = await fetch("https://localhost:44344/api/user",options)
-    if(user?.Status == "Error" ){
+    if(user?.Status != "Error" ){
+      setUser(await user?.json());
     }
     else{
-      setUser(await user?.json());
+      //If the user hasnt logged in the location data will be retrieved by guid
+      var user = await fetch("https://localhost:44344/api/user/guid/"+o.guid,options)
+      
     }
   }
   catch{

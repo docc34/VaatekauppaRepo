@@ -120,7 +120,7 @@ const paypalResponseObject = {
                 <p>Osoite:{o.order.location?.address}</p>
                 <p>Postinumero:{o.order?.location?.postalCode}</p>
                 <p>Kaupunki:{o.order?.location?.city.cityName}</p>
-                 <FormatDeliveryEstimateToDate deliveryDaysEstimateStarting={Starting} deliveryDaysEstimateEnding={Ending}/> 
+                <FormatDeliveryEstimateToDate deliveryDaysEstimateStarting={Starting} deliveryDaysEstimateEnding={Ending}/> 
                 <Error message={message}/>
                 {/* {o?.paypalResponseObject?.id} */}
             </div>)

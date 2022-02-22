@@ -41,7 +41,10 @@
 .g-4{ 
     max-height: 1500px;
 }
-
+.ReviewLinkedImage{
+    max-width: 400px;
+    max-height: 300px;
+}
 .testis{
     padding:10px;
     margin: 10px;

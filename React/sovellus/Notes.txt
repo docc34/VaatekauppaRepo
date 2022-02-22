@@ -22,3 +22,8 @@ update-database -Context ApplicationDbContext
 
 Tuo normi tietokannan pöydät ef modeleiksi
 Scaffold-DbContext 'Data Source=localhost;Initial Catalog=vaatekauppadb; user=root; password=;' Microsoft.EntityFrameworkCore.SqlServer -OutputDir NewModels -Force
+
+21.2.2022
+Front rivit 5010
+Backend rivit 4023
+Tietokant 669

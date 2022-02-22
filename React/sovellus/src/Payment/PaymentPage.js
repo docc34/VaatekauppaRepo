@@ -130,6 +130,10 @@ function PaymentPage() {
             body:JSON.stringify(orderItems)
             });
             setPrice( await price.json());
+
+            if(cookies.locationGuid != null && cookies.locationGuid != ""){
+              setTabKey("1");
+            }
         }
       }
       catch(e){
@@ -190,11 +194,14 @@ function PaymentPage() {
         let parsedAnswer = await answer.json();
   
         if(parsedAnswer?.status != "Error"){
-          
           setMessage(parsedAnswer?.message);
+
           if(parsedAnswer?.message == "Location created succesfully")window.location.reload();
+
           else if(parsedAnswer?.message == "User created succesfully"){
-          setCookie('loginModal', "true", { path: '/' ,expires: 0});window.location.reload();}
+            setCookie('loginModal', "true", { path: '/' ,expires: 0});window.location.reload();
+          }
+
         }
         else{
           setMessage(parsedAnswer?.message);
@@ -204,35 +211,28 @@ function PaymentPage() {
         }
       }
       else if(register == false){
-        try{const options = {
-          method:'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:JSON.stringify(locationObject)
-        }
-        let answer = await fetch("https://localhost:44344/api/Locations",options);
-        let parsedAnswer = await answer.json();
-  
-        if(parsedAnswer?.status != "Error"){
-          setCookie('userEmail', locationObject.user.email, { path: '/Maksu'});
-          setCookie('userFirstname', locationObject.user.firstname, { path: '/Maksu'});
-          setCookie('userLastname', locationObject.user.lastname, { path: '/Maksu'});
+        try{
+          const options = {
+            method:'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:JSON.stringify(locationObject)
+          }
+          let answer = await fetch("https://localhost:44344/api/Locations",options);
+          let parsedAnswer = await answer.json();
           
-          setMessage(parsedAnswer?.message);
-          if(parsedAnswer?.message == "Location created succesfully")
-            window.location.reload();
-          else if(parsedAnswer?.message == "User created succesfully"){
-            setCookie('loginModal', "true", { path: '/' ,expires: 0});
-            window.location.reload();}
+          if(parsedAnswer?.status != "Error"){
+            // setCookie('userEmail', locationObject.user.email, { path: '/Maksu'});
+            // setCookie('userFirstname', locationObject.user.firstname, { path: '/Maksu'});
+            // setCookie('userLastname', locationObject.user.lastname, { path: '/Maksu'});
+            //Tallenetaan sijainnin luonnin yhteydessä luotu guid cookiehen
+            setCookie('locationGuid', parsedAnswer.guid, { path: '/' });
+            setTabKey("1");
+            //TODO:Lisää ilmoitus että tiedot tallennettu            
+          }
+          else{
+            setMessage(parsedAnswer?.message);
+          }
         }
-        else if(parsedAnswer?.message != null && parsedAnswer?.message != ""){
-          setMessage(parsedAnswer?.message);
-        }
-        else{
-          //Tallenetaan sijainnin luonnin yhteydessä luotu guid cookiehen
-          setCookie('locationGuid', parsedAnswer, { path: '/Maksu' });
-          //setLocationGuid(parsedAnswer);
-        }
-      }
         catch{
           setMessage("Error");
         }
@@ -433,7 +433,7 @@ function PaymentPage() {
                   }
                   else{
                     setLocationObject({
-                      userId:cookies.UserId,
+                      userId:"0",
                       cityId:cityId,
                       address:address,
                       postalCode:postalCode,
@@ -485,33 +485,36 @@ function PaymentPage() {
                 <button onClick={()=>{setTabKey("1")}}>Maksamaan</button>
               </div>) : null}
             </Tab>
+            
             <Tab eventKey="1" title="Maksaminen" disabled>
               <p>Tab 2 maksaminen</p>
-              <div class="container mt-5 p-3 rounded cart">
-                <div class="row no-gutters">
-                      <div class="col-md-8">
-                          <div class="product-details mr-2">
-                              <div class="d-flex flex-row align-items-center"><i class="fa fa-long-arrow-left"></i><span class="ml-2">Maksaminen</span></div>
+              <div className="container mt-5 p-3 rounded cart">
+                <div className="row no-gutters">
+                      <div className="col-md-8">
+                          <div className="product-details mr-2">
+                              <div className="d-flex flex-row align-items-center"><i className="fa fa-long-arrow-left"></i><span className="ml-2">Maksaminen</span></div>
                               <hr/>
-                              <h6 class="mb-0">Ostoskori</h6>
-                              <div class="d-flex justify-content-between"><span>Sinulla on {posts?.length} tuotetta ostoskorissa</span>
-                                  {/* <div class="d-flex flex-row align-items-center"><span class="text-black-50">Sort by:</span>
-                                      <div class="price ml-2"><span class="mr-1">price</span><i class="fa fa-angle-down"></i></div>
+                              <h6 className="mb-0">Ostoskori</h6>
+                              <div className="d-flex justify-content-between"><span>Sinulla on {posts?.length} tuotetta ostoskorissa</span>
+                                  {/* <div className="d-flex flex-row align-items-center"><span className="text-black-50">Sort by:</span>
+                                      <div className="price ml-2"><span className="mr-1">price</span><i className="fa fa-angle-down"></i></div>
                                   </div> */}
                               </div>
                               <MakeShoppingCartItem shoppingCart={true} data={posts} />
                           </div>
                       </div>
-                      <div class="col-md-4">
-                          <div class="payment-info">
-                              <div class="d-flex justify-content-between align-items-center"><span>Card details</span></div>
-                              <Paypal recieveOrder={RecieveOrder} posts={posts} token={cookies.token}/>
-                              <hr class="line"/>
+                      <div className="col-md-4">
+                          <div className="payment-info">
+                              <div className="d-flex justify-content-between align-items-center">
+                                <span>Card details</span>
+                              </div>
+                              <Paypal recieveOrder={RecieveOrder} posts={posts} token={cookies.token} guid={cookies.locationGuid}/>
+                              <hr className="line"/>
                               {/* TODO: Laske tähän hinnat äläkä käytä staattisia arvoja. */}
-                              <div class="d-flex justify-content-between information"><span>Subtotal</span><span>$3000.00</span></div>
-                              <div class="d-flex justify-content-between information"><span>Verot</span><span>24%</span></div>
+                              <div className="d-flex justify-content-between information"><span>Subtotal</span><span>$3000.00</span></div>
+                              <div className="d-flex justify-content-between information"><span>Verot</span><span>24%</span></div>
                               {/* TODO:Hae tähän tuotteiden oikea veroprosentti */}
-                              <div class="d-flex justify-content-between information"><span>Kokonaishinta</span><span>{price}€</span></div>
+                              <div className="d-flex justify-content-between information"><span>Kokonaishinta</span><span>{price}€</span></div>
                           </div>
                       </div>
                   </div>

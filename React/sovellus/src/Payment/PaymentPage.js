@@ -131,7 +131,7 @@ function PaymentPage() {
             });
             setPrice( await price.json());
 
-            if(cookies.locationGuid != null && cookies.locationGuid != ""){
+            if(cookies.Guid != null && cookies.Guid != ""){
               setTabKey("1");
             }
         }
@@ -219,13 +219,13 @@ function PaymentPage() {
           }
           let answer = await fetch("https://localhost:44344/api/Locations",options);
           let parsedAnswer = await answer.json();
-          
+
           if(parsedAnswer?.status != "Error"){
             // setCookie('userEmail', locationObject.user.email, { path: '/Maksu'});
             // setCookie('userFirstname', locationObject.user.firstname, { path: '/Maksu'});
             // setCookie('userLastname', locationObject.user.lastname, { path: '/Maksu'});
             //Tallenetaan sijainnin luonnin yhteydessä luotu guid cookiehen
-            setCookie('locationGuid', parsedAnswer.guid, { path: '/' });
+            setCookie('Guid', parsedAnswer.guid, { path: '/' });
             setTabKey("1");
             //TODO:Lisää ilmoitus että tiedot tallennettu            
           }
@@ -278,10 +278,9 @@ function PaymentPage() {
         body:JSON.stringify({
           LocationId: cookies.currentLocationId,
           OrderItems: orderItems,
-          Guid: cookies.locationGuid,
-          Email: cookies.userEmail,
-          firstName: cookies.userFirstname,
-          lastName: cookies.userLastname
+          MinimalUser:{
+            Guid: cookies.Guid
+          }
         })
         }
 
@@ -304,7 +303,7 @@ function PaymentPage() {
         removeCookie('userFirstname',{ path: '/Maksu' });
         removeCookie('userLastname',{ path: '/Maksu' });
         //Voi ottaa käyttöön että poista cookiehin tallennetut sijaintitiedot.
-        // removeCookie('locationGuid',{ path: '/Maksu' });
+        // removeCookie('Guid',{ path: '/Maksu' });
         // removeCookie('currentLocationId',{ path: '/Maksu' });
         setOrder(parsedAnswer);
       }}
@@ -508,7 +507,7 @@ function PaymentPage() {
                               <div className="d-flex justify-content-between align-items-center">
                                 <span>Card details</span>
                               </div>
-                              <Paypal recieveOrder={RecieveOrder} posts={posts} token={cookies.token} guid={cookies.locationGuid}/>
+                              <Paypal recieveOrder={RecieveOrder} posts={posts} token={cookies.token} guid={cookies.Guid}/>
                               <hr className="line"/>
                               {/* TODO: Laske tähän hinnat äläkä käytä staattisia arvoja. */}
                               <div className="d-flex justify-content-between information"><span>Subtotal</span><span>$3000.00</span></div>

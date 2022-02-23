@@ -62,31 +62,34 @@ function PaymentPage() {
             headers: {"Authorization": `Bearer ${cookies.token}`}
           }
 
-          if(cookies?.currentLocationId != 0 && cookies?.currentLocationId != null && cookies?.currentLocationId != undefined ){
-            //Jos käyttäjällä ei ole käyttäjätiliä mutta sijainti on jo annettu aikaisemmin ja on vielä cookiessa tallella.
-            var check = await fetch("https://localhost:44344/api/Locations/"+cookies?.currentLocationId,options);
-            var i = await check.json();
-            if(i.status != "Error") {
-              setPostalCodePut(i.postalCode);
-              setAddressPut(i.address);
-              setCityPutId(i.cityId);
-              setCookie('currentLocationId', i.id, { path: '/Maksu'});
-              // setCurrentLocationId(i.id);
-              setLoggedIn(3);
+          //En ole varma tarvitaanko tätä enää
+          // if(cookies?.currentLocationId != 0 && cookies?.currentLocationId != null && cookies?.currentLocationId != undefined ){
+          //   //Jos käyttäjällä ei ole käyttäjätiliä mutta sijainti on jo annettu aikaisemmin ja on vielä cookiessa tallella.
+          //   var check = await fetch("https://localhost:44344/api/Locations/"+cookies?.currentLocationId,options);
+          //   var i = await check.json();
+          //   if(i.status != "Error") {
+          //     setPostalCodePut(i.postalCode);
+          //     setAddressPut(i.address);
+          //     setCityPutId(i.cityId);
+          //     setCookie('currentLocationId', i.id, { path: '/'});
+          //     // setCurrentLocationId(i.id);
+          //     setLoggedIn(3);
               
-              if(urlTabKey != null)setTabKey(urlTabKey.toString());
-            }
-            else{
-              setMessage("Error");
-            }
+          //     if(urlTabKey != null)setTabKey(urlTabKey.toString());
+          //   }
+          //   else{
+          //     setMessage("Error");
+          //   }
             
-          }
-          else{
-
-            var check = await fetch("https://localhost:44344/api/Locations/user",options);
+          // }
+          // else{
+            var guid = cookies?.Guid != undefined ? cookies?.Guid : null;
+            var check = await fetch("https://localhost:44344/api/Locations/user/"+ guid,options);
             var i = await check.json();
             if(i.status == "UserError") {
-              setLoggedIn(1);}
+              //Tila käyttäjälle joka ei ole kirjautunut sisään 
+              setLoggedIn(1);
+            }
             else if(i.status == "LocationError") {
               setLoggedIn(2);
             }
@@ -94,14 +97,14 @@ function PaymentPage() {
               setPostalCodePut(i.postalCode);
               setAddressPut(i.address);
               setCityPutId(i.cityId);
-              setCookie('currentLocationId', i.id, { path: '/Maksu'});
+              setCookie('currentLocationId', i.id, { path: '/'});
               // setCurrentLocationId(i.id);
               setLoggedIn(3);
               
               if(urlTabKey != null)setTabKey(urlTabKey.toString());
             }
             
-          }
+          // }
           //Hakee julkaisut ostoskorin sisällön mukaan, keho ottaa listan juilkaisujen ideitä [2,4] jne
           const fetchPosts = await fetch("https://localhost:44344/api/Orders/Posts",{
             method: 'POST',
@@ -226,6 +229,9 @@ function PaymentPage() {
             // setCookie('userLastname', locationObject.user.lastname, { path: '/Maksu'});
             //Tallenetaan sijainnin luonnin yhteydessä luotu guid cookiehen
             setCookie('Guid', parsedAnswer.guid, { path: '/' });
+            //Haetaan postit uudestaan että saadaan juuri luotu sijainnin id talteen 
+            //TODO: palauta sijainninluonnissa guid ja tallenna cookieen. Poista jobpostien haku
+            await GetJobPosts();
             setTabKey("1");
             //TODO:Lisää ilmoitus että tiedot tallennettu            
           }
@@ -308,7 +314,8 @@ function PaymentPage() {
         setOrder(parsedAnswer);
       }}
       catch(e){
-        setMessage(e);
+        console.log(e);
+        setMessage("Error");
       }
     }
   },[paypalResponseObject]);

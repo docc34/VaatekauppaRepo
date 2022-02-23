@@ -17,7 +17,6 @@ const ProfiiliMuokkaus = () => {
   const [profileFirstLoad, setProfileFirstLoad] = useState(0);
   const [email, setEmail] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState([]);
-  const [userName, setUserName] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [houseNumber, setHouseNumber] = useState("");
@@ -58,7 +57,6 @@ const ProfiiliMuokkaus = () => {
 
         setEmail(i?.email);
         setPhoneNumber(i?.phonenumber);
-        setUserName(i.username);
         setFirstName(i.firstName);
         setLastName(i.lastName);
         setProfileLocation(i?.location);
@@ -179,7 +177,7 @@ const ProfiiliMuokkaus = () => {
     <div className="Profiili-Main">
       <div className="Profiili-UpperPartMain">
         <div className="Profiili-Esittely">
-          <h1 className="Profiili-NimiOtsikko"> {userName}</h1>
+          <h1 className="Profiili-NimiOtsikko"> {firstName}</h1>
             {message}
           <div>
             <h4>Yhteystiedot</h4>
@@ -191,10 +189,7 @@ const ProfiiliMuokkaus = () => {
               <Form.Label>Sukunimi:</Form.Label>
               <Form.Control onBlur={(e)=>{handleInputChange(e)}} value={lastName} placeholder="Sukunimi"onChange={(e)=>{setLastName(handleInputChange(e));}}/>
             </Form.Group>
-            <Form.Group controlId="formBasicSahkoposti">
-              <Form.Label>Sähköposti:</Form.Label>
-              <Form.Control onBlur={(e)=>{handleInputChange(e)}} value={email} placeholder="Sähköposti"onChange={(e)=>{setEmail(handleInputChange(e));}}/>
-            </Form.Group>
+            <p>Sähköposti: {email}</p>
             <Form.Group controlId="formBasicPuhelinnumero">
               <Form.Label>Puhelinnumero:</Form.Label>
               <Form.Control onBlur={(e)=>{handleInputChange(e)}} value={phoneNumber} placeholder="Puhelinnumero"onChange={(e)=>{setPhoneNumber(handleInputChange(e));}}/>
@@ -229,9 +224,7 @@ const ProfiiliMuokkaus = () => {
            <button type="button" onClick={() => { setModifyUserObject({
                 firstname: firstName,
                 lastname: lastName,
-                email:email, 
                 phonenumber: phoneNumber,
-                userName:"0",
                 password:"0",
                 location:{
                   address:address,

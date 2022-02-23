@@ -14,7 +14,7 @@ const HeaderPublic = () => {
     const [labelSearchText,setLabelSearchText] = useState("");
     const [message,setMessage] = useState("");
 
-    const username = useFormInput('');
+    const email = useFormInput('');
     const password = useFormInput('');
     const path = useLocation().pathname;
     const [cookies, setCookie,removeCookie] = useCookies(['token']);
@@ -24,10 +24,9 @@ const HeaderPublic = () => {
     const handleLogin = async() => {
         try{
             let data = await fetch("https://localhost:44344/api/Authenticate/login",{
-            
                 method:'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body:JSON.stringify({username: username.value, password: password.value})
+                body:JSON.stringify({username: email.value, password: password.value})
                 });
                 let result = await data.json();
                 if (result?.Status == "Error") {
@@ -57,7 +56,7 @@ const HeaderPublic = () => {
 
     const resetValues = () => {
         setLoginModalShow(false);
-        username.value = "";
+        email.value = "";
         password.value = "";
         removeCookie('loginModal', { path: '/' });
     }
@@ -128,8 +127,8 @@ const HeaderPublic = () => {
                     <div className="login-main">
                         <div><Form>
                             <Form.Group controlId="formBasicEmail">
-                                <Form.Label>Käyttäjänimi</Form.Label>
-                                <Form.Control className="login-inputs" type="username" placeholder="Käyttäjänimi"{...username} autoComplete="new-password" />
+                                <Form.Label>Sähköposti</Form.Label>
+                                <Form.Control className="login-inputs" type="email" placeholder="Sähköposti"{...email} autoComplete="new-password" />
                             </Form.Group>
 
                             <Form.Group controlId="formBasicPassword">

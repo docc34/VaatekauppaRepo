@@ -20,7 +20,6 @@ function PaymentPage() {
   const [posts, setPosts] = useState("");
   const [loggedIn, setLoggedIn] = useState("");
 
-  const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   
@@ -40,6 +39,8 @@ function PaymentPage() {
   const [cityPutId, setCityPutId] = useState("");
   const [locationObjectPut, setLocationObjectPut] = useState("");
   const [currentLocationId, setCurrentLocationId] = useState("");
+  const [guid, setGuid] = useState("");
+  
   const [putEnabled, setPutEnabled] = useState(true);
   const [paypalResponseObject, setPaypalResponseObject] = useState("");
   const [order, setOrder] = useState("");
@@ -97,8 +98,9 @@ function PaymentPage() {
               setPostalCodePut(i.postalCode);
               setAddressPut(i.address);
               setCityPutId(i.cityId);
-              setCookie('currentLocationId', i.id, { path: '/'});
-              // setCurrentLocationId(i.id);
+              setCookie('currentLocationId', i.id, { path: '/Maksu'});
+              
+              setCurrentLocationId(i.id);
               setLoggedIn(3);
               
               if(urlTabKey != null)setTabKey(urlTabKey.toString());
@@ -133,8 +135,8 @@ function PaymentPage() {
             body:JSON.stringify(orderItems)
             });
             setPrice( await price.json());
-
-            if(cookies.Guid != null && cookies.Guid != ""){
+            var guid = cookies.Guid != undefined && cookies.Guid != null ? cookies.Guid : guid;
+            if(guid != null && guid != ""){
               setTabKey("1");
             }
         }
@@ -161,14 +163,14 @@ function PaymentPage() {
   }
 
   useEffect(async() => {
-    if(locationObjectPut != "" && putEnabled == false && CheckEmptyFields([locationObjectPut])){
+    if(putEnabled == false && CheckEmptyFields([locationObjectPut])){
       try{
         const options = {
           method:'PUT',
           headers: { 'Content-Type': 'application/json' ,"Authorization": `Bearer ${cookies.token}`},
           body:JSON.stringify(locationObjectPut)
         }
-        let answer = await fetch("https://localhost:44344/api/Locations/"+cookies.currentLocationId,options);
+        let answer = await fetch("https://localhost:44344/api/Locations/"+ cookies.currentLocationId != undefined && cookies.currentLocationId != null ? cookies.currentLocationId : currentLocationId,options);
         let parsedAnswer = await answer.json();
 
         if(parsedAnswer?.status != "Error"){
@@ -227,11 +229,15 @@ function PaymentPage() {
             // setCookie('userEmail', locationObject.user.email, { path: '/Maksu'});
             // setCookie('userFirstname', locationObject.user.firstname, { path: '/Maksu'});
             // setCookie('userLastname', locationObject.user.lastname, { path: '/Maksu'});
-            //Tallenetaan sijainnin luonnin yhteydessä luotu guid cookiehen
-            setCookie('Guid', parsedAnswer.guid, { path: '/' });
+            //Tallenetaan sijainnin luonnin yhteydessä luotu guid cookiehen ja paikalliseen muuttujaan koska cookiet eivät ole jostainsyysä luotettavia
+            console.log(parsedAnswer);
+            console.log(parsedAnswer.guid);
+            setGuid(parsedAnswer.guid);
+            setCurrentLocationId(parsedAnswer.locationId);
+            setCookie('Guid', parsedAnswer.guid, { path: '/Maksu' });
+            setCookie('currentLocationId', parsedAnswer.locationId, { path: '/Maksu'});
             //Haetaan postit uudestaan että saadaan juuri luotu sijainnin id talteen 
             //TODO: palauta sijainninluonnissa guid ja tallenna cookieen. Poista jobpostien haku
-            await GetJobPosts();
             setTabKey("1");
             //TODO:Lisää ilmoitus että tiedot tallennettu            
           }
@@ -269,7 +275,11 @@ function PaymentPage() {
 
   //Aktivoituu kun paypal maksu menee läpi ja luo tilauksen
   useEffect(async ()=>{
-    if(paypalResponseObject != ""){
+    var locationId = cookies.currentLocationId != undefined && cookies.currentLocationId != null ? cookies.currentLocationId : currentLocationId;
+    var Guid = cookies.Guid != undefined && cookies.Guid != null && cookies.Guid != "" ? cookies.Guid : guid;
+    console.log("locationId:"+locationId);
+    console.log("guid:"+Guid);
+    if(paypalResponseObject != "" && Guid != undefined && locationId != undefined){
       try{
         var orderItems = posts.map((e,i)=>{
           return{
@@ -278,14 +288,15 @@ function PaymentPage() {
           }//TODO: laita tähän tuotteiden määrä kun otat sen käyttöön.
         });
 
+
         var options = {
         method:'POST',
         headers: { 'Content-Type': 'application/json' ,"Authorization": `Bearer ${cookies.token}`},
         body:JSON.stringify({
-          LocationId: cookies.currentLocationId,
+          LocationId: locationId,
           OrderItems: orderItems,
-          MinimalUser:{
-            Guid: cookies.Guid
+          User:{
+            Guid: Guid
           }
         })
         }
@@ -302,21 +313,23 @@ function PaymentPage() {
           headers: { "Authorization": `Bearer ${cookies.token}`}
         }
         //Post palauttaa Guid:n jolla haetaan juuri luotu order
-        answer = await fetch("https://localhost:44344/api/Orders/"+parsedAnswer,options);
+        answer = await fetch("https://localhost:44344/api/Orders/"+parsedAnswer.guid,options);
         parsedAnswer = await answer.json();
         //Poistetaan cookiet joihin tallennettiin ei kirjautuneen käyttäjän tiedot
-        removeCookie('userEmail',{ path: '/Maksu' });
-        removeCookie('userFirstname',{ path: '/Maksu' });
-        removeCookie('userLastname',{ path: '/Maksu' });
         //Voi ottaa käyttöön että poista cookiehin tallennetut sijaintitiedot.
-        // removeCookie('Guid',{ path: '/Maksu' });
-        // removeCookie('currentLocationId',{ path: '/Maksu' });
+        removeCookie('Guid',{ path: '/Maksu' });
+        removeCookie('currentLocationId',{ path: '/Maksu' });
         setOrder(parsedAnswer);
-      }}
+      }
+
+    }
       catch(e){
         console.log(e);
         setMessage("Error");
       }
+    }
+    else{
+      setMessage("Error");
     }
   },[paypalResponseObject]);
 
@@ -397,10 +410,6 @@ function PaymentPage() {
                   <input id="setRegisterInput" type="checkbox" onClick={(e)=>{setRegister(e.target.checked);console.log(e.target.checked)}}/>
                   {register == true ? (
                   <div>
-                    <Form.Group controlId="formBasicUsername">
-                      <Form.Label>Käyttäjänimi</Form.Label>
-                      <Form.Control onBlur={(e)=>{handleInputChange(e)}} placeholder="Käyttäjänimi" onChange={(e)=>{setUsername(handleInputChange(e)); }} />
-                    </Form.Group>
 
                     <Form.Group controlId="formBasicPassword">
                       <Form.Label>Salasana</Form.Label>
@@ -416,14 +425,13 @@ function PaymentPage() {
                 </div>
                 <input type="Button" onClick={()=>{
                   if(register == true){
-                    if(passwordAgain.value == password.value){
+                    if(passwordAgain == password){
                       setLocationObject({
                         userId:cookies.UserId,
                         cityId:cityId,
                         address:address,
                         postalCode:postalCode,
                         user:{
-                          userName:username, 
                           password: password,  
                           firstname: firstName,
                           lastname: lastName,
@@ -443,8 +451,7 @@ function PaymentPage() {
                       cityId:cityId,
                       address:address,
                       postalCode:postalCode,
-                      user:{
-                        userName:"0", 
+                      user:{ 
                         password:"0",  
                         firstname: firstName,
                         lastname: lastName,
@@ -479,7 +486,7 @@ function PaymentPage() {
                       <Form.Control onBlur={(e)=>{handleInputChange(e)}} disabled={putEnabled} value={postalCodePut}placeholder="Postinumero"onChange={(e)=>{setPostalCodePut(handleInputChange(e));}}/>
                     </Form.Group>
                     <button disabled={putEnabled} type='button' onClick={()=>{setLocationObjectPut({
-                      Id:cookies.currentLocationId,
+                      Id:cookies.currentLocationId != undefined && cookies.currentLocationId != null ? cookies.currentLocationId : currentLocationId,
                       userId:cookies.userId,
                       cityId:cityPutId,
                       address:addressPut,
@@ -514,7 +521,7 @@ function PaymentPage() {
                               <div className="d-flex justify-content-between align-items-center">
                                 <span>Card details</span>
                               </div>
-                              <Paypal recieveOrder={RecieveOrder} posts={posts} token={cookies.token} guid={cookies.Guid}/>
+                              <Paypal recieveOrder={RecieveOrder} posts={posts} token={cookies.token} guid={cookies.Guid != undefined && cookies.Guid != null ? cookies.Guid : guid}/>
                               <hr className="line"/>
                               {/* TODO: Laske tähän hinnat äläkä käytä staattisia arvoja. */}
                               <div className="d-flex justify-content-between information"><span>Subtotal</span><span>$3000.00</span></div>

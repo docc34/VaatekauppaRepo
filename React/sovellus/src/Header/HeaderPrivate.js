@@ -89,7 +89,14 @@ const HeaderPrivate = () => {
                 </Modal.Body>
                 <Modal.Footer className="Return-Modal-Footer">
                     <div>
-                        <Button className='HeaderLogoutModalButton' onClick={() => {setLogOutModalShow(false); removeCookie('token',{ path: '/' }); removeCookie('userId',{ path: '/' }); removeCookie('shoppingCart',{ path: '/' }); navigate("/"); window.location.reload();}}>Sign out</Button>
+                <Button className='HeaderLogoutModalButton' onClick={() => {setLogOutModalShow(false);
+                removeCookie('Guid',{ path: '/Maksu' });
+                removeCookie('currentLocationId',{ path: '/Maksu' });
+                removeCookie('token',{ path: '/' });
+                removeCookie('userId',{ path: '/' });
+                removeCookie('shoppingCart',{ path: '/' }); 
+                navigate("/"); 
+                window.location.reload();}}>Sign out</Button>
                         <Button onClick={() => { setLogOutModalShow(false); }}>Cancel</Button>
                     </div>
 

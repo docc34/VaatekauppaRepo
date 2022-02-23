@@ -94,7 +94,7 @@ function Profiili() {
       <div className="Profiili-Main">
         <div className="Profiili-UpperPartMain">
           <div className="Profiili-Esittely">
-            <h1 className="Profiili-NimiOtsikko"> {profileData?.username}</h1>
+            <h1 className="Profiili-NimiOtsikko"> {profileData?.firstName}</h1>
 
               {/* {checkProfileImage()} */}
               <h3>Yhteystiedot</h3>

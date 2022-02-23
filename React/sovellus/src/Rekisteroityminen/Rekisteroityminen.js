@@ -8,7 +8,6 @@ import { useCookies } from 'react-cookie';
 //Renderöi rekisteröitymissivun
 const Rekisteroityminen = ()=>{
     const [loading, setLoading] = useState(false);
-    const username = useFormInput('');
     const password = useFormInput('');
     const passwordAgain = useFormInput('');
     const firstName = useFormInput('');
@@ -26,7 +25,7 @@ const Rekisteroityminen = ()=>{
             
             method:'POST',
             headers: { 'Content-Type': 'application/json' },
-            body:JSON.stringify({username: username.value, password: password.value,  firstName: firstName, lastName: lastName.value,email:email.value , phonenumber: phonenumber.value})
+            body:JSON.stringify({password: password.value,  firstName: firstName, lastName: lastName.value,email:email.value , phonenumber: phonenumber.value})
             });
             let tarkistus = await post.json();
             console.log(tarkistus);
@@ -50,10 +49,6 @@ return(
   <div>
     <h2>Rekisteröityminen</h2>
   <Form>
-    <Form.Group controlId="formBasicUsername">
-      <Form.Label>Käyttäjänimi</Form.Label>
-      <Form.Control  placeholder="Käyttäjänimi" {...username} />
-    </Form.Group>
 
     <Form.Group controlId="formBasicName">
       <Form.Label>Etunimi</Form.Label>

@@ -157,7 +157,7 @@ insert into city (cityName, provinceId) values("Ylöjärvi",1);
 insert into city (cityName, provinceId) values("Ähtäri",2);
 insert into city (cityName, provinceId) values("Äänekoski",12);
 
-insert into user (email,username,password,firstName,lastName,phonenumber,created,lastLogin,deleted,admin) values ("eemeli.antikainen@gmail.com","Eemeli","", "Eemeli","Antikainen","0409606973",'2022-10-1 18:00:00','2022-10-1 18:00:00',0,1);
+insert into user (email,password,firstName,lastName,phonenumber,created,lastLogin,deleted,admin,guid) values ("eemeli.antikainen@gmail.com","", "Eemeli","Antikainen","0409606973",'2022-10-1 18:00:00','2022-10-1 18:00:00',0,1,"9eea6507-e6f7-4f57-ab1e-fe3e5a0f77c3");
 
 insert into Location (userId,cityId,address,postalCode) values (1,46,"Presidentinkatu 5", "70400");
 

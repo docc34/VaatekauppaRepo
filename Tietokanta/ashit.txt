@@ -20,15 +20,15 @@ USE `vaatekauppadb` ;
 CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`user` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(100) NOT NULL,
-  `username` VARCHAR(45) NOT NULL,
   `password` VARCHAR(45) NOT NULL,
   `firstName` VARCHAR(60) NOT NULL,
   `lastName` VARCHAR(80) NOT NULL,
   `phonenumber` VARCHAR(45) NOT NULL,
   `created` DATETIME NOT NULL,
-  `lastLogin` DATETIME NOT NULL,
+  `lastLogin` DATETIME NULL,
   `deleted` TINYINT NOT NULL,
   `admin` TINYINT NOT NULL,
+  `guid` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -138,35 +138,18 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `vaatekauppadb`.`minimalUser`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`minimalUser` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `firstName` VARCHAR(60) NOT NULL,
-  `lastName` VARCHAR(80) NOT NULL,
-  `email` VARCHAR(100) NOT NULL,
-  `phoneNumber` VARCHAR(45) NOT NULL,
-  `guid` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `vaatekauppadb`.`location`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`location` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `userId` INT NULL,
-  `minimalUserId` INT NULL,
+  `userId` INT NOT NULL,
   `address` VARCHAR(200) NOT NULL,
   `postalCode` INT NOT NULL,
   `cityId` INT NOT NULL,
   `houseNumber` VARCHAR(45) NULL,
-  `guid` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_location_userdata1_idx` (`userId` ASC),
   INDEX `fk_location_city1_idx` (`cityId` ASC),
-  INDEX `fk_location_minimalUser1_idx` (`minimalUserId` ASC),
   CONSTRAINT `fk_location_userdata1`
     FOREIGN KEY (`userId`)
     REFERENCES `vaatekauppadb`.`user` (`id`)
@@ -175,11 +158,6 @@ CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`location` (
   CONSTRAINT `fk_location_city1`
     FOREIGN KEY (`cityId`)
     REFERENCES `vaatekauppadb`.`city` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_location_minimalUser1`
-    FOREIGN KEY (`minimalUserId`)
-    REFERENCES `vaatekauppadb`.`minimalUser` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -244,16 +222,13 @@ CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`orders` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `price` DOUBLE NOT NULL,
   `orderDate` DATETIME NOT NULL,
-  `guid` VARCHAR(45) NOT NULL,
   `locationId` INT NOT NULL,
   `orderStatusId` INT NOT NULL,
-  `userId` INT NULL,
-  `minimalUserId` INT NULL,
+  `userId` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_Orders_location1_idx` (`locationId` ASC),
   INDEX `fk_Orders_user1_idx` (`userId` ASC),
   INDEX `fk_Orders_orderStatus1_idx` (`orderStatusId` ASC),
-  INDEX `fk_orders_minimalUser1_idx` (`minimalUserId` ASC),
   CONSTRAINT `fk_Orders_location1`
     FOREIGN KEY (`locationId`)
     REFERENCES `vaatekauppadb`.`location` (`id`)
@@ -267,11 +242,6 @@ CREATE TABLE IF NOT EXISTS `vaatekauppadb`.`orders` (
   CONSTRAINT `fk_Orders_orderStatus1`
     FOREIGN KEY (`orderStatusId`)
     REFERENCES `vaatekauppadb`.`orderStatus` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_orders_minimalUser1`
-    FOREIGN KEY (`minimalUserId`)
-    REFERENCES `vaatekauppadb`.`minimalUser` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

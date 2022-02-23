@@ -23,6 +23,11 @@ update-database -Context ApplicationDbContext
 Tuo normi tietokannan pöydät ef modeleiksi
 Scaffold-DbContext 'Data Source=localhost;Initial Catalog=vaatekauppadb; user=root; password=;' Microsoft.EntityFrameworkCore.SqlServer -OutputDir NewModels -Force
 
+21.2.2022
+Front rivit 5010
+Backend rivit 4023
+Tietokant 669
+
 	Paypal sandbox personal
 sb-xybis7895175@personal.example.com
 +^ChjA@9
@@ -30,7 +35,7 @@ sb-xybis7895175@personal.example.com
 sb-doxy48783494@business.example.com
 2+K!/vA#
 
-21.2.2022
-Front rivit 5010
-Backend rivit 4023
-Tietokant 669
+	TODO
+Laita paypalille oikeat tiedot kun tilataan ilman käyttäjänluontia
+Käyttäjänimi korvattiin emaililla
+Käyttäjätilin luonti tilauksen yhteydessä ei toimi

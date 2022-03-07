@@ -7,17 +7,20 @@ import { useLocation } from "react-router-dom";
 import { useCookies } from 'react-cookie';
 import {Error} from '../Utils/Functions'
 // import './Kirjautuminen.css';
-
+import {  useNavigate  } from 'react-router-dom';
 const HeaderPublic = () => {
     let [loginModalShow, setLoginModalShow] = useState(false);
     
     const [labelSearchText,setLabelSearchText] = useState("");
     const [message,setMessage] = useState("");
-
+    const [loginState,setLoginState] = useState(false);
+    const [logOutModalShow, setLogOutModalShow] = useState(false);
+    
     const email = useFormInput('');
     const password = useFormInput('');
     const path = useLocation().pathname;
     const [cookies, setCookie,removeCookie] = useCookies(['token']);
+    let navigate = useNavigate();
     
     // handle button click of login form
     //TODO:Handel login
@@ -75,10 +78,57 @@ const HeaderPublic = () => {
             return(<a className="Header-SearchBar-Link Header-SearchBar-Button" href={"/Kauppa?title="+labelSearchText}>{/*Tähän se suurennuslasin logo */}o</a>)
         }
     }
+
+    useEffect(async()=>{
+        if(cookies.token!= "" && cookies.token != null ){
+          const options = {
+            method: 'GET',
+            headers: {"Authorization": `Bearer ${cookies.token}`}
+          }
+    
+          try{ 
+            let validation = await fetch("https://localhost:44344/api/authenticate/validatetoken", options)
+            let data = await validation.json();
+          
+            if( data == true){
+                setLoginState(true);
+            }
+            else{
+                setLoginState(false);
+            }
+          }
+          catch{
+            setLoginState(false);
+          }
+        }
+      },[cookies?.token]);
+    
+    const checkLoginStatus = ()=>{
+        if(loginState == true){
+            return(
+                <div>
+                    {/*Profiiliin pääsee vain kun on kirjautunut */}
+                    <NavLink className="flex-header-link" activeClassName="active" to="/Profiili">Profiili</NavLink>
+                    <NavLink className="flex-header-link" onClick={()=>{setLogOutModalShow(true);}} activeClassName="active" to="/">Kirjaudu ulos</NavLink>
+                </div>
+            );
+        }
+        else{
+            return(
+                <div>
+                        <a className="flex-header-link" href="#" onClick={() => { setLoginModalShow(true) }}>Kirjaudu</a>
+                </div>
+            );
+        }
+
+    }
     return (
         <div className="flex-container">
             <div className="flex-header-logo">
-                <NavLink className="flex-header-link" exact activeClassName="active" to="/"><img className="header-img" src="https://vaatekauppastorage.blob.core.windows.net/defaultkuvat/mrWorldwide.jpg"></img></NavLink>
+                <NavLink className="flex-header-link" exact activeClassName="active" to="/">
+                <h1 className="header-img">Unnamed</h1>
+                    {/* <img className="header-img" src="https://vaatekauppastorage.blob.core.windows.net/defaultkuvat/mrWorldwide.jpg"></img> */}
+                    </NavLink>
             </div>
 
             <div className="Header-SearchBar">
@@ -104,9 +154,9 @@ const HeaderPublic = () => {
                         <NavLink className="flex-header-link" activeClassName="active" to="/Kauppa">Kauppa </NavLink>
                         {/*Kirjautumiseen pääsee vain kun ei ole kirjautunut */}
                         {/* <NavLink className="flex-header-link" activeClassName="active" to="/Kirjautuminen">Kirjaudu</NavLink> */}
-                        <a className="flex-header-link" href="#" onClick={() => { setLoginModalShow(true) }}>Kirjaudu</a>
+                        {checkLoginStatus()}
                         {/* TODO: Ostoskorin logo ja päivittyvät grafiikat kun ostoskoriin lisätään esineitä. */}
-                        <a href='/Maksu'>Ostoskori: {cookies?.shoppingCart?.length}</a>
+                        <NavLink className="flex-header-link" activeClassName="active" to="/Maksu">Ostoskori: {cookies?.shoppingCart?.length} </NavLink>
                     </Navbar.Collapse>
                 </Navbar>
             </div>
@@ -151,6 +201,40 @@ const HeaderPublic = () => {
                         <p>Eikö sinulla ole käyttäjää. Voit rekisteröityä <NavLink onClick={() => { resetValues(); }} to="/Rekisteroityminen">Täältä</NavLink> </p>
                         <p>Voit palauttaa salasanan <NavLink onClick={() => { resetValues(); }} to="/SalasananPalautus">täältä</NavLink> </p>
                     </div>
+                </Modal.Footer>
+            </Modal>
+            {/* Logoutmodal */}
+            <Modal
+                show={logOutModalShow}
+                className="SignOut-Modal"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+                >
+                <Modal.Header >
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        Signing out
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="Return-Modal-Body">
+                    <div className="return-main">
+                        <div>
+                            <h3>Are you sure you want to Sign out</h3>
+                        </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer className="Return-Modal-Footer">
+                    <div>
+                <Button className='HeaderLogoutModalButton' onClick={() => {setLogOutModalShow(false);
+                removeCookie('Guid',{ path: '/Maksu' });
+                removeCookie('currentLocationId',{ path: '/Maksu' });
+                removeCookie('token',{ path: '/' });
+                removeCookie('userId',{ path: '/' });
+                removeCookie('shoppingCart',{ path: '/' }); 
+                navigate("/"); 
+                window.location.reload();}}>Sign out</Button>
+                        <Button onClick={() => { setLogOutModalShow(false); }}>Cancel</Button>
+                    </div>
+
                 </Modal.Footer>
             </Modal>
         </div>

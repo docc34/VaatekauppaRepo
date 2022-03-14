@@ -31,9 +31,11 @@ function PaymentPage() {
   const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [locationObject, setLocationObject] = useState("");
+  const [houseNumber, setHouseNumber] = useState("");
 
   const [tabKey, setTabKey] = useState("0");
   
+  const [houseNumberPut, setHouseNumberPut] = useState("");
   const [postalCodePut, setPostalCodePut] = useState("");
   const [addressPut, setAddressPut] = useState("");
   const [cityPutId, setCityPutId] = useState("");
@@ -96,6 +98,7 @@ function PaymentPage() {
             }
             else{
               setPostalCodePut(i.postalCode);
+              setHouseNumberPut(i.houseNumber);
               setAddressPut(i.address);
               setCityPutId(i.cityId);
               setCookie('currentLocationId', i.id, { path: '/Maksu'});
@@ -108,7 +111,7 @@ function PaymentPage() {
             
           // }
           //Hakee julkaisut ostoskorin sisällön mukaan, keho ottaa listan juilkaisujen ideitä [2,4] jne
-          const fetchPosts = await fetch("https://localhost:44344/api/Orders/Posts",{
+          const fetchPosts = await fetch("https://localhost:44344/api/Posts/ShoppingCart",{
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body:JSON.stringify(cookies?.shoppingCart)
@@ -354,10 +357,6 @@ function PaymentPage() {
               <div>
                 {/* TODO: Tähän kaupungin autofill ja hae kaupungit backendista*/}
                 <Form.Group controlId="formBasicCity">
-                <select onBlur={(e)=>{handleInputChange(e)}} onChange={(e)=>{setCityId(handleInputChange(e));}}>
-                  <option value="">Valitse kaupunki</option>
-                  {citiesToSelect}
-                </select>
                 </Form.Group>
                 <Form.Group controlId="formBasicAddress">
                   <Form.Label>osoite</Form.Label>
@@ -367,6 +366,18 @@ function PaymentPage() {
                   <Form.Label>Postinumero</Form.Label>
                   <Form.Control onBlur={(e)=>{handleInputChange(e)}} placeholder="Postinumero"onChange={(e)=>{setPostalCode(handleInputChange(e));}}/>
                 </Form.Group>
+                <Form.Group controlId="formBasicHouseNumber">
+                  <Form.Label>Talonnumero</Form.Label>
+                  <Form.Control onBlur={(e)=>{handleInputChange(e)}} placeholder="Talonnumero"onChange={(e)=>{setHouseNumber(handleInputChange(e));}}/>
+                </Form.Group>
+                <Form.Group controlId="formBasicCity">
+                  <Form.Label>Kaupunki</Form.Label>
+                  <select onBlur={(e)=>{handleInputChange(e)}} onChange={(e)=>{setCityId(handleInputChange(e));}}>
+                    <option value="">Valitse kaupunki</option>
+                    {citiesToSelect}
+                </select>
+                </Form.Group>
+
               </div>):null}
 
               {/* Jos on kirjautunut mutta ei ole vielä antanut osoitetietoja */}
@@ -375,6 +386,7 @@ function PaymentPage() {
                 cityId:cityId,
                 address:address,
                 postalCode:postalCode,
+                houseNumber:houseNumber,
                 user: null,
                 orderItems:cookies?.shoppingCart
                 });}}>Tallenna</button>): null}
@@ -431,6 +443,7 @@ function PaymentPage() {
                         cityId:cityId,
                         address:address,
                         postalCode:postalCode,
+                        houseNumber:houseNumber,
                         user:{
                           password: password,  
                           firstname: firstName,
@@ -451,6 +464,7 @@ function PaymentPage() {
                       cityId:cityId,
                       address:address,
                       postalCode:postalCode,
+                      houseNumber:houseNumber,
                       user:{ 
                         password:"0",  
                         firstname: firstName,
@@ -472,10 +486,7 @@ function PaymentPage() {
                   <div>
                     {/* TODO: Tähän kaupungin autofill. */}
                     <Form.Group controlId="formBasicCity">
-                    <select disabled={putEnabled} value={cityPutId} onBlur={(e)=>{handleInputChange(e)}} onChange={(e)=>{setCityPutId(handleInputChange(e));}}>
-                      <option value="">Valitse kaupunki</option>
-                      {citiesToSelect}
-                    </select>
+
                     </Form.Group>
                     <Form.Group controlId="formBasicAddress">
                       <Form.Label>osoite</Form.Label>
@@ -485,12 +496,21 @@ function PaymentPage() {
                       <Form.Label>Postinumero</Form.Label>
                       <Form.Control onBlur={(e)=>{handleInputChange(e)}} disabled={putEnabled} value={postalCodePut}placeholder="Postinumero"onChange={(e)=>{setPostalCodePut(handleInputChange(e));}}/>
                     </Form.Group>
+                    <Form.Group controlId="formBasicHouseNumber">
+                      <Form.Label>Talonnumero</Form.Label>
+                      <Form.Control onBlur={(e)=>{handleInputChange(e)}} disabled={putEnabled} value={houseNumberPut}placeholder="Talonnumero"onChange={(e)=>{setHouseNumberPut(handleInputChange(e));}}/>
+                    </Form.Group>
+                    <select disabled={putEnabled} value={cityPutId} onBlur={(e)=>{handleInputChange(e)}} onChange={(e)=>{setCityPutId(handleInputChange(e));}}>
+                      <option value="">Valitse kaupunki</option>
+                      {citiesToSelect}
+                    </select>
                     <button disabled={putEnabled} type='button' onClick={()=>{setLocationObjectPut({
                       Id:cookies.currentLocationId != undefined && cookies.currentLocationId != null ? cookies.currentLocationId : currentLocationId,
                       userId:cookies.userId,
                       cityId:cityPutId,
                       address:addressPut,
                       postalCode:postalCodePut,
+                      houseNumber:houseNumberPut,
                       user: null
                     });}}>Tallenna</button>
                   </div>

@@ -431,7 +431,7 @@ const Paypal = (o)=>{
   const [post, setPost] = useState("");
   const [user, setUser] = useState("");
   useEffect(async ()=>{
-   try{ 
+  try{
     const options = {
       method: 'GET',
       headers: {"Authorization": `Bearer ${o.token}`}
@@ -446,92 +446,93 @@ const Paypal = (o)=>{
       var user = await fetch("https://localhost:44344/api/user/guid/"+o.guid,options)
       
     }
-  }
+  } 
   catch{
 
   }
   },[]);
-    useEffect(()=>{
-      //Luodaan napille funktiot
-      if(o.posts != "" && user != ""&& user != null){
-        window.paypal.Buttons({
-          //Luodaan tilaus
-          createOrder: (data, actions, error) =>{
-            console.log(o.posts);
-            console.log(user);
-            if(o.posts != "" && user != ""&& user != null){
-            var i = {
-              intent: "CAPTURE",
-              payer:{
-                email_address:user.email,
-                name:{
-                  given_name:user.firstName,
-                  surname:user.lastName
-                },
-                phone_with_type:{
-                  phone_number:{
-                    national_number:user.phonenumber
-                  }
-                },
-                address_portable:{
-                  address_line_1:user?.location?.address,
-                  postal_code:user?.location?.postalCode,
-                  country_code:"FI",
-                  admin_area_1:user?.province,
-                  admin_area_2:user?.city
+
+  useEffect(()=>{
+    //Luodaan napille funktiot
+    if(o.posts != "" && user != ""&& user != null){
+      window.paypal.Buttons({
+        //Luodaan tilaus
+        createOrder: (data, actions, error) =>{
+          console.log(o.posts);
+          console.log(user);
+          if(o.posts != "" && user != ""&& user != null){
+          var i = {
+            intent: "CAPTURE",
+            payer:{
+              email_address:user.email,
+              name:{
+                given_name:user.firstName,
+                surname:user.lastName
+              },
+              phone_with_type:{
+                phone_number:{
+                  national_number:user.phonenumber
                 }
               },
-              purchase_units:
-                o.posts.map((e,i)=>{
-                  console.log(e);
-                  return({
-                    description: e.description,
-                    reference_id: e.id,
-                    amount: {
-                      currency_code:"EUR",
-                      value: e.price
-                      //, breakdown:{
-                      //   tax_total:{
-                      //     currency_code:"EUR",
-                      //     value: e.tax
-                      //   },
-                      //   discount:{
-                      //     currency_code:"EUR",
-                      //     value: e?.discount
-                      //   }
-                      // }
-                    }
-                  })
+              address_portable:{
+                address_line_1:user?.location?.address,
+                postal_code:user?.location?.postalCode,
+                country_code:"FI",
+                admin_area_1:user?.province,
+                admin_area_2:user?.city
+              }
+            },
+            purchase_units:
+              o.posts.map((e,i)=>{
+                console.log(e);
+                return({
+                  description: e.description,
+                  reference_id: e.id,
+                  amount: {
+                    currency_code:"EUR",
+                    value: e.price
+                    //, breakdown:{
+                    //   tax_total:{
+                    //     currency_code:"EUR",
+                    //     value: e.tax
+                    //   },
+                    //   discount:{
+                    //     currency_code:"EUR",
+                    //     value: e?.discount
+                    //   }
+                    // }
+                  }
                 })
-                // TODO määritä shipping asetukset
-              // ,application_context: {
-              //   shipping_preference: 'NO_SHIPPING' 
-              //   }
-            };
-            console.log(o.posts);
-            console.log(i);
-            return actions.order.create(i)
-            }
-            else{
-              return null;
-            }
-          },
-          //Jos tilaus menee läpi toteutetaan on Approve funktio
-          onApprove: async (data, actions) =>{
-            //TODO: Julkaise ostoskorin sisältö ordereihin t
-            //https://localhost:44344/api/Orders/OrderItem
-            const order = await (actions.order.capture()) 
-            console.log(order);
-            o.recieveOrder(order);
-          },
-          //Jos tilaus kaatuu tehdään onError funktio
-          onError: (err) =>{
-            console.log(err);
+              })
+              // TODO määritä shipping asetukset
+            // ,application_context: {
+            //   shipping_preference: 'NO_SHIPPING' 
+            //   }
+          };
+          console.log(o.posts);
+          console.log(i);
+          return actions.order.create(i)
           }
-          
-        }).render(paypal.current)
-      }
-    },[user]);
+          else{
+            return null;
+          }
+        },
+        //Jos tilaus menee läpi toteutetaan on Approve funktio
+        onApprove: async (data, actions) =>{
+          //TODO: Julkaise ostoskorin sisältö ordereihin t
+          //https://localhost:44344/api/Orders/OrderItem
+          const order = await (actions.order.capture()) 
+          console.log(order);
+          o.recieveOrder(order);
+        },
+        //Jos tilaus kaatuu tehdään onError funktio
+        onError: (err) =>{
+          console.log(err);
+        }
+        
+      }).render(paypal.current)
+    }
+  },[user]);
 
   return(
   <div>
@@ -539,6 +540,7 @@ const Paypal = (o)=>{
   </div>
   );
 }
+
 export {
   MakePost,
   Error,

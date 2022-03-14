@@ -64,7 +64,7 @@ const paypalResponseObject = {
         //                 return i.reference_id;
         //               });
 
-        //             const answer = await fetch("https://localhost:44344/api/Orders/Posts",{
+        //             const answer = await fetch("https://localhost:44344/api/Posts/Shoppingcart",{
         //                 method: 'POST',
         //                 headers: {'Content-Type': 'application/json'},
         //                 body:JSON.stringify(ids)

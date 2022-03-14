@@ -37,5 +37,4 @@ sb-doxy48783494@business.example.com
 
 	TODO
 Laita paypalille oikeat tiedot kun tilataan ilman käyttäjänluontia
-Käyttäjänimi korvattiin emaililla
 Käyttäjätilin luonti tilauksen yhteydessä ei toimi

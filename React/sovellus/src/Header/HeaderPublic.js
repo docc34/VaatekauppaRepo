@@ -32,8 +32,8 @@ const HeaderPublic = () => {
                 body:JSON.stringify({username: email.value, password: password.value})
                 });
                 let result = await data.json();
-                if (result?.Status == "Error") {
-                    setMessage(result.Message);
+                if (result?.status == "Error") {
+                    setMessage(result.message);
                 }
                 else{
                     resetValues();
@@ -125,8 +125,8 @@ const HeaderPublic = () => {
     return (
         <div className="flex-container">
             <div className="flex-header-logo">
-                <NavLink className="flex-header-link" exact activeClassName="active" to="/">
-                <h1 className="header-img">Unnamed</h1>
+                <NavLink className="header-text" exact activeClassName="active" to="/">
+                <h3 >Unnamed</h3>
                     {/* <img className="header-img" src="https://vaatekauppastorage.blob.core.windows.net/defaultkuvat/mrWorldwide.jpg"></img> */}
                     </NavLink>
             </div>

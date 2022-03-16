@@ -26,6 +26,8 @@ import { PostManager } from './postManager/jobPostManager';
 import { PaymentPage} from './Payment/PaymentPage';
 import { ProductPage } from './ProductPage/ProductPage';
 import { ReturnPassword } from './returnPassword/ReturnPassword';
+import { ResponsePage } from './Payment/ResponsePage';
+
 //Tää tiedosto renderöidään index.js:ssä. 
 //Täällä hoidetaan sivun reititys 
 //Kaikille sivuille renderöidään footer ja joko julkinen tai yksityinen header
@@ -69,6 +71,7 @@ function App() {
         <div className="content">
           <Routes>
             <Route path="/" element={<EtusivuTekstit />} />
+            <Route path="/Tilaus" element={<ResponsePage />}/>
             <Route path="/Kauppa" element={<Store />}/>
             <Route path="/Maksu" element={<PaymentPage />} />
             <Route path="/Profiili" element={<Profiili />}/>

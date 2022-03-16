@@ -27,8 +27,8 @@ const ProductPage = () => {
                 method: 'GET'
             });
             let post = await data.json();
-            if (post?.Status == "Error") {
-                setMessage(post.Message);
+            if (post?.status == "Error") {
+                setMessage(post.message);
             }
             else{
                 setMessage("");

@@ -1,7 +1,8 @@
 import React,{useEffect, useState} from "react";
 import { useCookies } from 'react-cookie';
 import {Error, MakeShoppingCartItem,FormatDeliveryEstimateToDate} from '../Utils/Functions';
-const paypalResponseObject = {
+import { useLocation } from "react-router-dom";
+    const paypalResponseObject = {
     "id":"7TF79262PP128420G",
     "intent":"CAPTURE",
     "status":"COMPLETED",
@@ -51,12 +52,35 @@ const paypalResponseObject = {
         "links":[{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/7TF79262PP128420G","rel":"self","method":"GET"}]
     };
     
+
     const ResponsePage = (o)=>{
-        const [posts, setPosts] = useState("");
-        const [price, setPrice] = useState("");
+        const [response, setResponse] = useState("");
         const [message, setMessage] = useState("");
         const [cookies,setCookie] = useCookies(['token']);
+        const search = useLocation().search;
+        const orderId = new URLSearchParams(search).get('id');
         
+        const getOrder  = async ()=>{
+            if(orderId != null && orderId != "" && response == ""){
+                const answer = await fetch("https://localhost:44344/api/Orders/"+orderId,{
+                        method: 'GET',
+                        headers: { "Authorization": `Bearer ${cookies.token}`}
+                    });
+                var parsedAnswer = await answer.json();
+
+                if(parsedAnswer?.status != "Error"){
+                    setResponse(parsedAnswer);
+                }
+                else{
+                    setMessage(parsedAnswer?.message);
+                }
+
+            }
+        }
+
+        useEffect( async ()=>{
+            await getOrder();
+        },[]);
         // useEffect(async ()=>{
         //     if(posts != ""){
         //         try{
@@ -100,30 +124,54 @@ const paypalResponseObject = {
         //if(o.paypalResponseObject != null && o.paypalResponseObject != ""&& o.paypalResponseObject != undefined && o != null){
             var Starting = 0;
             var Ending = 2;
-            o.posts.map((e)=>{
-            if(e?.deliveryDaysEstimateStarting > Starting){
-                Starting = e?.deliveryDaysEstimateStarting
-            }
-            if(e?.deliveryDaysEstimateEnding > Ending){
-                Ending = e?.deliveryDaysEstimateEnding
-            }
-
+            o?.posts?.map((e)=>{
+                if(e?.deliveryDaysEstimateStarting > Starting){
+                    Starting = e?.deliveryDaysEstimateStarting
+                }
+                if(e?.deliveryDaysEstimateEnding > Ending){
+                    Ending = e?.deliveryDaysEstimateEnding
+                }
             });
+            if(o != null && o != ""&& o != {}){
+                console.log(response)
+                console.log(o)
+                return(<div>
+                        {(o != null && o != ""&& o != {}) ? 
+                        (<p>{response.o}</p>) : (<p>{response.price}</p>)
+                        }
+                        <h3>Tilaus {o?.order?.guid} tehty</h3>
+                        <p>Ostetut tuotteet</p>
+                        <MakeShoppingCartItem data={o?.posts} />
+                        <p>Kokonaishinta:{o?.price}</p>
+                        {/* TODO: Muotoile aika oikein */}
+                        <p>Aika:{o?.order?.orderDate}</p> 
+                        <p>Tilauksen status: {o?.order?.status}</p>
+                        <p>Osoite:{o?.order?.location?.address}</p>
+                        <p>Postinumero:{o?.order?.location?.postalCode}</p>
+                        <p>Kaupunki:{o?.order?.location?.city.cityName}</p>
+                        <FormatDeliveryEstimateToDate deliveryDaysEstimateStarting={Starting} deliveryDaysEstimateEnding={Ending}/> 
+                        <Error message={message}/>
+                        {/* {o?.paypalResponseObject?.id} */}
+                    </div>)
+            }
+            else{
             return(<div>
-                <h3>Tilaus {o.order?.guid} tehty</h3>
-                <p>Ostetut tuotteet</p>
-                <MakeShoppingCartItem data={o.posts} />
-                <p>Kokonaishinta:{o.price}</p>
-                {/* TODO: Muotoile aika oikein */}
-                <p>Aika:{o.order?.orderDate}</p> 
-                <p>Tilauksen status: {o.order?.status}</p>
-                <p>Osoite:{o.order.location?.address}</p>
-                <p>Postinumero:{o.order?.location?.postalCode}</p>
-                <p>Kaupunki:{o.order?.location?.city.cityName}</p>
-                <FormatDeliveryEstimateToDate deliveryDaysEstimateStarting={Starting} deliveryDaysEstimateEnding={Ending}/> 
-                <Error message={message}/>
-                {/* {o?.paypalResponseObject?.id} */}
-            </div>)
+                    <h3>Tilaus {response.order?.guid} tehty</h3>
+                    <p>Ostetut tuotteet</p>
+                    <MakeShoppingCartItem data={response.posts} />
+                    <p>Kokonaishinta:{response.price}</p>
+                    {/* TODO: Muotoile aika oikein */}
+                    <p>Aika:{response.order?.orderDate}</p> 
+                    <p>Tilauksen status: {response.order?.status}</p>
+                    <p>Osoite:{response.order?.location?.address}</p>
+                    <p>Postinumero:{response.order?.location?.postalCode}</p>
+                    <p>Kaupunki:{response.order?.location?.city.cityName}</p>
+                    <FormatDeliveryEstimateToDate deliveryDaysEstimateStarting={Starting} deliveryDaysEstimateEnding={Ending}/> 
+                    <Error message={message}/>
+                    {/* {o?.paypalResponseObject?.id} */}
+                </div>)
+            }
+            
         //}
         //else{
             // return(<div>

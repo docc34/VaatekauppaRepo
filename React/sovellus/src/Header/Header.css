@@ -16,6 +16,14 @@
     width: 150px;
     height: 50px;
 }
+.header-text{
+    text-decoration: none;
+    color: white;
+}
+.header-text:hover{
+    text-decoration: none;
+    color: white;
+}
 .flex-header-left-box{
     display: flex;
     flex-direction: row;
@@ -24,7 +32,8 @@
 }
 .flex-header-logo {
     padding: 10px;  
-    
+    width: 150px;
+    height: 50px;
 }
 .flex-header-searchBar{
     padding-left: 2em;

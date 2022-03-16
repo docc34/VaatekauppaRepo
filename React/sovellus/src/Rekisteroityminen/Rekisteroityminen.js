@@ -32,7 +32,7 @@ const Rekisteroityminen = ()=>{
             if(tarkistus.type != ""){
               setMessage(tarkistus.title);
             } 
-            else if(tarkistus.status =="Error")setMessage(tarkistus.Message);
+            else if(tarkistus.status =="Error")setMessage(tarkistus.message);
             else{
               setMessage("");
               //navigate("/");

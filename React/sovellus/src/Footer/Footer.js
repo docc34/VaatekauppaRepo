@@ -18,8 +18,8 @@ const Footer = () => {
                 </div>
                 <div className="Footer-Info-Data">
                     <p>Eemeli Antikainen</p>
-                    <p>yrityssähöposti@yritys.fi</p>
-                    <p>044 829 1018</p>
+                    <p>eemeli.antikainen@gmail.com</p>
+                    <p>040 960 6973</p>
                 </div>
 
             </div>
@@ -31,9 +31,9 @@ const Footer = () => {
                 </div>
 
                 <div className="Footer-Info-Data" >
-                    <p>Patrick Väisänen</p>
+                    <p>Maija Mehiläinen</p>
                     <p>yrityssähöposti@yritys.fi</p>
-                    <p>040 129 7862</p>
+                    <p>123 456 7891</p>
                 </div>
             </div>
         </div>

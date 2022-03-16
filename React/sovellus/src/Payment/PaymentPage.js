@@ -166,6 +166,8 @@ function PaymentPage() {
   }
 
   useEffect(async() => {
+    console.log(CheckEmptyFields([locationObjectPut]));
+    console.log(locationObjectPut);
     if(putEnabled == false && CheckEmptyFields([locationObjectPut])){
       try{
         const options = {
@@ -173,7 +175,8 @@ function PaymentPage() {
           headers: { 'Content-Type': 'application/json' ,"Authorization": `Bearer ${cookies.token}`},
           body:JSON.stringify(locationObjectPut)
         }
-        let answer = await fetch("https://localhost:44344/api/Locations/"+ cookies.currentLocationId != undefined && cookies.currentLocationId != null ? cookies.currentLocationId : currentLocationId,options);
+        var locationId = cookies.currentLocationId != undefined && cookies.currentLocationId != null ? cookies.currentLocationId : currentLocationId;
+        let answer = await fetch("https://localhost:44344/api/Locations/"+ locationId,options);
         let parsedAnswer = await answer.json();
 
         if(parsedAnswer?.status != "Error"){
@@ -510,8 +513,7 @@ function PaymentPage() {
                       cityId:cityPutId,
                       address:addressPut,
                       postalCode:postalCodePut,
-                      houseNumber:houseNumberPut,
-                      user: null
+                      houseNumber:houseNumberPut
                     });}}>Tallenna</button>
                   </div>
 

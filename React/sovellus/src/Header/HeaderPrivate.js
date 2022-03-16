@@ -33,7 +33,10 @@ const HeaderPrivate = () => {
         <div className="flex-container">
             <div className="flex-header-left-box">
                 <div className="flex-header-logo">
-                    <NavLink className="flex-header-link" exact activeClassName="active" to="/"><img className="header-img" src="https://vaatekauppastorage.blob.core.windows.net/defaultkuvat/mrWorldwide.jpg"></img></NavLink>
+                    <NavLink className="header-text" exact activeClassName="active" to="/">
+                        <h3 >Unnamed</h3>
+                        {/* <img className="header-img" src="https://vaatekauppastorage.blob.core.windows.net/defaultkuvat/mrWorldwide.jpg"></img> */}
+                    </NavLink>
                 </div>
 
                 <div className="Header-SearchBar">

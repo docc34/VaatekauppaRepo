@@ -28,8 +28,8 @@ function Profiili() {
 
     const result = await fetch("https://localhost:44344/api/user",options)
     //const posts = await getProfilePostsService(cookies?.userId);
-    if (result?.Status == "Error") {
-      setMessage(result.Message);
+    if (result?.status == "Error") {
+      setMessage(result.message);
     }
     else{
       var i = await result.json();

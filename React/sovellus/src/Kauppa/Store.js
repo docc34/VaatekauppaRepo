@@ -45,8 +45,8 @@ const Store = () => {
 
                 let data = await fetch(url,options);
                 let posts = await data.json();
-                if (posts?.Status == "Error") {
-                    setMessage(posts.Message);
+                if (posts?.status == "Error") {
+                    setMessage(posts.message);
                 }
                 else{
                     setMessage("");

@@ -438,7 +438,7 @@ const Paypal = (o)=>{
     }
     
     var user = await fetch("https://localhost:44344/api/user",options)
-    if(user?.Status != "Error" ){
+    if(user?.status != "Error" ){
       setUser(await user?.json());
     }
     else{

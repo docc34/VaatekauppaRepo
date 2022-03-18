@@ -166,6 +166,11 @@ insert into post (label,price,description,sleeveLength,material,length,deleted,d
 insert into post (label,price,description,sleeveLength,material,length,deleted,deliveryDaysEstimateStarting,deliveryDaysEstimateEnding,colorId,sizeId,taxId,userId) values ("Huppari",50,"Pehmee lämmin tyylikäs huppari","50cm","Villa","120cm",0,5,15,4,4,1,1);
 insert into post (label,price,description,sleeveLength,material,discount,length,deleted,deliveryDaysEstimateStarting,deliveryDaysEstimateEnding,colorId,sizeId,taxId,userId) values ("Tiukat housut",15,"Tiukat mustat spandex housut","50cm","Spandex","20","120cm",0,1,3,1,1,1,1);
 
+insert into images (postId, imageLink) values(1, "https://vaatekauppastorage.blob.core.windows.net/images/T-Shirt.jpg");
+insert into images (postId, imageLink) values(2, "https://vaatekauppastorage.blob.core.windows.net/images/T-Shirt.jpg");
+insert into images (postId, imageLink) values(3, "https://vaatekauppastorage.blob.core.windows.net/images/Hoodie.jpg");
+insert into images (postId, imageLink) values(4, "https://vaatekauppastorage.blob.core.windows.net/images/Pants.jpg");
+
 insert into orderstatus (status) values ("Order received");
 insert into orderstatus (status) values ("Order delivered");
 insert into orderstatus (status) values ("Order is being handled");

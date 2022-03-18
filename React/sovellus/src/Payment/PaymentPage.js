@@ -16,7 +16,7 @@ function PaymentPage() {
   //#region 
   const search = useLocation().search;
   const [checkout, setCheckout] = useState(false);
-  const [message, setMessage] = useState(false);
+  const [message, setMessage] = useState("");
   const [posts, setPosts] = useState("");
   const [loggedIn, setLoggedIn] = useState("");
 
@@ -236,8 +236,6 @@ function PaymentPage() {
             // setCookie('userFirstname', locationObject.user.firstname, { path: '/Maksu'});
             // setCookie('userLastname', locationObject.user.lastname, { path: '/Maksu'});
             //Tallenetaan sijainnin luonnin yhteydessä luotu guid cookiehen ja paikalliseen muuttujaan koska cookiet eivät ole jostainsyysä luotettavia
-            console.log(parsedAnswer);
-            console.log(parsedAnswer.guid);
             setGuid(parsedAnswer.guid);
             setCurrentLocationId(parsedAnswer.locationId);
             setCookie('Guid', parsedAnswer.guid, { path: '/Maksu' });
@@ -335,7 +333,7 @@ function PaymentPage() {
       }
     }
     else{
-      setMessage("Error");
+      // setMessage("Error");
     }
   },[paypalResponseObject]);
 
@@ -348,7 +346,6 @@ function PaymentPage() {
         <div>
           <div>
             <a href="/Kauppa">Takaisin kauppaan</a>
-            <Error message={message}/>
           </div>
 
           <Tabs activeKey={tabKey} id="uncontrolled-tab-example" className="mb-3">
@@ -396,9 +393,7 @@ function PaymentPage() {
 
               {/* Jos ei ole kirjautunut */}
               {loggedIn == 1?
-              (<div>
-                <p>Tämä renderöi jos et ole kirjautunut tai sinulla ei ole laitettuna sijaintitietoja vielä</p>
-                
+              (<div>                
                 <div>
                   <Form.Group controlId="formBasicName">
                     <Form.Label>Etunimi</Form.Label>
@@ -431,18 +426,19 @@ function PaymentPage() {
                       <Form.Control onBlur={(e)=>{handleInputChange(e)}} type="password" placeholder="Salasana"onChange={(e)=>{setPassword(handleInputChange(e)); }}/>
                     </Form.Group>
 
-                    <Form.Group controlId="formBasicPassword">
+                    <Form.Group controlId="formBasicPasswordAgain">
                       <Form.Label>Salasana uudestaan</Form.Label>
                       <Form.Control onBlur={(e)=>{handleInputChange(e)}} type="password" placeholder="Salasana uudestaan"onChange={(e)=>{setPasswordAgain(handleInputChange(e));}}/>
                     </Form.Group>
+                    <p>Salasanan pitää olla vähintään 8 merkkiä pitkä, sisältää isoja kirjaimia, erikoismerkkejä ja numeroita</p>
                   </div>) : (null)}
-                  
+                  <Error message={message}/>
                 </div>
                 <input type="Button" onClick={()=>{
                   if(register == true){
                     if(passwordAgain == password){
                       setLocationObject({
-                        userId:cookies.UserId,
+                        userId:"0",
                         cityId:cityId,
                         address:address,
                         postalCode:postalCode,
@@ -482,7 +478,6 @@ function PaymentPage() {
                 {/* Jos on kirjautunut ja on sijaintitiedot */}
               {loggedIn == 3 ?
               (<div>
-                  <p>Tämä renderöi jos oot kirjautunut ja sulla on sijaintitiedot jo kerrottu</p>
                   <p>Tarkasta että osoitetiedot ovat oikein</p>
                   <button disabled={!putEnabled} onClick={()=>{setPutEnabled(false);}}>Muokkaa tietoja</button>
                   <button disabled={putEnabled} onClick={()=>{setPutEnabled(true);}}>Peruuta</button>
@@ -522,7 +517,8 @@ function PaymentPage() {
             </Tab>
             
             <Tab eventKey="1" title="Maksaminen" disabled>
-              <p>Tab 2 maksaminen</p>
+              <h3>Maksaminen</h3>
+              <p>Tässä paypal sandbox tunnukset millä voi testata maksamista Email: sb-xybis7895175@personal.example.com Password: +^ChjA@9</p>
               <div className="container mt-5 p-3 rounded cart">
                 <div className="row no-gutters">
                       <div className="col-md-8">
@@ -545,10 +541,9 @@ function PaymentPage() {
                               </div>
                               <Paypal recieveOrder={RecieveOrder} posts={posts} token={cookies.token} guid={cookies.Guid != undefined && cookies.Guid != null ? cookies.Guid : guid}/>
                               <hr className="line"/>
-                              {/* TODO: Laske tähän hinnat äläkä käytä staattisia arvoja. */}
-                              <div className="d-flex justify-content-between information"><span>Subtotal</span><span>$3000.00</span></div>
+                                {/* TODO:Hae tähän tuotteiden oikea veroprosentti */}
                               <div className="d-flex justify-content-between information"><span>Verot</span><span>24%</span></div>
-                              {/* TODO:Hae tähän tuotteiden oikea veroprosentti */}
+
                               <div className="d-flex justify-content-between information"><span>Kokonaishinta</span><span>{price}€</span></div>
                           </div>
                       </div>

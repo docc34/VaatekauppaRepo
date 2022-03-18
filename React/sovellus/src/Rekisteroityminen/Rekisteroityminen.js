@@ -88,6 +88,7 @@ return(
       }} value={'Rekisteröidy'} disabled={loading} variant="primary"/><br />
 
   </Form>
+  <p>Salasanan pitää olla vähintään 8 merkkiä pitkä, sisältää isoja kirjaimia, erikoismerkkejä ja numeroita</p>
   <p>Onko sinulla jo käyttäjä. Voit kirjautua sisään  <NavLink  to="/Kirjautuminen">Täältä</NavLink> </p>
     <Error message={message}/>
   </div>

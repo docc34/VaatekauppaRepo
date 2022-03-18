@@ -80,13 +80,13 @@ const HeaderPrivate = () => {
                 >
                 <Modal.Header >
                     <Modal.Title id="contained-modal-title-vcenter">
-                        Signing out
+                        Uloskirjautuminen
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="Return-Modal-Body">
                     <div className="return-main">
                         <div>
-                            <h3>Are you sure you want to Sign out</h3>
+                            <h3>Haluatko varmasti kirjautua ulos</h3>
                         </div>
                     </div>
                 </Modal.Body>
@@ -99,8 +99,8 @@ const HeaderPrivate = () => {
                 removeCookie('userId',{ path: '/' });
                 removeCookie('shoppingCart',{ path: '/' }); 
                 navigate("/"); 
-                window.location.reload();}}>Sign out</Button>
-                        <Button onClick={() => { setLogOutModalShow(false); }}>Cancel</Button>
+                window.location.reload();}}>Kirjaudu ulos</Button>
+                        <Button onClick={() => { setLogOutModalShow(false); }}>Peruuta</Button>
                     </div>
 
                 </Modal.Footer>

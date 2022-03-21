@@ -21,14 +21,13 @@ const Rekisteroityminen = ()=>{
     //Kutsutaan rekisteröitymisen backendiä
     useEffect( async()=>{
          if(loading != false){
-          let post = await fetch("https://localhost:44344/api/Authenticate/register", {
+          let post = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Authenticate/register", {
             
             method:'POST',
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({password: password.value,  firstName: firstName, lastName: lastName.value,email:email.value , phonenumber: phonenumber.value})
             });
             let tarkistus = await post.json();
-            console.log(tarkistus);
             if(tarkistus.type != ""){
               setMessage(tarkistus.title);
             } 
@@ -45,7 +44,7 @@ const Rekisteroityminen = ()=>{
     },[loading]);
 
 return(
-<div className="login-main"> 
+<div className="Registering-Main-Container"> 
   <div>
     <h2>Rekisteröityminen</h2>
   <Form>
@@ -89,7 +88,7 @@ return(
 
   </Form>
   <p>Salasanan pitää olla vähintään 8 merkkiä pitkä, sisältää isoja kirjaimia, erikoismerkkejä ja numeroita</p>
-  <p>Onko sinulla jo käyttäjä. Voit kirjautua sisään  <NavLink  to="/Kirjautuminen">Täältä</NavLink> </p>
+  <p>Onko sinulla jo käyttäjä. Voit kirjautua sisään  <a onClick={()=>{setCookie('loginModal', "true", { path: '/' ,expires: 0});window.location.reload();}}>Täältä</a> </p>
     <Error message={message}/>
   </div>
 </div>

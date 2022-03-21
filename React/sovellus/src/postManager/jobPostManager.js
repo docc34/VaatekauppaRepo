@@ -132,7 +132,7 @@ const PostManager = () => {
             //, 'Content-Type': 'application/x-www-form-urlencoded'
             //, 'Content-Type': 'image/png'
             try {
-                let data = await fetch("https://localhost:44344/api/Posts/image", options)
+                let data = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Posts/image", options)
                 let j = await data.json();
                 if (j?.status != "Error") {
                     setMessage("Image added successfully.");

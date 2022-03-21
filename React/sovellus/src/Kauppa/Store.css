@@ -12,6 +12,9 @@ padding-right: 3%;
 .Store-Search-Options-Container{
     height:200px;
 }
+.Store-Search-Options-Container{
+    width: 400px;
+}
 .Store-Card-Column{
     padding-top: 5em;
     display:flex;

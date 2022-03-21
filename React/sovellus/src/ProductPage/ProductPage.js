@@ -23,7 +23,7 @@ const ProductPage = () => {
     const getStoreData = async () => {
         try{
 
-            let data = await fetch("https://localhost:44344/api/Posts/"+postId,{
+            let data = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Posts/"+postId,{
                 method: 'GET'
             });
             let post = await data.json();

@@ -42,7 +42,7 @@ function App() {
         headers: {"Authorization": `Bearer ${cookies.token}`}
       }
 
-      try{ let validation = await fetch("https://localhost:44344/api/authenticate/validatetoken", options)
+      try{ let validation = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/authenticate/validatetoken", options)
         let data = await validation.json();
       
         if( data == true){

@@ -28,6 +28,7 @@ Front rivit 5010
 Backend rivit 4023
 Tietokant 669
 
+18.3.2022 79 tuntia eka versio julkaistu.
 	Paypal sandbox personal
 sb-xybis7895175@personal.example.com
 +^ChjA@9

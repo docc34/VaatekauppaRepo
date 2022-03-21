@@ -18,6 +18,16 @@
     border-color: #8f37aa;
     border-width: 2px;
 }
+.Form-User-Data-Container{
+    width:400px;
+}
+.Form-Address-Data-Container{
+    width:400px;
+}
+.Payment-Page-Main-Container{
+margin: 2%;
+
+}
 .cart {
     background: #fff
 }

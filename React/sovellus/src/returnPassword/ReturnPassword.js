@@ -21,8 +21,7 @@ const ReturnPassword = () => {
                 method: 'GET',
                 headers: {"Authorization": `Bearer ${cookies.token}`}
             }
-            var i = await fetch("https://localhost:44344/api/Email/Send?toAddress="+emailObject,options);
-            console.log(i);
+            var i = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Email/Send?toAddress="+emailObject,options);
             setMessage(await i.json());
         }
     },[emailObject]);

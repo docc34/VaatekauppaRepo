@@ -31,7 +31,7 @@ const Store = () => {
                     method: 'GET',
                     headers: {"Authorization": `Bearer ${cookies.token}`}
                 }
-                let url = "https://localhost:44344/api/Posts/?1=1";
+                let url = "https://vaatekauppayritysbackend.azurewebsites.net/api/Posts/?1=1";
                 if( i?.jobPostTitle != "" && i?.jobPostTitle != null && i?.jobPostTitle != undefined){
                     url += "&title="+i.jobPostTitle;
                 }
@@ -61,7 +61,6 @@ const Store = () => {
 
     // get user list on page load
     useEffect(() => {
-        console.log(cookies?.shoppingCart);
         getStoreData({jobPostTitle:null,priceSort:null});
     }, []);
 
@@ -71,13 +70,12 @@ const Store = () => {
         <h1> Hae tuotteita</h1>
         {/* Hakukenttä */}
         <div className="Store-Search-Options-Container">
-            <div>
-                
+            <div className='Store-Searchbar-Input-Container'>
                 <InputGroup >
                     <InputGroup.Prepend className="Store-SearchBar-Button-Div">
                     <InputGroup.Text id="basic-addon1"><button className="Store-SearchBar-Button" onClick={() => {let i = searchObject; i.jobPostTitle =labelSearchText; setSearchObject(i); getStoreData(i); }}>{/*Tähän se suurennuslasin logo */}o</button></InputGroup.Text>
                 </InputGroup.Prepend>
-                    <FormControl onChange={(e) => { setLabelSearchText(e.target.value); }} placeholder="Hae" aria-label="Search" aria-describedby="basic-addon1" />
+                    <FormControl  onChange={(e) => { setLabelSearchText(e.target.value); }} placeholder="Hae" aria-label="Search" aria-describedby="basic-addon1" />
                 </InputGroup>
                 <Error message={message}/>
             </div>

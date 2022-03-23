@@ -12,6 +12,7 @@ const ReturnPassword = () => {
     const [message, setMessage] = useState("");
     const [emailObject, setEmailObject] = useState("");
     const [emailTo, setEmailTo] = useState("");
+    const [emailSent, setEmailSent] = useState(false);
 
     const [cookies] = useCookies(['token']);
     
@@ -22,7 +23,14 @@ const ReturnPassword = () => {
                 headers: {"Authorization": `Bearer ${cookies.token}`}
             }
             var i = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Email/Send?toAddress="+emailObject,options);
-            setMessage(await i.json());
+            var response = await i.json();
+            if(response?.status != "Error"){
+                setMessage(response?.message);
+                setEmailSent(true);
+            }
+            else{
+                setMessage(response?.message);
+            }
         }
     },[emailObject]);
     

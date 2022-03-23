@@ -113,6 +113,16 @@ const MakePost = (p) => {
                   <img className='ReviewLinkedImage' src={e?.imageLink}/>
                   {/* Tämä on ehdollista renderöintiä, pitää määrittää kenttiin jotka voi olla tyhjiä */}
                   {
+                    e?.size ? (<Card.Text>
+                      Koko: {e?.size}
+                    </Card.Text> ):( null)
+                  }
+                  {
+                    e?.color ? (<Card.Text>
+                      Väri: {e?.color}
+                    </Card.Text> ):( null)
+                  }
+                  {
                   e?.material ? (<Card.Text>
                     Materiaali: {e?.material}
                   </Card.Text> ): (null)
@@ -141,12 +151,12 @@ const MakePost = (p) => {
                   </div>
 
                   <div className="ProfileCardTitleContainer">
-                    <Card.Text className="ProfileCardTitleLabelBox">
-                    {/* Tähän vois tähti arvostelut laittaa */}
+                    {/* TODO: Tähän vois tähti arvostelut laittaa */}
+                    {/* <Card.Text className="ProfileCardTitleLabelBox">
                       <MakeRatingStars/>
-                    </Card.Text>
+                    </Card.Text> */}
                     <Card.Text>
-                      <button onClick={()=>{if(cookies['shoppingCart'] == null || cookies['shoppingCart'] == undefined){
+                      <button className='Post-Button' onClick={()=>{if(cookies['shoppingCart'] == null || cookies['shoppingCart'] == undefined){
                         setCookie('shoppingCart', [{PostId:e?.id}], { path: '/' })
                         window.location.reload();
                       }
@@ -191,7 +201,7 @@ const MakeShoppingCartItem = (p) => {
           if(e!= null){
             return (
               <div className="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
-                <div className="d-flex flex-row"><img className="rounded" src={e?.imageLink} width="120"/>
+                <div className="d-flex flex-row"><img className="rounded  Post-Image" src={e?.imageLink} />
                   <div className="ml-2"><span className="font-weight-bold d-block">{e?.label}</span>
                     <span className="ml-2">
                       {/* Tämä on ehdollista renderöintiä, pitää määrittää kenttiin jotka voi olla tyhjiä */}
@@ -242,7 +252,7 @@ const MakeShoppingCartItem = (p) => {
           if(e!= null){
             return (
               <div className="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
-                <div className="d-flex flex-row"><img className="rounded" src={e?.imageLink} width="40"/>
+                <div className="d-flex flex-row"><img className="rounded Post-Image" src={e?.imageLink} width="40"/>
                   <div className="ml-2"><span className="font-weight-bold d-block">{e?.label}</span><span className="spec">
                     {/* Tämä on ehdollista renderöintiä, pitää määrittää kenttiin jotka voi olla tyhjiä */}
                     {
@@ -266,7 +276,6 @@ const MakeShoppingCartItem = (p) => {
                      <p> Alennus: {e?.discount}<br/></p> 
                     ): (null)
                     }
-
                   </span>
                 </div>
                   <div className="d-flex flex-row align-items-center">

@@ -47,38 +47,84 @@ const ProductPage = () => {
 
 
     return (
-    <div className="Store-Post-Main-Box">
+    <div className="Store-Post-Main-Container">
         <h1> {post?.label}</h1>
-        <Error message={message}/>
-        <p>Tuotteen arvioitu kuljetusaika:<FormatDeliveryEstimateToDate deliveryDaysEstimateStarting={post?.deliveryDaysEstimateStarting} deliveryDaysEstimateEnding={post?.deliveryDaysEstimateEnding}/></p>
-        <button onClick={()=>{
-            if(cookies['shoppingCart'] == null || cookies['shoppingCart'] == undefined){
-            setCookie('shoppingCart', [{PostId:post?.id}], { path: '/' })
-            }
-            else{
-                var i = cookies['shoppingCart'];
-                var t = true;
-                i?.map((item,index)=>{
-                if(item?.PostId == post?.id){
-                    t = false;
-                }
-                })
-
-                if(t == true)
+        <div className="Store-Post-Data-Container">
+            <div className="Store-Post-Title-Container">
+                <img className='Store-Post-Image' src={post?.imageLink}/>
+                {console.log(post)}
                 {
-                i[i.length] ={PostId:post?.id}
-                setCookie('shoppingCart', JSON.stringify(i), { path: '/',expires: 0})
-                window.location.reload();
+                    post?.price ? (
+                        <h4> Hinta: {post?.price}€<br/></h4> 
+                    ): (null)
                 }
-            }}}
-        >Lisää ostoskoriin</button>
-        {/* TODO: Muotoile sivu ja näytä kaikki datat.*/}
-        <div className="Store-Card-Column-container">
-            <CardColumns  className="Store-Card-Column">
-                {/* <MakePost data={storePostsData} /> */}
-            </CardColumns>
-        </div>
+                <button onClick={()=>{
+                    if(cookies['shoppingCart'] == null || cookies['shoppingCart'] == undefined){
+                    setCookie('shoppingCart', [{PostId:post?.id}], { path: '/' })
+                    }
+                    else{
+                        var i = cookies['shoppingCart'];
+                        var t = true;
+                        i?.map((item,index)=>{
+                        if(item?.PostId == post?.id){
+                            t = false;
+                        }
+                        })
 
+                        if(t == true)
+                        {
+                        i[i.length] ={PostId:post?.id}
+                        setCookie('shoppingCart', JSON.stringify(i), { path: '/',expires: 0})
+                        window.location.reload();
+                        }
+                    }}}
+                >Lisää ostoskoriin</button>
+            </div>
+            <div className='Store-Post-Product-Data-Container'>
+                    <h4>Tuotetiedot</h4>
+                {
+                    post?.description ? (
+                        <p> Kuvaus: {post?.description}<br/></p> 
+                    ): (null)
+                }
+                            {
+                    post?.size ? (
+                        <p> Koko: {post?.size}<br/></p> 
+                    ): (null)
+                }
+                            
+                {
+                    post?.color ? (
+                        <p> Väri: {post?.color}<br/></p> 
+                    ): (null)
+                }
+                {
+                    post?.material ? (
+                        <p>Materiaali: {post?.material}<br/></p> 
+                    ): (null)
+                }
+                {
+                    post?.length ? (
+                        <p>Pituus: {post?.length}<br/></p> 
+                    ):( null)
+                }
+                {
+                    post?.sleeveLength ? 
+                        <p> Hihan pituus: {post?.sleeveLength}<br/></p> 
+                    : (null)
+                }
+                {/* TODO: Tee funktio joka laskee hintaan mukaan alennuksen ja veron ja jos alennusta on muuta tyylityksiä ehdollisella reneröinnillä */}
+                {
+                    post?.discount ? (
+                        <p> Alennus: {post?.discount}<br/></p> 
+                    ): (null)
+                }
+
+                <p>Tuotteen arvioitu kuljetusaika: <FormatDeliveryEstimateToDate deliveryDaysEstimateStarting={post?.deliveryDaysEstimateStarting} deliveryDaysEstimateEnding={post?.deliveryDaysEstimateEnding}/></p>
+
+                <Error message={message}/>
+            </div>
+        </div>
     </div>)
 }
 

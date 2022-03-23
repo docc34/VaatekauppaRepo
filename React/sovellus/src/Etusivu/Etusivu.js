@@ -5,7 +5,7 @@ import './Etusivu.css'
 
 const EtusivuTekstit = () => {
     return (
-    <div>
+    <div className='EtusivuMainContainer'>
         <h1>Unnamed by Eemeli Antikainen</h1>
         <h4>Projekti on vielä keskeneräinen. Tyylitykset olen päättänyt tehdä viimesenä joten tällähtekellä sivut näyttävät tältä, mutta toiminnallisuutta on. Jos sivusta tai koodista on mitään kysymyksiä ota yhteyttä eemeli.antikainen@gmail.com</h4>
         

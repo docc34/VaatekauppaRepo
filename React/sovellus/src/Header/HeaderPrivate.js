@@ -17,15 +17,15 @@ const HeaderPrivate = () => {
     const searchStore =()=>{
     if(path != "/Kauppa"){
         if(labelSearchText == ""){
-        return(<a className="Header-SearchBar-Link Header-SearchBar-Button" href="/Kauppa">{/*Tähän se suurennuslasin logo */}o</a>)
+        return(<a className="Header-SearchBar-Link Header-SearchBar-Button" href="/Kauppa"><img className='Header-Searchbar-Image' src="https://vaatekauppastorage.blob.core.windows.net/images/MagnifyingGlass.jpg"/></a>)
         }
         else{
-        return(<a className="Header-SearchBar-Link Header-SearchBar-Button" href={"/Kauppa?title="+labelSearchText}>{/*Tähän se suurennuslasin logo */}o</a>)
+        return(<a className="Header-SearchBar-Link Header-SearchBar-Button" href={"/Kauppa?title="+labelSearchText}><img className='Header-Searchbar-Image' src="https://vaatekauppastorage.blob.core.windows.net/images/MagnifyingGlass.jpg"/></a>)
         }
     }
     else{
         //return(<button className="Header-SearchBar-Button">{/*Tähän se suurennuslasin logo */}o</button>)
-        return(<a className="Header-SearchBar-Link Header-SearchBar-Button" href={"/Kauppa?title="+labelSearchText}>{/*Tähän se suurennuslasin logo */}o</a>)
+        return(<a className="Header-SearchBar-Link Header-SearchBar-Button" href={"/Kauppa?title="+labelSearchText}><img className='Header-Searchbar-Image' src="https://vaatekauppastorage.blob.core.windows.net/images/MagnifyingGlass.jpg"/></a>)
     }
     }
 
@@ -39,12 +39,13 @@ const HeaderPrivate = () => {
                     </NavLink>
                 </div>
 
-                <div className="Header-SearchBar">
-                <InputGroup className="Header-SearchBar">
+                <div className="Header-SearchBar-Container">
+                <InputGroup >
                     <InputGroup.Prepend className="Header-SearchBar-Button-Div">
-                    <InputGroup.Text id="basic-addon1">
-                       {searchStore()}
-                    </InputGroup.Text>
+                    <div className="Header-SearchBar-Button-Div" id="basic-addon1">
+                        {searchStore()}
+                    </div>
+                        
                 </InputGroup.Prepend>
                     <FormControl 
                     onChange={(e) => { setLabelSearchText(e.target.value); }} 

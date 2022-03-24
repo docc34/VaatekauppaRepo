@@ -15,7 +15,6 @@ import {ResponsePage} from './ResponsePage';
 function PaymentPage() {
   //#region 
   const search = useLocation().search;
-  const [checkout, setCheckout] = useState(false);
   const [message, setMessage] = useState("");
   const [posts, setPosts] = useState("");
   const [loggedIn, setLoggedIn] = useState("");
@@ -48,7 +47,6 @@ function PaymentPage() {
   const [order, setOrder] = useState("");
   const [price, setPrice] = useState("");
   const [register, setRegister] = useState(false);
-  const [testErrors, setTestErrors] = useState([]);
   
   const [cities, setCities] = useState([]);
   let navigate = useNavigate();

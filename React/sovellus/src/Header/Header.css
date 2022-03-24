@@ -68,12 +68,7 @@
     padding:0px;
     width: 48px;
 }
-.Header-SearchBar{
-    padding-left: 1.5%;
-    padding-top: 0.5%;
-    max-width: 400px;
-    height: 44px;
-}
+
 .Header-SearchBar-Button-Div{
     max-height: 38px;
     display: flex;
@@ -94,6 +89,10 @@
 .Header-SearchBar-Container{
     display: flex;
     flex-direction: row;
+    padding-left: 1%;
+    padding-top: 1%;
+    max-width: 400px;
+    height: 44px;
 }
 .Header-Searchbar-Image{
     width: 100%;

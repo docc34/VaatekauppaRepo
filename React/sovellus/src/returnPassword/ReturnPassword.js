@@ -168,13 +168,15 @@ const ReturnPassword = () => {
             <div className="Store-Post-Main-Box">
                 <h1> Palauta salasana</h1>
                 <p>Anna käyttäjätilisi sähköposti</p>
-                <Form.Group controlId="formBasicEmail">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control onBlur={(e)=>{handleInputChange(e)}} type="email"  placeholder="Email" onChange={(e)=>{setEmailTo(handleInputChange(e));}}/>
-                  </Form.Group>
+                <div className='Password-Return-Password-Container'>
+                    <Form.Group controlId="formBasicEmail">
+                        <Form.Label>Email</Form.Label>
+                        <Form.Control onBlur={(e)=>{handleInputChange(e)}} type="email"  placeholder="Email" onChange={(e)=>{setEmailTo(handleInputChange(e));}}/>
+                    </Form.Group>
+                </div>
                 {/* TODO: Lisää ilmoitus että sähköposti on lähetetty ja vaihtoehto lähettää sähköposti uudestaan */}
                 {message}
-                <button onClick={()=>{setEmailObject(emailTo)}}>Lähetä gmail</button>
+                <button className='Password-Return-Button' onClick={()=>{setEmailObject(emailTo)}}>Lähetä gmail</button>
             </div>)
     }
     

@@ -31,7 +31,7 @@ const Store = () => {
                     method: 'GET',
                     headers: {"Authorization": `Bearer ${cookies.token}`}
                 }
-                let url = "https://vaatekauppayritysbackend.azurewebsites.net/api/Posts/?1=1";
+                let url = "https://localhost:44344/api/Posts/?1=1";
                 if( i?.jobPostTitle != "" && i?.jobPostTitle != null && i?.jobPostTitle != undefined){
                     url += "&title="+i.jobPostTitle;
                 }
@@ -81,7 +81,6 @@ const Store = () => {
             </div>
             {/* Outobugi ei näytä nappeja jos ovat tässä */}
             <div>
-
                 <Button  onClick={()=>{let i = searchObject; i.priceSort = "desc"; setSearchObject(i); getStoreData(i); }}>Kalliimmat ensin</Button>
                 <Button  onClick={()=>{let i = searchObject; i.priceSort = "asc"; setSearchObject(i); getStoreData(i);}}>Halvimmat ensin</Button>
             </div>

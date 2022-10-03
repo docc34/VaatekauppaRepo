@@ -12,8 +12,7 @@ import { useCookies } from 'react-cookie';
 
 //import { verifyTokenAsync } from './asyncActions/authAsyncActions';
 import { EtusivuTekstit } from './Etusivu/Etusivu';
-import { HeaderPublic } from './Header/HeaderPublic';
-import { HeaderPrivate } from './Header/HeaderPrivate';
+import { Header } from './Header/Header';
 
 import { Footer } from './Footer/Footer';
 import { Rekisteroityminen } from './Rekisteroityminen/Rekisteroityminen'
@@ -42,7 +41,7 @@ function App() {
         headers: {"Authorization": `Bearer ${cookies.token}`}
       }
 
-      try{ let validation = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/authenticate/validatetoken", options)
+      try{ let validation = await fetch("https://localhost:44344/api/authenticate/validatetoken", options)
         let data = await validation.json();
       
         if( data == true){
@@ -64,7 +63,7 @@ function App() {
       <div>
         <nav className="header">
           <Routes>
-            <Route path="/*" element={<HeaderPrivate />} />
+            <Route path="/*" element={<Header privacy={state} />} />
           </Routes>
         </nav>
 
@@ -94,7 +93,7 @@ function App() {
       <div>
         <nav className="header">
           <Routes>
-            <Route path="/*" element={<HeaderPublic />} />
+            <Route path="/*" element={<Header privacy={state} />} />
           </Routes>
         </nav>
         <div className="content">

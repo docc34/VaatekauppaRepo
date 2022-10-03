@@ -6,8 +6,44 @@
 @media (min-width: 1400px) { }
 @media (min-width: 576px) {  }*/
 
+#EtusivuDisclaimer{
+    color:red;
+}
+.EtusivuTextsMainContainer{
+    padding:2%;
+    display: flex;
+    flex-direction: column;
+}
+.EtusivuTextsContainer{
+    width:500px;
 
+}
+.EtusivuTextsContainerType1{
 
+}
+
+.EtusivuTextsContainerType2{
+    float:right;
+}
 .EtusivuMainContainer{
-    margin: 2%;
+    /* margin: 2%; */
+}
+
+.EtusivuTitleMainContainer{
+    background-color: rgb(42, 48, 48);
+    height:165px;
+    text-align: center;
+}
+.EtusivuTitleContainer{
+    padding-top: 2.5%;
+}
+
+.EtusivuTitleText{
+    color: whitesmoke;
+}
+
+.EtuSivuImages{
+    
+    max-width: 1100px;
+    max-height: 1200px;
 }

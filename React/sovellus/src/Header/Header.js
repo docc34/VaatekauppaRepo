@@ -8,12 +8,11 @@ import { useCookies } from 'react-cookie';
 import {Error} from '../Utils/Functions'
 // import './Kirjautuminen.css';
 import {  useNavigate  } from 'react-router-dom';
-const HeaderPublic = () => {
+const Header = (x) => {
     let [loginModalShow, setLoginModalShow] = useState(false);
     
     const [labelSearchText,setLabelSearchText] = useState("");
     const [message,setMessage] = useState("");
-    const [loginState,setLoginState] = useState(false);
     const [logOutModalShow, setLogOutModalShow] = useState(false);
     
     const email = useFormInput('');
@@ -26,7 +25,7 @@ const HeaderPublic = () => {
     //TODO:Handel login
     const handleLogin = async() => {
         try{
-            let data = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Authenticate/login",{
+            let data = await fetch("https://localhost:44344/api/Authenticate/login",{
                 method:'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body:JSON.stringify({username: email.value, password: password.value})
@@ -79,49 +78,6 @@ const HeaderPublic = () => {
         }
     }
 
-    useEffect(async()=>{
-        if(cookies.token!= "" && cookies.token != null ){
-          const options = {
-            method: 'GET',
-            headers: {"Authorization": `Bearer ${cookies.token}`}
-          }
-    
-          try{ 
-            let validation = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/authenticate/validatetoken", options)
-            let data = await validation.json();
-          
-            if( data == true){
-                setLoginState(true);
-            }
-            else{
-                setLoginState(false);
-            }
-          }
-          catch{
-            setLoginState(false);
-          }
-        }
-      },[cookies?.token]);
-    
-    const checkLoginStatus = ()=>{
-        if(loginState == true){
-            return(
-                <div>
-                    {/*Profiiliin pääsee vain kun on kirjautunut */}
-                    <NavLink className="flex-header-link" activeClassName="active" to="/Profiili">Profiili</NavLink>
-                    <NavLink className="flex-header-link" onClick={()=>{setLogOutModalShow(true);}} activeClassName="active" to="/">Kirjaudu ulos</NavLink>
-                </div>
-            );
-        }
-        else{
-            return(
-                <div>
-                        <a className="flex-header-link" href="#" onClick={() => { setLoginModalShow(true) }}>Kirjaudu</a>
-                </div>
-            );
-        }
-
-    }
     return (
         <div className="flex-container">
             <div className="flex-header-logo">
@@ -151,15 +107,22 @@ const HeaderPublic = () => {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         {labelSearchText}
-                        {/*Kotiin pääsee aina*/}
                         <NavLink className="flex-header-link" exact activeClassName="active" to="/">Etusivu</NavLink>
-                        {/*Profiiliin pääsee vain kun on kirjautunut */}
                         <NavLink className="flex-header-link" activeClassName="active" to="/Kauppa">Kauppa </NavLink>
-                        {/*Kirjautumiseen pääsee vain kun ei ole kirjautunut */}
-                        {/* <NavLink className="flex-header-link" activeClassName="active" to="/Kirjautuminen">Kirjaudu</NavLink> */}
-                        {checkLoginStatus()}
+
+                        {/* Privacy determines if the user has logged in */}
+                        {x?.privacy == true ? (
+                            <div>
+                                <NavLink className="flex-header-link" activeClassName="active" to="/Profiili">Profiili</NavLink>
+                                <NavLink className="flex-header-link" onClick={()=>{setLogOutModalShow(true);}} activeClassName="active" to="/">Kirjaudu ulos</NavLink>
+                            </div>):
+                            (<div>
+                                <a className="flex-header-link" href="#" onClick={() => { setLoginModalShow(true) }}>Kirjaudu</a>
+                            </div>
+                        )}
+                        
                         {/* TODO: Ostoskorin logo ja päivittyvät grafiikat kun ostoskoriin lisätään esineitä. */}
-                        <NavLink className="flex-header-link" activeClassName="active" to="/Maksu">Ostoskori: {cookies?.shoppingCart?.length} </NavLink>
+                        <NavLink className="flex-header-link" activeClassName="active" to="/Maksu">Ostoskori: {cookies?.shoppingCart?.length ?(cookies?.shoppingCart?.length):(0)} </NavLink>
                     </Navbar.Collapse>
                 </Navbar>
             </div>
@@ -257,4 +220,4 @@ const useFormInput = initialValue => {
         onChange: handleChange
     }
 }
-export { HeaderPublic }
+export { Header }

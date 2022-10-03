@@ -25,18 +25,23 @@ function Profiili() {
       method: 'GET',
       headers: {"Authorization": `Bearer ${cookies.token}`}
     }
-
-    const result = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/user",options)
-    //const posts = await getProfilePostsService(cookies?.userId);
-    if (result?.status == "Error") {
-      setMessage(result.message);
-    }
-    else{
-      var i = await result.json();
-      setProfileData(i);
-      setProfileLocation(i?.location);
-      setProfileOrders(i?.orders);
-    }
+      //TODO Sivu kaatuu töhön uudella käyttäjällä
+      try{
+        const result = await fetch("https://localhost:44344/api/user",options)
+        //const posts = await getProfilePostsService(cookies?.userId);
+        if (result?.status == "Error") {
+          setMessage(result.message);
+        }
+        else{
+          var i = await result.json();
+          setProfileData(i);
+          setProfileLocation(i?.location);
+          setProfileOrders(i?.orders);
+        }
+      }
+      catch(e){
+        console.log(e);
+      }
     //let post = posts.data;
 
     //setProfilePosts(post);

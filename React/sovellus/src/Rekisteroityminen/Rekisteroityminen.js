@@ -21,11 +21,11 @@ const Rekisteroityminen = ()=>{
     //Kutsutaan rekisteröitymisen backendiä
     useEffect( async()=>{
          if(loading != false){
-          let post = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Authenticate/register", {
+          let post = await fetch("https://localhost:44344/api/Authenticate/register", {
             
             method:'POST',
             headers: { 'Content-Type': 'application/json' },
-            body:JSON.stringify({password: password.value,  firstName: firstName, lastName: lastName.value,email:email.value , phonenumber: phonenumber.value})
+            body:JSON.stringify({password: password.value,  firstName: firstName.value, lastName: lastName.value,email:email.value , phonenumber: phonenumber.value})
             });
             let tarkistus = await post.json();
             if(tarkistus.type != ""){

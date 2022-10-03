@@ -36,6 +36,23 @@ const PostManager = () => {
     const [errors, setErrors] = useState([]);
     const [cookies] = useCookies(['token']);
 
+    const [adminStatus, setAdminStatus] = useState(false);
+
+    useEffect( async ()=>{
+        const options = {
+            method: 'GET',
+            headers: { "Authorization": `Bearer ${cookies?.token}` }
+        }
+        try{
+            let fetchStatus = await fetch("https://localhost:44344/api/authenticate/validateadmin", options);
+            let status = await fetchStatus?.json();
+            if(status)
+                setAdminStatus(status);
+        }
+        catch(e){
+            console.log(e);
+        }
+    },[]);
 
     {/* nollaa kaikki ponnahdusikkunoiden arvot ja sulkee pnnahdusikkunat */ }
     const resetValues = () => {
@@ -132,7 +149,7 @@ const PostManager = () => {
             //, 'Content-Type': 'application/x-www-form-urlencoded'
             //, 'Content-Type': 'image/png'
             try {
-                let data = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Posts/image", options)
+                let data = await fetch("https://localhost:44344/api/Posts/image", options)
                 let j = await data.json();
                 if (j?.status != "Error") {
                     setMessage("Image added successfully.");
@@ -184,95 +201,103 @@ const PostManager = () => {
     }
     const applyErrorClass= field =>((field in errors && errors[field] == false)?' invalid-field':'')
 
-    return (<div className="PostManagerMainBox">
-        <h1> Hae työilmoituksia</h1>
-        <h3>Lisää kuva julkaisuun</h3>
-        <form onSubmit={handleFormSubmit}>
-            {/* <label htmlFor='attachmentDescription'>Picture description<input id="attachmentDescription" onChange={(e)=>{setAttachmentDescription(e.target.value);}} className="form-control"/></label> */}
-            {/*onChange={showPreview}*/}
-            <input onChange={setFileFromInput} type="file" accept='image/*' id="image-uploader" className={"form-control"+applyErrorClass("imageSource")}/>
-            <Button type="submit">Save</Button>
-        </form>
-        <Button onClick={() => { setPostModalShow(true) }}>Tee työilmoitus</Button>
-        {/* <Button onClick={() => { deleteSelectedPosts();}}>Poista valitut</Button> */}
-        <a href="/Profiili">Profiiliin</a>
+    if(adminStatus == true){
+        return (<div className="PostManagerMainBox">
+            <h1> Hae työilmoituksia</h1>
+            <h3>Lisää kuva julkaisuun</h3>
+            <form onSubmit={handleFormSubmit}>
+                {/* <label htmlFor='attachmentDescription'>Picture description<input id="attachmentDescription" onChange={(e)=>{setAttachmentDescription(e.target.value);}} className="form-control"/></label> */}
+                {/*onChange={showPreview}*/}
+                <input onChange={setFileFromInput} type="file" accept='image/*' id="image-uploader" className={"form-control"+applyErrorClass("imageSource")}/>
+                <Button type="submit">Save</Button>
+            </form>
+            <Button onClick={() => { setPostModalShow(true) }}>Tee työilmoitus</Button>
+            {/* <Button onClick={() => { deleteSelectedPosts();}}>Poista valitut</Button> */}
+            <a href="/Profiili">Profiiliin</a>
 
-        {/* modalin asetukset määritetään tässä */}
-        <Modal
-            show={postModalShow}
-            size="lg"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-        >
-            <Modal.Header >
-                <Modal.Title id="contained-modal-title-vcenter">
-                    {/* Otsikko */}
-                    Luo ilmoitus
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                {/* Tässä on ponnahdusikkunan kehon sisältö */}
-                <div><label htmlFor="postLabel">Otsikko <input type="text" value={postLabel} id="postLabel" onChange={(e) => { setPostLabel(e.target.value); }}></input></label></div>
-                <div><label htmlFor="postPriceStartingAt">Hinta <input type="number" value={postPriceStartingAt} id="postPriceStartingAt" onChange={(e) => { setPostPriceStartingAt(e.target.value); }}></input></label></div>
-                <div><label htmlFor="postPriceEndingAt">Jos hinta vaihtelee voit laittaa tähän maksimi hinnan. <input type="number" value={postPriceEndingAt} id="postPriceEndingAt" onChange={(e) => { setPostPriceEndingAt(e.target.value); }}></input></label></div>
-                <div><label htmlFor="postHourEstimate">Tuntiarvio <input id="postHourEstimate" value={postHourEstimate} type='number' onChange={e => setPostHourEstimate(e.target.value)}></input></label></div>
-                {/* <label htmlFor="postDescription">Kuvaus  </label> */}
-               <div> <InputGroup>
-                     <InputGroup.Text>Kuvaus</InputGroup.Text>
-                    
-                    <FormControl as="textarea" value={postDescription}  onChange={(e) => { setPostDescription(e.target.value); }} />
-                </InputGroup></div>
-               
-                <Error message={message} />
-
-            </Modal.Body>
-            <Modal.Footer>
-                {/* Ilmoituksen footteri */}
-                {/* <Button onClick={() => { setPostData({ userId: profileId, label: postLabel, priceStartingAt: postPriceStartingAt,priceEndingAt: postPriceEndingAt , hourEstimate: postHourEstimate, description: postDescription }); }}>Tallenna</Button> */}
-                <Button onClick={() => { resetValues(); setMessage(""); }}>Peruuta</Button>
-            </Modal.Footer>
-        </Modal>
-
-
-        {/* modalin asetukset määritetään tässä */}
-        <Modal
-            show={modifyDataModal}
-            size="lg"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-        >
-            <Modal.Header >
-                <Modal.Title id="contained-modal-title-vcenter">
-                    {/* Otsikko */}
-                    Muokkaa ilmoitusta
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                {/* Tässä on ponnahdusikkunan kehon sisältö */}
-                <div><label htmlFor="postLabel">Otsikko <input type="text" value={postLabel} id="postLabel" onChange={(e) => { setPostLabel(e.target.value); }}></input></label></div>
-                <div><label htmlFor="postPriceStartingAt">Hinta alken <input type="number" value={postPriceStartingAt} id="postPriceStartingAt" onChange={(e) => { setPostPriceStartingAt(e.target.value); }}></input></label></div>
-                <div><label htmlFor="postPriceEndingAt">Hinta loppuen <input type="number" value={postPriceEndingAt} id="postPriceEndingAt" onChange={(e) => { setPostPriceEndingAt(e.target.value); }}></input></label></div>
-                <div><label htmlFor="postHourEstimate">Tuntiarvio <input id="postHourEstimate" value={postHourEstimate} type='number' onChange={e => setPostHourEstimate(e.target.value)}></input></label></div>
+            {/* modalin asetukset määritetään tässä */}
+            <Modal
+                show={postModalShow}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+                <Modal.Header >
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        {/* Otsikko */}
+                        Luo ilmoitus
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {/* Tässä on ponnahdusikkunan kehon sisältö */}
+                    <div><label htmlFor="postLabel">Otsikko <input type="text" value={postLabel} id="postLabel" onChange={(e) => { setPostLabel(e.target.value); }}></input></label></div>
+                    <div><label htmlFor="postPriceStartingAt">Hinta <input type="number" value={postPriceStartingAt} id="postPriceStartingAt" onChange={(e) => { setPostPriceStartingAt(e.target.value); }}></input></label></div>
+                    <div><label htmlFor="postPriceEndingAt">Jos hinta vaihtelee voit laittaa tähän maksimi hinnan. <input type="number" value={postPriceEndingAt} id="postPriceEndingAt" onChange={(e) => { setPostPriceEndingAt(e.target.value); }}></input></label></div>
+                    <div><label htmlFor="postHourEstimate">Tuntiarvio <input id="postHourEstimate" value={postHourEstimate} type='number' onChange={e => setPostHourEstimate(e.target.value)}></input></label></div>
+                    {/* <label htmlFor="postDescription">Kuvaus  </label> */}
+                <div> <InputGroup>
+                        <InputGroup.Text>Kuvaus</InputGroup.Text>
+                        
+                        <FormControl as="textarea" value={postDescription}  onChange={(e) => { setPostDescription(e.target.value); }} />
+                    </InputGroup></div>
                 
-                <div><InputGroup>
-                     <InputGroup.Text>Kuvaus</InputGroup.Text>
+                    <Error message={message} />
+
+                </Modal.Body>
+                <Modal.Footer>
+                    {/* Ilmoituksen footteri */}
+                    {/* <Button onClick={() => { setPostData({ userId: profileId, label: postLabel, priceStartingAt: postPriceStartingAt,priceEndingAt: postPriceEndingAt , hourEstimate: postHourEstimate, description: postDescription }); }}>Tallenna</Button> */}
+                    <Button onClick={() => { resetValues(); setMessage(""); }}>Peruuta</Button>
+                </Modal.Footer>
+            </Modal>
+
+
+            {/* modalin asetukset määritetään tässä */}
+            <Modal
+                show={modifyDataModal}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+                <Modal.Header >
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        {/* Otsikko */}
+                        Muokkaa ilmoitusta
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {/* Tässä on ponnahdusikkunan kehon sisältö */}
+                    <div><label htmlFor="postLabel">Otsikko <input type="text" value={postLabel} id="postLabel" onChange={(e) => { setPostLabel(e.target.value); }}></input></label></div>
+                    <div><label htmlFor="postPriceStartingAt">Hinta alken <input type="number" value={postPriceStartingAt} id="postPriceStartingAt" onChange={(e) => { setPostPriceStartingAt(e.target.value); }}></input></label></div>
+                    <div><label htmlFor="postPriceEndingAt">Hinta loppuen <input type="number" value={postPriceEndingAt} id="postPriceEndingAt" onChange={(e) => { setPostPriceEndingAt(e.target.value); }}></input></label></div>
+                    <div><label htmlFor="postHourEstimate">Tuntiarvio <input id="postHourEstimate" value={postHourEstimate} type='number' onChange={e => setPostHourEstimate(e.target.value)}></input></label></div>
                     
-                    <FormControl as="textarea" value={postDescription}  onChange={(e) => { setPostDescription(e.target.value); }} />
-                </InputGroup>
-                <Error message={message} /></div>
+                    <div><InputGroup>
+                        <InputGroup.Text>Kuvaus</InputGroup.Text>
+                        
+                        <FormControl as="textarea" value={postDescription}  onChange={(e) => { setPostDescription(e.target.value); }} />
+                    </InputGroup>
+                    <Error message={message} /></div>
 
-            </Modal.Body>
-            <Modal.Footer>
-                {/* Ilmoituksen footteri */}
-                {/* <Button onClick={() => { setPostModifyData({ idJobPost: idJobPost, userId: profileId, label: postLabel, priceStartingAt: postPriceStartingAt,priceEndingAt: postPriceEndingAt, hourEstimate: postHourEstimate, description: postDescription }); }}>Tallenna</Button> */}
-                <Button onClick={() => { resetValues(); setMessage(""); }}>Peruuta</Button>
-            </Modal.Footer>
-        </Modal>
+                </Modal.Body>
+                <Modal.Footer>
+                    {/* Ilmoituksen footteri */}
+                    {/* <Button onClick={() => { setPostModifyData({ idJobPost: idJobPost, userId: profileId, label: postLabel, priceStartingAt: postPriceStartingAt,priceEndingAt: postPriceEndingAt, hourEstimate: postHourEstimate, description: postDescription }); }}>Tallenna</Button> */}
+                    <Button onClick={() => { resetValues(); setMessage(""); }}>Peruuta</Button>
+                </Modal.Footer>
+            </Modal>
 
-        <CardColumns  className="Job-Post-CardColumns"> 
-            {/* <MakePost data={userPosts} mode={1} receivePostDeleteData={receivePostDeleteData} receivePostModifyData={receivePostModifyData} /> */}
-        </CardColumns>
-    </div>)
+            <CardColumns  className="Job-Post-CardColumns"> 
+                {/* <MakePost data={userPosts} mode={1} receivePostDeleteData={receivePostDeleteData} receivePostModifyData={receivePostModifyData} /> */}
+            </CardColumns>
+        </div>)
+    }
+    else{
+        return(<div>
+            <p>Error 401</p>
+        </div>)
+    }
+   
 }
 
 export { PostManager }

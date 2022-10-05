@@ -6,7 +6,7 @@ import '@inovua/reactdatagrid-community/index.css'
 import { Image, Overlay } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 import moment from 'moment'
-
+import {AdminStatus} from '../Utils/Functions'
 //Renderöidään perus profiili
 function Profiili() {
 
@@ -17,8 +17,7 @@ function Profiili() {
   // const [show, setShow] = useState(false);
   const target = useRef(null);
   const [cookies] = useCookies(['token']);
-
-  
+  const [adminStatus, setAdminStatus] = useState("");
   // get user profile data
   const getProfileData = async () => {
     const options = {
@@ -55,8 +54,9 @@ function Profiili() {
   }
 
   // get user list on page load
-  useEffect(() => {
-    getProfileData();
+  useEffect( async () => {
+    await getProfileData();
+    setAdminStatus(await AdminStatus({token: cookies?.token}));
   }, []);
 
 
@@ -136,6 +136,7 @@ function Profiili() {
             <h2>Asetukset</h2>
             
             <div ref={target}>< a href="/ProfiiliMuokkaus">Muokkaa profiilia</a></div>
+            {adminStatus ? (<div ref={target}>< a href="/Julkaisut">Luo julkaisuja</a></div>):null}
             
             {/* <Overlay target={target.current} show={show} placement="left">
               <Tooltip >

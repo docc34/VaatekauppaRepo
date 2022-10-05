@@ -11,7 +11,7 @@
     
 }
 .Footer-Main-Container{
-margin-top: auto;
+    margin-top: auto;
 }
 .Footer-Info-Containers{
     display: flex;
@@ -25,6 +25,7 @@ margin-top: auto;
     margin: 0px;
     padding-top: 1em;
     width: 100%;
+    margin-left: 1%;
 }
 
 .Footer-Header-Text{

@@ -13,6 +13,7 @@
     padding:2%;
     display: flex;
     flex-direction: column;
+    max-width: 1400px;
 }
 .EtusivuTextsContainer{
     width:500px;
@@ -27,6 +28,7 @@
 }
 .EtusivuMainContainer{
     /* margin: 2%; */
+    
 }
 
 .EtusivuTitleMainContainer{

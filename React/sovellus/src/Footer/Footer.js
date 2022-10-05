@@ -6,7 +6,7 @@ const Footer = () => {
 
     return (<div className="Footer-Main-Container" >
 
-        <div className="Footer-header"><h1 className="Footer-Header-Text">Yhteystiedot</h1></div>
+        <div className="Footer-header"><h3 className="Footer-Header-Text">Yhteystiedot</h3></div>
         
         <div className="Footer-Text-Container">
 

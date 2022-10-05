@@ -9,80 +9,7 @@ import moment from 'moment';
 const MakePost = (p) => {
   const [cookies,setCookie] = useCookies(['token']);
 
-  //Julkaisu poisto ja muokkausnapeilla
-  //#region 
-  // if (p.mode == 1) {
-  //   if(p.data != null){
-
-  //   return (
-  //   <div>
-  //     <Row xs={1} sm={1} md={2}  xl={3}  className="g-4" >
-  //       {p.data.map((e, i) => {
-  //     const sendDataDelete = () => {
-  //       p.receivePostDeleteData({ label: e.label, idjobPost: e.idJobPost }, i);
-  //     }
-
-  //     const sendDataModify = () => {
-  //       p.receivePostModifyData({ idJobPost: e.idJobPost, label: e.label, priceStartingAt: e.priceStartingAt, priceEndingAt: e.priceEndingAt, hourEstimate: e.hourEstimate, description: e.description });
-  //     }
-  //         let url = "";
-  //         if(e!= null){
-  //            url = "/Maksu/?jobPostId=" + e.idJobPost;
-  //         return (
-  //         <Col>
-  //           <Card className="Post-Card">
-  //             <Card.Body>
-  //               {/* Tähän tekstin tilalle roskiksen logo */}
-  //               <input type="button" onClick={(x) => { sendDataDelete() }} value="Poista" ></input>
-  //               {/* Tähän tekstin tilalle kynän logo */}
-  //               <input type="button" onClick={(x) => { sendDataModify() }} value="Muokkaa" ></input>
-
-  //               <Card.Title><MakeSmallProfileCard name={e.name} image={e.image} userId={e.userId} /></Card.Title>
-  //               <Card.Text className=""> 
-  //                 <div className="ProfileCardTitleContainer">
-  //                   <div className="ProfileCardTitleLabelBox">
-  //                     {e.label}
-  //                   </div> 
-  //                   <div>
-  //                     Tuntiarvio:{e.hourEstimate} 
-  //                   </div>
-  //                 </div>
-  //               </Card.Text>
-                
-  //               <div className="ProfileCardTitleContainer">
-  //               <Card.Text className="ProfileCardTitleLabelBox">
-  //                 {e.description}
-  //               </Card.Text>
-
-  //               <Card.Text>
-  //               {ModelPriceRange(e)}
-  //               </Card.Text>
-  //               </div>
-
-  //               <div className="ProfileCardTitleContainer">
-  //               <Card.Text className="ProfileCardTitleLabelBox">
-  //               {/* Tähän vois tähti arvostelut laittaa */}
-  //               <MakeRatingStars/>
-  //               </Card.Text>
-  //               <Card.Text>
-  //               <a href={url} className="ProfileCardText"> Osta</a>
-  //               </Card.Text>
-  //               </div>
-  //             </Card.Body>
-  //           </Card>
-  //         </Col>)
-  //       }})}
-  //     </Row>
-  //   </div>
-  //   )
-  // }
-  // //))}
-  // else{
-  //   return(<div><p>Loading</p></div>)
-  // }
-  // }
-  //Tämän ehkä voi häkätä frontista pitää tarkistaa
-  // else {
+  
     //Näin voi cutomoida kortin ulkonäköä
     //   <Card
     //   bg={variant.toLowerCase()}
@@ -90,14 +17,23 @@ const MakePost = (p) => {
     //   text={variant.toLowerCase() === 'light' ? 'dark' : 'white'}
     //   style={{ width: '18rem' }}
     //   className="mb-2"
-    // ></Card>
+    //  ></Card>
+    
     //#endregion
     if(p.data != null){
+      
     return (
     <div>
       <Row xs={1} sm={1} md={2}  xl={4}  className="g-4" >
         {p.data.map((e, i) => {
           if(e!= null){
+            const sendDataDelete = () => {
+              p.receivePostDeleteData({ label: e.label, idjobPost: e.idJobPost }, i);
+            }
+      
+            const sendDataModify = () => {
+              p.receivePostModifyData({ idJobPost: e.idJobPost, label: e.label, priceStartingAt: e.priceStartingAt, priceEndingAt: e.priceEndingAt, hourEstimate: e.hourEstimate, description: e.description });
+            }
             var url ="http://localhost:3000/Tuote?id="+e?.id;
             return (<Col>
               <Card className="Post-Card">
@@ -176,6 +112,15 @@ const MakePost = (p) => {
                           window.location.reload();
                         }
                       }}}>Lisää ostoskoriin</button>
+
+                      {p.mode == 1 ? (<div>                
+                          {/*  Tähän tekstin tilalle roskiksen logo */}
+                          <input type="button" onClick={(x) => { sendDataDelete() }} value="Poista" />
+                          {/* Tähän tekstin tilalle kynän logo  */}
+                          <input type="button" onClick={(x) => { sendDataModify() }} value="Muokkaa" />
+                        </div>)
+                      : (null)
+                      }
                     </Card.Text>
                   </div>
                 </Card.Body>
@@ -186,9 +131,6 @@ const MakePost = (p) => {
     </div>
     )
   }
-    else {
-      return(<div><p>Loading</p></div>)
-    }
 }
 
 const MakeShoppingCartItem = (p) => {
@@ -529,6 +471,31 @@ const Paypal = (o)=>{
   );
 }
 
+const AdminStatus = async function(o) {
+  var adminStatus = false;
+
+  try{
+    const options = {
+      method: 'GET',
+      headers: {"Authorization": `Bearer ${o.token}`}
+    }
+
+    var statusFetch = await fetch("https://localhost:44344/api/authenticate/validateadmin",options);
+    var status = await statusFetch.json();
+    if(status = true){
+      adminStatus = status;
+    }
+    else{
+      return false;
+    }
+  }
+  catch(e){
+    return false;
+  }
+
+  return adminStatus;
+}
+
 export {
   MakePost,
   Error,
@@ -536,5 +503,6 @@ export {
   Paypal,
   MakeShoppingCartItem,
   FormatDeliveryEstimateToDate,
-  handleInputChange
+  handleInputChange,
+  AdminStatus
 }

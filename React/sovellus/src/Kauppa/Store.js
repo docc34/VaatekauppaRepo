@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import './Store.css';
 
 import {  Button, InputGroup, FormControl,  Modal, CardGroup as CardColumns } from 'react-bootstrap';
@@ -8,13 +8,15 @@ import { useLocation } from "react-router-dom";
 
 import '@inovua/reactdatagrid-community/index.css'
 
-import { MakePost, Error } from '../Utils/Functions';
+import { MakePost, Error,AdminStatus } from '../Utils/Functions';
 //^Importataan kaikki paketit mitä tarvitaan
 import { useCookies } from 'react-cookie';
 const Store = () => {
     const [storePostsData, setStorePostsData] = useState([]);
     const [labelSearchText, setLabelSearchText] = useState([]);
     const [message, setMessage] = useState([]);
+    const [adminStatus, setAdminStatus] = useState("");
+    const target = useRef(null);
 
     
     const [searchObject, setSearchObject] = useState({jobPostTitle:null,priceSort:null});
@@ -31,6 +33,8 @@ const Store = () => {
                     method: 'GET',
                     headers: {"Authorization": `Bearer ${cookies.token}`}
                 }
+                setAdminStatus(await AdminStatus({token: cookies?.token}));
+
                 let url = "https://localhost:44344/api/Posts/?1=1";
                 if( i?.jobPostTitle != "" && i?.jobPostTitle != null && i?.jobPostTitle != undefined){
                     url += "&title="+i.jobPostTitle;
@@ -83,6 +87,8 @@ const Store = () => {
             <div>
                 <Button  onClick={()=>{let i = searchObject; i.priceSort = "desc"; setSearchObject(i); getStoreData(i); }}>Kalliimmat ensin</Button>
                 <Button  onClick={()=>{let i = searchObject; i.priceSort = "asc"; setSearchObject(i); getStoreData(i);}}>Halvimmat ensin</Button>
+                {adminStatus ? (<div ref={target}>< a href="/Julkaisut">Luo julkaisuja</a></div>):null}
+            
             </div>
         </div>
 

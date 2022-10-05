@@ -7,117 +7,120 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import '@inovua/reactdatagrid-community/index.css'
 
-import { MakePost, Error } from '../Utils/Functions';
+import { MakePost, Error, AdminStatus } from '../Utils/Functions';
 //^Importataan kaikki paketit mitä tarvitaan
 
 import { postPostService, postDeleteService, postModifyService } from '../services/postManager';
 
 import './jobPostManager.css';
 import { useCookies } from 'react-cookie';
+import { useLocation } from "react-router-dom";
 
 const PostManager = () => {
     var user = null;
     const [modifyDataModal, setModifyDataModal] = useState(false);
     const [postModalShow, setPostModalShow] = useState(false);
     const [postLabel, setPostLabel] = useState("");
-    const [postPriceStartingAt, setPostPriceStartingAt] = useState(0);
+    const [postPrice, setPostPrice] = useState(0);
     const [postPriceEndingAt, setPostPriceEndingAt] = useState(0);
 
     const [postHourEstimate, setPostHourEstimate] = useState("");
     const [postDescription, setPostDescription] = useState("");
     const [idJobPost, setIdJobPost] = useState("");
-    const [postData, setPostData] = useState("");
+    const [storePostsData, setStorePostsData] = useState([]);
+
     //TODO:User objekti pitää ottaa käyttöön
-    //const [profileId] = useState(user.userId);
+
     const [message, setMessage] = useState("");
-    const [userPosts, setUserPosts] = useState([]);
     const [postModifyData, setPostModifyData] = useState([]);
     const [file, setFile] = useState(null);
     const [errors, setErrors] = useState([]);
     const [cookies] = useCookies(['token']);
 
-    const [adminStatus, setAdminStatus] = useState(false);
 
+    const [adminStatus, setAdminStatus] = useState(false);
+    const [searchObject, setSearchObject] = useState({jobPostTitle:null,priceSort:null});
+    
+    const search = useLocation().search;
+    const jobPostTitle = new URLSearchParams(search).get('title');
     useEffect( async ()=>{
-        const options = {
-            method: 'GET',
-            headers: { "Authorization": `Bearer ${cookies?.token}` }
-        }
-        try{
-            let fetchStatus = await fetch("https://localhost:44344/api/authenticate/validateadmin", options);
-            let status = await fetchStatus?.json();
-            if(status)
-                setAdminStatus(status);
-        }
-        catch(e){
-            console.log(e);
-        }
+        setAdminStatus(await AdminStatus({token: cookies?.token}));
+        await getStoreData({jobPostTitle:null,priceSort:null});
     },[]);
+
+     // haetaan kaikki ilmoitukset 
+     const getStoreData = async (i) => {
+        if(i != null){
+            try{
+                const options = {
+                    method: 'GET',
+                    headers: {"Authorization": `Bearer ${cookies.token}`}
+                }
+
+                let url = "https://localhost:44344/api/Posts/?1=1";
+                if( i?.jobPostTitle != "" && i?.jobPostTitle != null && i?.jobPostTitle != undefined){
+                    url += "&title="+i.jobPostTitle;
+                }
+                else if(jobPostTitle != null && jobPostTitle != undefined){
+                    url += "&title="+jobPostTitle;
+                }
+                if(i?.priceSort != "" && i?.priceSort != null && i?.priceSort != undefined){
+                    url += "&sortPrice="+i?.priceSort;
+                }
+
+
+                let data = await fetch(url,options);
+                let posts = await data.json();
+                if (posts?.status == "Error") {
+                    setMessage(posts.message);
+                }
+                else{
+                    setMessage("");
+                    setStorePostsData(posts);
+                }
+            }
+            catch{
+                setMessage("Fatal Error");
+            }
+        }
+    }
 
     {/* nollaa kaikki ponnahdusikkunoiden arvot ja sulkee pnnahdusikkunat */ }
     const resetValues = () => {
         setPostModalShow(false);
         setModifyDataModal(false);
         setPostLabel("");
-        setPostPriceStartingAt(0);
-        setPostPriceEndingAt(0);
+        setPostPrice(0);
         setPostHourEstimate("");
         setPostDescription("");
 
         setFile(null);
     }
-    // get user profile data
-    // const getUserPosts = async () => {
-
-    //     const posts = null;
-    //     if (posts.error) {
-    //     //TODO:Error
-    //     }
-
-    //     let post = posts.data;
-
-    //     setUserPosts(post.posts);
-    // }
-    // useEffect(async () => {
-    //     if (postData != "") {
-    //         const posts = await postPostService(postData);
-    //         if (posts.error) {
-    //             //TODO:Error
-    //         }
-    //         let post = posts.data;
-
-    //         resetValues();
-    //         setMessage("");
-    //     }
-    // }, [postData]);
-
-    // useEffect(() => {
-    //     getUserPosts();
-    // }, []);
 
 
-    // const receivePostDeleteData = async (data) => {
 
-    //     if (window.confirm("Haluatko varmasti poistaa julkaisun")) {
-    //         if (data != undefined && data != null) {
-    //             const posts = await postDeleteService({ selectedPost: data, userId: profileId });
-    //             if (posts.error) {
-    //                             //TODO:Error
+    const receivePostDeleteData = async (data) => {
 
-    //             }
-    //             let post = posts.data;
-    //             resetValues();
-    //             getUserPosts();
-    //         }
-    //     }
-    // }
+        if (window.confirm("Haluatko varmasti poistaa julkaisun")) {
+            // if (data != undefined && data != null) {
+            //     //const posts = await postDeleteService({ selectedPost: data, userId: profileId });
+            //     if (posts.error) {
+            //                     //TODO:Error
+
+            //     }
+            //     let post = posts.data;
+            //     resetValues();
+            //     getUserPosts();
+            // }
+        }
+    }
+
     const receivePostModifyData = async (data) => {
 
         if (data != undefined && data != null) {
             setModifyDataModal(data);
             setPostLabel(data.label);
-            setPostPriceStartingAt(data.priceStartingAt);
-            setPostPriceEndingAt(data.priceEndingAt);
+            setPostPrice(data.priceStartingAt);
             setPostHourEstimate(data.hourEstimate);
             setPostDescription(data.description);
             setIdJobPost(data.idJobPost);
@@ -168,14 +171,12 @@ const PostManager = () => {
         
         e.preventDefault();
         if( file != null){
-        
-        const formData = new FormData();
-        formData.append("ImageLink", "imageName")
-        formData.append("imageFile", file)
-        formData.append("postId", 1)//TODO:Lisää tähän valitun julkaisun id
-        //formData.append("description", attachmentDescription)
-        addOrEdit(formData);
-
+            const formData = new FormData();
+            formData.append("ImageLink", "imageName")
+            formData.append("imageFile", file)
+            formData.append("postId", 1)//TODO:Lisää tähän valitun julkaisun id
+            //formData.append("description", attachmentDescription)
+            addOrEdit(formData);
         }
     }
     // const validate=()=>{
@@ -200,20 +201,24 @@ const PostManager = () => {
         }
     }
     const applyErrorClass= field =>((field in errors && errors[field] == false)?' invalid-field':'')
+    
 
-    if(adminStatus == true){
+    if( adminStatus == true){
         return (<div className="PostManagerMainBox">
-            <h1> Hae työilmoituksia</h1>
-            <h3>Lisää kuva julkaisuun</h3>
-            <form onSubmit={handleFormSubmit}>
-                {/* <label htmlFor='attachmentDescription'>Picture description<input id="attachmentDescription" onChange={(e)=>{setAttachmentDescription(e.target.value);}} className="form-control"/></label> */}
-                {/*onChange={showPreview}*/}
-                <input onChange={setFileFromInput} type="file" accept='image/*' id="image-uploader" className={"form-control"+applyErrorClass("imageSource")}/>
-                <Button type="submit">Save</Button>
-            </form>
-            <Button onClick={() => { setPostModalShow(true) }}>Tee työilmoitus</Button>
+                <div>
+                    <h1>Tee tuote ilmoitus</h1>
+                    <Button onClick={() => { setPostModalShow(true) }}>Tee työilmoitus</Button>
             {/* <Button onClick={() => { deleteSelectedPosts();}}>Poista valitut</Button> */}
             <a href="/Profiili">Profiiliin</a>
+                </div>
+                <div>
+                    <h3>Ilmoitukset</h3>
+                    <CardColumns  className="Job-Post-CardColumns"> 
+                        <MakePost data={storePostsData} mode={1}  receivePostDeleteData={receivePostDeleteData} receivePostModifyData={receivePostModifyData}/>
+                    </CardColumns>
+                </div>
+
+
 
             {/* modalin asetukset määritetään tässä */}
             <Modal
@@ -231,10 +236,16 @@ const PostManager = () => {
                 <Modal.Body>
                     {/* Tässä on ponnahdusikkunan kehon sisältö */}
                     <div><label htmlFor="postLabel">Otsikko <input type="text" value={postLabel} id="postLabel" onChange={(e) => { setPostLabel(e.target.value); }}></input></label></div>
-                    <div><label htmlFor="postPriceStartingAt">Hinta <input type="number" value={postPriceStartingAt} id="postPriceStartingAt" onChange={(e) => { setPostPriceStartingAt(e.target.value); }}></input></label></div>
-                    <div><label htmlFor="postPriceEndingAt">Jos hinta vaihtelee voit laittaa tähän maksimi hinnan. <input type="number" value={postPriceEndingAt} id="postPriceEndingAt" onChange={(e) => { setPostPriceEndingAt(e.target.value); }}></input></label></div>
+                    <div><label htmlFor="postPrice">Hinta <input type="number" value={postPrice} id="postPrice" onChange={(e) => { setPostPrice(e.target.value); }}></input></label></div>
                     <div><label htmlFor="postHourEstimate">Tuntiarvio <input id="postHourEstimate" value={postHourEstimate} type='number' onChange={e => setPostHourEstimate(e.target.value)}></input></label></div>
                     {/* <label htmlFor="postDescription">Kuvaus  </label> */}
+                    <h3>Lisää kuva julkaisuun</h3>
+                    <form onSubmit={handleFormSubmit}>
+                        {/* <label htmlFor='attachmentDescription'>Picture description<input id="attachmentDescription" onChange={(e)=>{setAttachmentDescription(e.target.value);}} className="form-control"/></label> */}
+                        {/*onChange={showPreview}*/}
+                        <input onChange={setFileFromInput} type="file" accept='image/*' id="image-uploader" className={"form-control"+applyErrorClass("imageSource")}/>
+                        <Button type="submit">Save</Button>
+                    </form>
                 <div> <InputGroup>
                         <InputGroup.Text>Kuvaus</InputGroup.Text>
                         
@@ -268,8 +279,7 @@ const PostManager = () => {
                 <Modal.Body>
                     {/* Tässä on ponnahdusikkunan kehon sisältö */}
                     <div><label htmlFor="postLabel">Otsikko <input type="text" value={postLabel} id="postLabel" onChange={(e) => { setPostLabel(e.target.value); }}></input></label></div>
-                    <div><label htmlFor="postPriceStartingAt">Hinta alken <input type="number" value={postPriceStartingAt} id="postPriceStartingAt" onChange={(e) => { setPostPriceStartingAt(e.target.value); }}></input></label></div>
-                    <div><label htmlFor="postPriceEndingAt">Hinta loppuen <input type="number" value={postPriceEndingAt} id="postPriceEndingAt" onChange={(e) => { setPostPriceEndingAt(e.target.value); }}></input></label></div>
+                    <div><label htmlFor="postPrice">Hinta alken <input type="number" value={postPrice} id="postPrice" onChange={(e) => { setPostPrice(e.target.value); }}></input></label></div>
                     <div><label htmlFor="postHourEstimate">Tuntiarvio <input id="postHourEstimate" value={postHourEstimate} type='number' onChange={e => setPostHourEstimate(e.target.value)}></input></label></div>
                     
                     <div><InputGroup>
@@ -287,12 +297,10 @@ const PostManager = () => {
                 </Modal.Footer>
             </Modal>
 
-            <CardColumns  className="Job-Post-CardColumns"> 
-                {/* <MakePost data={userPosts} mode={1} receivePostDeleteData={receivePostDeleteData} receivePostModifyData={receivePostModifyData} /> */}
-            </CardColumns>
+
         </div>)
     }
-    else{
+    else {
         return(<div>
             <p>Error 401</p>
         </div>)

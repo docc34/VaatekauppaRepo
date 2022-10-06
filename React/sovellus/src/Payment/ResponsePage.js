@@ -62,7 +62,7 @@ import { useLocation } from "react-router-dom";
         
         const getOrder  = async ()=>{
             if(orderId != null && orderId != "" && response == ""){
-                const answer = await fetch("https://localhost:44344/api/Orders/"+orderId,{
+                const answer = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Orders/"+orderId,{
                         method: 'GET',
                         headers: { "Authorization": `Bearer ${cookies.token}`}
                     });
@@ -88,7 +88,7 @@ import { useLocation } from "react-router-dom";
         //                 return i.reference_id;
         //               });
 
-        //             const answer = await fetch("https://localhost:44344/api/Posts/Shoppingcart",{
+        //             const answer = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Posts/Shoppingcart",{
         //                 method: 'POST',
         //                 headers: {'Content-Type': 'application/json'},
         //                 body:JSON.stringify(ids)
@@ -106,7 +106,7 @@ import { useLocation } from "react-router-dom";
         //                   Amount:1
         //                 }//TODO: laita tähän tuotteiden määrä kun otat sen käyttöön.
         //               });
-        //             var price = await fetch("https://localhost:44344/api/Orders/price",{//TODO:Lisää tähän tuotteiden määrä kun teet sen
+        //             var price = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Orders/price",{//TODO:Lisää tähän tuotteiden määrä kun teet sen
         //             method: 'POST',
         //             headers: {'Content-Type': 'application/json'},
         //             body:JSON.stringify(orderItems)

@@ -66,7 +66,7 @@ function PaymentPage() {
           //En ole varma tarvitaanko tätä enää
           // if(cookies?.currentLocationId != 0 && cookies?.currentLocationId != null && cookies?.currentLocationId != undefined ){
           //   //Jos käyttäjällä ei ole käyttäjätiliä mutta sijainti on jo annettu aikaisemmin ja on vielä cookiessa tallella.
-          //   var check = await fetch("https://localhost:44344/api/Locations/"+cookies?.currentLocationId,options);
+          //   var check = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Locations/"+cookies?.currentLocationId,options);
           //   var i = await check.json();
           //   if(i.status != "Error") {
           //     setPostalCodePut(i.postalCode);
@@ -85,7 +85,7 @@ function PaymentPage() {
           // }
           // else{
             var guid = cookies?.Guid != undefined ? cookies?.Guid : null;
-            var check = await fetch("https://localhost:44344/api/Locations/user/"+ guid,options);
+            var check = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Locations/user/"+ guid,options);
             var i = await check.json();
             if(i.status == "UserError") {
               //Tila käyttäjälle joka ei ole kirjautunut sisään 
@@ -109,7 +109,7 @@ function PaymentPage() {
             
           // }
           //Hakee julkaisut ostoskorin sisällön mukaan, keho ottaa listan juilkaisujen ideitä [2,4] jne
-          const fetchPosts = await fetch("https://localhost:44344/api/Posts/ShoppingCart",{
+          const fetchPosts = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Posts/ShoppingCart",{
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body:JSON.stringify(cookies?.shoppingCart)
@@ -130,7 +130,7 @@ function PaymentPage() {
               }//TODO: laita tähän tuotteiden määrä kun otat sen käyttöön.
             });
   
-            var price = await fetch("https://localhost:44344/api/Orders/price",{
+            var price = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Orders/price",{
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body:JSON.stringify(orderItems)
@@ -154,7 +154,7 @@ function PaymentPage() {
         method: 'GET'
       }
       if(cities.length == 0){
-        var i = await fetch("https://localhost:44344/api/Cities",options);
+        var i = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Cities",options);
         var data = await i.json();
         setCities(data);
       }
@@ -173,7 +173,7 @@ function PaymentPage() {
           body:JSON.stringify(locationObjectPut)
         }
         var locationId = cookies.currentLocationId != undefined && cookies.currentLocationId != null ? cookies.currentLocationId : currentLocationId;
-        let answer = await fetch("https://localhost:44344/api/Locations/"+ locationId,options);
+        let answer = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Locations/"+ locationId,options);
         let parsedAnswer = await answer.json();
 
         if(parsedAnswer?.status != "Error"){
@@ -198,7 +198,7 @@ function PaymentPage() {
           headers: { 'Content-Type': 'application/json' },
           body:JSON.stringify(locationObject)
         }
-        let answer = await fetch("https://localhost:44344/api/Locations",options);
+        let answer = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Locations",options);
         let parsedAnswer = await answer.json();
   
         if(parsedAnswer?.status != "Error"){
@@ -225,7 +225,7 @@ function PaymentPage() {
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify(locationObject)
           }
-          let answer = await fetch("https://localhost:44344/api/Locations",options);
+          let answer = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Locations",options);
           let parsedAnswer = await answer.json();
 
           if(parsedAnswer?.status != "Error"){
@@ -300,7 +300,7 @@ function PaymentPage() {
         })
         }
 
-      let answer = await fetch("https://localhost:44344/api/Orders",options);
+      let answer = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Orders",options);
       let parsedAnswer = await answer.json();
 
       if(parsedAnswer?.status == "Error"){
@@ -312,7 +312,7 @@ function PaymentPage() {
           headers: { "Authorization": `Bearer ${cookies.token}`}
         }
         //Post palauttaa Guid:n jolla haetaan juuri luotu order
-        answer = await fetch("https://localhost:44344/api/Orders/"+parsedAnswer.guid,options);
+        answer = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Orders/"+parsedAnswer.guid,options);
         parsedAnswer = await answer.json();
         //Poistetaan cookiet joihin tallennettiin ei kirjautuneen käyttäjän tiedot
         //Voi ottaa käyttöön että poista cookiehin tallennetut sijaintitiedot.

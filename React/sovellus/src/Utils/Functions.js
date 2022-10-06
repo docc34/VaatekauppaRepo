@@ -373,13 +373,13 @@ const Paypal = (o)=>{
       headers: {"Authorization": `Bearer ${o.token}`}
     }
     
-    var user = await fetch("https://localhost:44344/api/user",options)
+    var user = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/user",options)
     if(user?.status != "Error" ){
       setUser(await user?.json());
     }
     else{
       //If the user hasnt logged in the location data will be retrieved by guid
-      var user = await fetch("https://localhost:44344/api/user/guid/"+o.guid,options)
+      var user = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/user/guid/"+o.guid,options)
       
     }
   } 
@@ -451,7 +451,7 @@ const Paypal = (o)=>{
         //Jos tilaus menee läpi toteutetaan on Approve funktio
         onApprove: async (data, actions) =>{
           //TODO: Julkaise ostoskorin sisältö ordereihin t
-          //https://localhost:44344/api/Orders/OrderItem
+          //https://vaatekauppayritysbackend.azurewebsites.net/api/Orders/OrderItem
           const order = await (actions.order.capture()) 
           o.recieveOrder(order);
         },
@@ -480,7 +480,7 @@ const AdminStatus = async function(o) {
       headers: {"Authorization": `Bearer ${o.token}`}
     }
 
-    var statusFetch = await fetch("https://localhost:44344/api/authenticate/validateadmin",options);
+    var statusFetch = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/authenticate/validateadmin",options);
     var status = await statusFetch.json();
     if(status = true){
       adminStatus = status;

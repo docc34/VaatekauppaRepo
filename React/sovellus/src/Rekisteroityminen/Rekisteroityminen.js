@@ -21,7 +21,7 @@ const Rekisteroityminen = ()=>{
     //Kutsutaan rekisteröitymisen backendiä
     useEffect( async()=>{
          if(loading != false){
-          let post = await fetch("https://localhost:44344/api/Authenticate/register", {
+          let post = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Authenticate/register", {
             
             method:'POST',
             headers: { 'Content-Type': 'application/json' },

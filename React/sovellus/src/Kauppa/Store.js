@@ -35,7 +35,7 @@ const Store = () => {
                 }
                 setAdminStatus(await AdminStatus({token: cookies?.token}));
 
-                let url = "https://localhost:44344/api/Posts/?1=1";
+                let url = "https://vaatekauppayritysbackend.azurewebsites.net/api/Posts/?1=1";
                 if( i?.jobPostTitle != "" && i?.jobPostTitle != null && i?.jobPostTitle != undefined){
                     url += "&title="+i.jobPostTitle;
                 }

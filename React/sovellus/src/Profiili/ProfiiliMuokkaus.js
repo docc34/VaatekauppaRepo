@@ -46,7 +46,7 @@ const ProfiiliMuokkaus = () => {
         headers: {"Authorization": `Bearer ${cookies.token}`}
       }
 
-      const result = await fetch("https://localhost:44344/api/user",options)
+      const result = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/user",options)
       //const posts = await getProfilePostsService(cookies?.userId);
       if (result?.status == "Error") {
         setMessage(result.message);
@@ -75,7 +75,7 @@ const ProfiiliMuokkaus = () => {
           method: 'GET'
         }
         if(cities.length == 0){
-          var i = await fetch("https://localhost:44344/api/Cities",options);
+          var i = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Cities",options);
           var data = await i.json();
           setCities(data);
         }
@@ -92,7 +92,7 @@ const ProfiiliMuokkaus = () => {
         headers: {"Authorization": `Bearer ${cookies.token}`}
       }
   
-      const result = await fetch("https://localhost:44344/api/user",options)
+      const result = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/user",options)
       //const posts = await getProfilePostsService(cookies?.userId);
       if (result?.status == "Error") {
         setMessage(result.message);
@@ -118,7 +118,7 @@ const ProfiiliMuokkaus = () => {
           body:JSON.stringify(modifyUserObject)
         }
     
-        const result = await fetch("https://localhost:44344/api/user",options);
+        const result = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/user",options);
         //const posts = await getProfilePostsService(cookies?.userId);
         if (result?.status == "Error") {
           setMessage(result.message);

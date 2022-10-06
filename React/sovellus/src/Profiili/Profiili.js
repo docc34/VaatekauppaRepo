@@ -26,7 +26,7 @@ function Profiili() {
     }
       //TODO Sivu kaatuu töhön uudella käyttäjällä
       try{
-        const result = await fetch("https://localhost:44344/api/user",options)
+        const result = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/user",options)
         //const posts = await getProfilePostsService(cookies?.userId);
         if (result?.status == "Error") {
           setMessage(result.message);

@@ -31,7 +31,7 @@ const ReturnPassword = () => {
                     method: 'GET',
                     headers: {"Authorization": `Bearer ${cookies.token}`}
                 }
-                var i = await fetch("https://localhost:44344/api/Email/Send?toAddress="+emailObject,options);
+                var i = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Email/Send?toAddress="+emailObject,options);
                 var response = await i.json();
                 if(response?.status == "OK"){
                     setMessage(response?.message);
@@ -54,7 +54,7 @@ const ReturnPassword = () => {
                 method: 'GET',
                 headers: {"Authorization": `Bearer ${cookies.token}`}
                 }
-                var i = await fetch("https://localhost:44344/api/Email/Check?Code="+returnCodeObject,options);
+                var i = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Email/Check?Code="+returnCodeObject,options);
                 var response = await i.json();
                 if(response?.status == "OK"){
                     setMessage(response?.message);
@@ -84,7 +84,7 @@ const ReturnPassword = () => {
                     body:JSON.stringify(passwordObject)
                 }
                 
-                var i = await fetch("https://localhost:44344/api/Email/Change",options);
+                var i = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Email/Change",options);
                 var response = await i.json();
                 if(response?.status == "OK"){
                     setMessage(response?.message);

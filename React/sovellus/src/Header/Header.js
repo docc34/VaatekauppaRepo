@@ -25,7 +25,7 @@ const Header = (x) => {
     //TODO:Handel login
     const handleLogin = async() => {
         try{
-            let data = await fetch("https://localhost:44344/api/Authenticate/login",{
+            let data = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Authenticate/login",{
                 method:'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body:JSON.stringify({username: email.value, password: password.value})

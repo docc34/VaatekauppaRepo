@@ -1,5 +1,2 @@
-
-select * from user;
-select * from city;
-select * from size;
-select * from post;
+select * from jsharjottelua;
+insert into  jsharjottelua (Etunimi, Sukunimi) values ("Pekka", "Puustinen");

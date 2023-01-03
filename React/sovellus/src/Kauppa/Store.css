@@ -5,16 +5,12 @@ padding-top: 1%;
 padding-left: 3%;
 padding-right: 3%;
 }
-.Store-Card-Column-container{
-    
-    display:flex;
-}
+
 .Store-Search-Options-Container{
     height:200px;
-}
-.Store-Search-Options-Container{
     width: 400px;
 }
+
 .Store-Card-Column{
     padding-top: 5em;
     display:flex;
@@ -32,18 +28,9 @@ padding-right: 3%;
     padding:0px;
     width: 48px;
 }
-.Store-SearchBar{
-    padding-top: 2%;
-    max-width: 400px;
-    height: 44px;
-}
-.Store-SearchBar-Button-Div{
 
-    max-height: 38px;
+.Store-Spinner-Container{
+    display: flex;
+    align-items: center;
 }
-.Store-SearchBar-Button{
-    border: none;
-    
-    width: 100%;
-    height: 100%;
-}
+

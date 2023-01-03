@@ -207,8 +207,8 @@ const PostManager = () => {
         return (<div className="PostManagerMainBox">
                 <div>
                     <h1>Tee tuote ilmoitus</h1>
-                    <Button onClick={() => { setPostModalShow(true) }}>Tee työilmoitus</Button>
-            {/* <Button onClick={() => { deleteSelectedPosts();}}>Poista valitut</Button> */}
+                    <Button variant="dark"  onClick={() => { setPostModalShow(true) }}>Tee työilmoitus</Button>
+            {/* <Button variant="dark"  onClick={() => { deleteSelectedPosts();}}>Poista valitut</Button> */}
             <a href="/Profiili">Profiiliin</a>
                 </div>
                 <div>
@@ -244,7 +244,7 @@ const PostManager = () => {
                         {/* <label htmlFor='attachmentDescription'>Picture description<input id="attachmentDescription" onChange={(e)=>{setAttachmentDescription(e.target.value);}} className="form-control"/></label> */}
                         {/*onChange={showPreview}*/}
                         <input onChange={setFileFromInput} type="file" accept='image/*' id="image-uploader" className={"form-control"+applyErrorClass("imageSource")}/>
-                        <Button type="submit">Save</Button>
+                        <Button variant="dark"  type="submit">Save</Button>
                     </form>
                 <div> <InputGroup>
                         <InputGroup.Text>Kuvaus</InputGroup.Text>
@@ -257,8 +257,8 @@ const PostManager = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     {/* Ilmoituksen footteri */}
-                    {/* <Button onClick={() => { setPostData({ userId: profileId, label: postLabel, priceStartingAt: postPriceStartingAt,priceEndingAt: postPriceEndingAt , hourEstimate: postHourEstimate, description: postDescription }); }}>Tallenna</Button> */}
-                    <Button onClick={() => { resetValues(); setMessage(""); }}>Peruuta</Button>
+                    {/* <Button variant="dark"  onClick={() => { setPostData({ userId: profileId, label: postLabel, priceStartingAt: postPriceStartingAt,priceEndingAt: postPriceEndingAt , hourEstimate: postHourEstimate, description: postDescription }); }}>Tallenna</Button> */}
+                    <Button variant="dark"  onClick={() => { resetValues(); setMessage(""); }}>Peruuta</Button>
                 </Modal.Footer>
             </Modal>
 
@@ -292,8 +292,8 @@ const PostManager = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     {/* Ilmoituksen footteri */}
-                    {/* <Button onClick={() => { setPostModifyData({ idJobPost: idJobPost, userId: profileId, label: postLabel, priceStartingAt: postPriceStartingAt,priceEndingAt: postPriceEndingAt, hourEstimate: postHourEstimate, description: postDescription }); }}>Tallenna</Button> */}
-                    <Button onClick={() => { resetValues(); setMessage(""); }}>Peruuta</Button>
+                    {/* <Button variant="dark"  onClick={() => { setPostModifyData({ idJobPost: idJobPost, userId: profileId, label: postLabel, priceStartingAt: postPriceStartingAt,priceEndingAt: postPriceEndingAt, hourEstimate: postHourEstimate, description: postDescription }); }}>Tallenna</Button> */}
+                    <Button variant="dark"  onClick={() => { resetValues(); setMessage(""); }}>Peruuta</Button>
                 </Modal.Footer>
             </Modal>
 

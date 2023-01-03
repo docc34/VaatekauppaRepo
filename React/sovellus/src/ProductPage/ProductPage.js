@@ -58,7 +58,7 @@ const ProductPage = () => {
                         <h4> Hinta: {post?.price}€<br/></h4> 
                     ): (null)
                 }
-                <button onClick={()=>{
+                <Button variant="dark"  onClick={()=>{
                     if(cookies['shoppingCart'] == null || cookies['shoppingCart'] == undefined){
                     setCookie('shoppingCart', [{PostId:post?.id}], { path: '/' })
                     }
@@ -78,7 +78,7 @@ const ProductPage = () => {
                         window.location.reload();
                         }
                     }}}
-                >Lisää ostoskoriin</button>
+                >Lisää ostoskoriin</Button>
             </div>
             <div className='Store-Post-Product-Data-Container'>
                     <h4>Tuotetiedot</h4>

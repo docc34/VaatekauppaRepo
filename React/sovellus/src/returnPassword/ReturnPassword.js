@@ -176,7 +176,7 @@ const ReturnPassword = () => {
                 </div>
                 {/* TODO: Lisää ilmoitus että sähköposti on lähetetty ja vaihtoehto lähettää sähköposti uudestaan */}
                 {message}
-                <button className='Password-Return-Button' onClick={()=>{setEmailObject(emailTo)}}>Lähetä gmail</button>
+                <Button variant="dark"  className='Password-Return-Button' onClick={()=>{setEmailObject(emailTo)}}>Lähetä gmail</Button>
             </div>)
     }
     

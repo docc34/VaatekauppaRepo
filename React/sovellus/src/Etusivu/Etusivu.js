@@ -1,15 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Etusivu.css'
-
+import Carousel from 'react-bootstrap/Carousel';
+import Spinner from 'react-bootstrap/Spinner';
 
 const EtusivuTekstit = () => {
-
+    const [posts, setPosts] = useState([]);
     var titleContainer =  null;
 
+    const getCarouselPosts = async ()=>{
+        var postsFetch = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Posts?take=3");
+
+        var posts = await postsFetch.json();
+        setPosts(posts);
+    }
     useEffect(()=>{
         titleContainer =  document.getElementById('EtusivuTitleMainContainerId');
+        getCarouselPosts();
     },[]);
+
     function fadeOutOnScroll(element) {
 
         if (element == null) {
@@ -40,15 +49,46 @@ const EtusivuTekstit = () => {
     
     window.addEventListener('scroll', scrollHandler);
 
+    const carouselItems = posts.map((e,i)=>{
+        return(
+            <Carousel.Item >
+                <a href={"/Tuote?id="+e.id}>
+                    <img
+                    className="CarouselImages"
+                    src={e.imageLink}
+                    />
+                </a>
+                <Carousel.Caption >
+                    <a href={"/Tuote?id="+e.id}>
+                        <h3 className="CarouselTexts">{e.label}</h3>
+                        <p  className="CarouselTexts">{e.description}</p>
+                    </a>
+                </Carousel.Caption>
+            </Carousel.Item>
+        )
+    });
+    
     return (
     <div className='EtusivuMainContainer'>
         <div id="EtusivuTitleMainContainerId" className="EtusivuTitleMainContainer">
-            <div className='EtusivuTitleContainer'>
+
+        
+            { posts?.length != 0 ?
+                <Carousel>
+                    {carouselItems}
+                </Carousel>
+                :
+                <Spinner  animation="border" /> 
+            }
+        
+            {/* <div className='EtusivuTitleContainer'>
                 <h1 className="EtusivuTitleText">Unnamed </h1>
                 <h1 className="EtusivuTitleText">by Eemeli Antikainen</h1>
-            </div> 
+            </div>  */}
+
         </div>
         <div  className='EtusivuTextsMainFlexContainer'>
+        {/* Layout kusee tähän joteki */}
             <div className='EtusivuFlexBox'>
 
             </div>
@@ -56,6 +96,7 @@ const EtusivuTekstit = () => {
             <div className='EtusivuTextsMainContainer'>
                 <div>
                     <div className='EtusivuTextsContainer EtusivuTextsContainerType1'>
+                    <h1 >Unnamed </h1>
                         <h4>Projektin tarkoitus</h4>
                         <h4 id='EtusivuDisclaimer'>Projekti on vielä keskeneräinen.</h4>
                         <p> Tyylitykset olen päättänyt tehdä viimesenä joten tällähtekellä sivut näyttävät tältä, mutta toiminnallisuutta on. Jos sivusta tai koodista on mitään kysymyksiä ota yhteyttä eemeli.antikainen@gmail.com</p>

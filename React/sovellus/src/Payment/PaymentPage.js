@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
-import {  Button,Form,Tabs,Tab } from 'react-bootstrap';
+import {  Button,Form,Tabs,Tab,Spinner } from 'react-bootstrap';
 
 import {CheckEmptyFields, Paypal,handleInputChange} from '../Utils/Functions';
 import './PaymentPage.css';
@@ -87,9 +87,11 @@ function PaymentPage() {
             var guid = cookies?.Guid != undefined ? cookies?.Guid : null;
             var check = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Locations/user/"+ guid,options);
             var i = await check.json();
-            if(i.status == "UserError") {
+
+            if(i.status == "UserError" || i == null) {
               //Tila käyttäjälle joka ei ole kirjautunut sisään 
               setLoggedIn(1);
+              console.log(1)
             }
             else if(i.status == "LocationError") {
               setLoggedIn(2);
@@ -375,7 +377,7 @@ function PaymentPage() {
               </div>):null}
 
               {/* Jos on kirjautunut mutta ei ole vielä antanut osoitetietoja */}
-              {loggedIn == 2 ?(<button type='button' onClick={()=>{setLocationObject({
+              {loggedIn == 2 ?(<Button variant="dark"  onClick={()=>{setLocationObject({
                 userId:cookies.userId,
                 cityId:cityId,
                 address:address,
@@ -383,7 +385,7 @@ function PaymentPage() {
                 houseNumber:houseNumber,
                 user: null,
                 orderItems:cookies?.shoppingCart
-                });}}>Tallenna</button>): null}
+                });}}>Tallenna</Button>): null}
 
               {/* Jos ei ole kirjautunut */}
               {loggedIn == 1?
@@ -428,7 +430,8 @@ function PaymentPage() {
                   </div>) : (null)}
                   <Error message={message}/>
                 </div>
-                <input type="Button" onClick={()=>{
+
+                <Button variant="dark" onClick={()=>{
                   if(register == true){
                     if(passwordAgain == password){
                       setLocationObject({
@@ -466,15 +469,16 @@ function PaymentPage() {
                         phonenumber: phonenumber
                       }
                   })
-                  }}} value={'Tallenna'} variant="primary"/>
+                  }}} >Tallenna</Button>
+
               </div>) : null}
 
                 {/* Jos on kirjautunut ja on sijaintitiedot */}
               {loggedIn == 3 ?
               (<div>
                   <p>Tarkasta että osoitetiedot ovat oikein</p>
-                  <button disabled={!putEnabled} onClick={()=>{setPutEnabled(false);}}>Muokkaa tietoja</button>
-                  <button disabled={putEnabled} onClick={()=>{setPutEnabled(true);}}>Peruuta</button>
+                  <Button variant="dark"  disabled={!putEnabled} onClick={()=>{setPutEnabled(false);}}>Muokkaa tietoja</Button>
+                  <Button variant="dark"  disabled={putEnabled} onClick={()=>{setPutEnabled(true);}}>Peruuta</Button>
                   <div>
                     {/* TODO: Tähän kaupungin autofill. */}
                     <Form.Group controlId="formBasicCity">
@@ -496,17 +500,17 @@ function PaymentPage() {
                       <option value="">Valitse kaupunki</option>
                       {citiesToSelect}
                     </select>
-                    <button disabled={putEnabled} type='button' onClick={()=>{setLocationObjectPut({
+                    <Button variant="dark"  disabled={putEnabled} type='Button' onClick={()=>{setLocationObjectPut({
                       Id:cookies.currentLocationId != undefined && cookies.currentLocationId != null ? cookies.currentLocationId : currentLocationId,
                       userId:cookies.userId,
                       cityId:cityPutId,
                       address:addressPut,
                       postalCode:postalCodePut,
                       houseNumber:houseNumberPut
-                    });}}>Tallenna</button>
+                    });}}>Tallenna</Button>
                   </div>
 
-                <button onClick={()=>{setTabKey("1")}}>Maksamaan</button>
+                <Button variant="dark"  onClick={()=>{setTabKey("1")}}>Maksamaan</Button>
               </div>) : null}
             </Tab>
             
@@ -547,20 +551,20 @@ function PaymentPage() {
                 {checkout ? (
                     <Paypal posts={posts} token={cookies.token}/>
                 ):(
-                <Button onClick={()=>{setCheckout(true);}}>Checkout</Button>
+                <Button variant="dark"  onClick={()=>{setCheckout(true);}}>Checkout</Button>
                 )}
               
               </div> */}
-            <button onClick={()=>{setTabKey("0")}}>Peruuta</button>
+            <Button variant="dark"  onClick={()=>{setTabKey("0")}}>Peruuta</Button>
             {/* TODO: */}
             <p>HUOM POISTA OIKEALLE NAPPI </p>
-            <button onClick={()=>{setTabKey("2")}}>Oikealle</button>
+            <Button variant="dark"  onClick={()=>{setTabKey("2")}}>Oikealle</Button>
             </Tab>
             <Tab eventKey="2" title="Tilaus valmis" disabled>
               <ResponsePage price={price} posts={posts} order={order} paypalResponseObject={paypalResponseObject} />
             {/* TODO: */}
             <p>HUOM POISTA VASEMMALLE NAPPI </p>
-            <button onClick={()=>{setTabKey("1")}}>Vasemmalle</button>
+            <Button variant="dark"  onClick={()=>{setTabKey("1")}}>Vasemmalle</Button>
             </Tab>
           </Tabs>
           <div>
@@ -579,7 +583,7 @@ function PaymentPage() {
       <p>Shoppingcart was empty</p>
     ): 
     (
-      <p>Loading</p>
+      <Spinner  animation="border" /> 
 
     )}
     

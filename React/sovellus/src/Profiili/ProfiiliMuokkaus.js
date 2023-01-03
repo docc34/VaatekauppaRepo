@@ -217,9 +217,9 @@ const ProfiiliMuokkaus = () => {
           <h2>Asetukset</h2>
          <div><a href="/ProfiiliMuokkaus">Muokkaa profiilia</a></div> 
          
-         <div> <button type="button" onClick={()=>{navigate("/Profiili");}}>Peruuta</button></div> 
+         <div> <Button variant="dark"  type="Button" onClick={()=>{navigate("/Profiili");}}>Peruuta</Button></div> 
          <div> 
-           <button type="button" onClick={() => { setModifyUserObject({
+           <Button variant="dark"  type="Button" onClick={() => { setModifyUserObject({
                 firstname: firstName,
                 lastname: lastName,
                 phonenumber: phoneNumber,
@@ -229,7 +229,7 @@ const ProfiiliMuokkaus = () => {
                   postalCode:postalCode,
                   houseNumber:houseNumber
                 }
-            }) }}>Tallenna</button></div> 
+            }) }}>Tallenna</Button></div> 
         </div>
       </div>
       <div>

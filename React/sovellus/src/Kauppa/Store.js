@@ -1,7 +1,7 @@
 import React, { useEffect, useState,useRef } from 'react';
 import './Store.css';
 
-import {  Button, InputGroup, FormControl,  Modal, CardGroup as CardColumns } from 'react-bootstrap';
+import {  Button, InputGroup, FormControl, Spinner,  Modal, CardGroup as CardColumns } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { useLocation } from "react-router-dom";
@@ -11,6 +11,7 @@ import '@inovua/reactdatagrid-community/index.css'
 import { MakePost, Error,AdminStatus } from '../Utils/Functions';
 //^Importataan kaikki paketit mitä tarvitaan
 import { useCookies } from 'react-cookie';
+
 const Store = () => {
     const [storePostsData, setStorePostsData] = useState([]);
     const [labelSearchText, setLabelSearchText] = useState([]);
@@ -74,28 +75,46 @@ const Store = () => {
         <h1> Hae tuotteita</h1>
         {/* Hakukenttä */}
         <div className="Store-Search-Options-Container">
-            <div className='Store-Searchbar-Input-Container'>
+            <div>
+                
                 <InputGroup >
-                    <InputGroup.Prepend className="Store-SearchBar-Button-Div">
-                    <InputGroup.Text id="basic-addon1"><button className="Store-SearchBar-Button" onClick={() => {let i = searchObject; i.jobPostTitle =labelSearchText; setSearchObject(i); getStoreData(i); }}>{/*Tähän se suurennuslasin logo */}o</button></InputGroup.Text>
-                </InputGroup.Prepend>
-                    <FormControl  onChange={(e) => { setLabelSearchText(e.target.value); }} placeholder="Hae" aria-label="Search" aria-describedby="basic-addon1" />
+                    
+                    <Button id='SearchBar-Button' variant="dark outline-secondary" onClick={() => {
+                        let i = searchObject; 
+                        i.jobPostTitle =labelSearchText; 
+                        setSearchObject(i); 
+                        getStoreData(i); 
+                        }}><img className='Searchbar-Image' src="https://vaatekauppastorage.blob.core.windows.net/images/MagnifyingGlass.jpg"/></Button>
+                        {/* <InputGroup.Text id="basic-addon1"></InputGroup.Text> */}
+                        
+                    <FormControl  onChange={(e) => { 
+                        setLabelSearchText(e.target.value); 
+                        }} placeholder="Hae" 
+                        aria-label="Search" 
+                        aria-describedby="basic-addon1" />
                 </InputGroup>
                 <Error message={message}/>
             </div>
             {/* Outobugi ei näytä nappeja jos ovat tässä */}
             <div>
-                <Button  onClick={()=>{let i = searchObject; i.priceSort = "desc"; setSearchObject(i); getStoreData(i); }}>Kalliimmat ensin</Button>
-                <Button  onClick={()=>{let i = searchObject; i.priceSort = "asc"; setSearchObject(i); getStoreData(i);}}>Halvimmat ensin</Button>
+                <Button variant="dark"  onClick={()=>{let i = searchObject; i.priceSort = "desc"; setSearchObject(i); getStoreData(i); }}>Kalliimmat ensin</Button>
+                <Button variant="dark"   onClick={()=>{let i = searchObject; i.priceSort = "asc"; setSearchObject(i); getStoreData(i);}}>Halvimmat ensin</Button>
                 {adminStatus ? (<div ref={target}>< a href="/Julkaisut">Luo julkaisuja</a></div>):null}
             
             </div>
         </div>
 
-        <div className="Store-Card-Column-container">
-            <CardColumns  className="Store-Card-Column">
-                <MakePost data={storePostsData} />
-            </CardColumns>
+        <div>
+            { storePostsData == null || storePostsData?.length == 0 ? 
+                <div className='Store-Card-Column'>
+                    <Spinner  animation="border" /> 
+                </div>
+            :
+                <CardColumns  className="Store-Card-Column">
+                    <MakePost data={storePostsData} />
+                </CardColumns>
+            }
+            
         </div>
 
     </div>)

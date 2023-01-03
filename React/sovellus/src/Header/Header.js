@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Navbar, InputGroup, FormControl, Form, Modal, Button } from 'react-bootstrap';
+import { Navbar, InputGroup, FormControl, Form, Modal, Button, Badge, CloseButton } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Header.css'
 import { NavLink } from 'react-router-dom';
@@ -21,7 +21,7 @@ const Header = (x) => {
     const [cookies, setCookie,removeCookie] = useCookies(['token']);
     let navigate = useNavigate();
     
-    // handle button click of login form
+    // handle Button click of login form
     //TODO:Handel login
     const handleLogin = async() => {
         try{
@@ -66,16 +66,26 @@ const Header = (x) => {
     const searchStore =()=>{
         if(path != "/Kauppa"){
             if(labelSearchText == ""){
-                return(<a className="Header-SearchBar-Link Header-SearchBar-Button" href="/Kauppa"><img className='Header-Searchbar-Image' src="https://vaatekauppastorage.blob.core.windows.net/images/MagnifyingGlass.jpg"/></a>)
+                return( 
+                    <Button id='SearchBar-Button' href="/Kauppa" variant="dark outline-secondary">
+                        <img className='Searchbar-Image' src="https://vaatekauppastorage.blob.core.windows.net/images/MagnifyingGlass.jpg"/>
+                    </Button>)
             }
             else{
-                return(<a className="Header-SearchBar-Link Header-SearchBar-Button" href={"/Kauppa?title="+labelSearchText}><img className='Header-Searchbar-Image' src="https://vaatekauppastorage.blob.core.windows.net/images/MagnifyingGlass.jpg"/></a>)
+                return(
+                    <Button id='SearchBar-Button' href={"/Kauppa?title="+labelSearchText} variant="dark outline-secondary">
+                        <img className='Searchbar-Image' src="https://vaatekauppastorage.blob.core.windows.net/images/MagnifyingGlass.jpg"/>
+                    </Button>)
             }
         }
         else{
-            //return(<button className="Header-SearchBar-Button">{/*Tähän se suurennuslasin logo */}o</button>)
-            return(<a className="Header-SearchBar-Link Header-SearchBar-Button" href={"/Kauppa?title="+labelSearchText}><img className='Header-Searchbar-Image' src="https://vaatekauppastorage.blob.core.windows.net/images/MagnifyingGlass.jpg"/></a>)
-        }
+            //return(<Button variant="dark"  className="Header-SearchBar-Button">{/*Tähän se suurennuslasin logo */}o</Button>)
+            return(
+                <Button id='SearchBar-Button' href={"/Kauppa?title="+labelSearchText} variant="dark outline-secondary">
+                    <img className='Searchbar-Image' src="https://vaatekauppastorage.blob.core.windows.net/images/MagnifyingGlass.jpg"/>
+                </Button>
+                )  
+            }
     }
 
     return (
@@ -93,9 +103,8 @@ const Header = (x) => {
                         {/* <InputGroup.Text id="basic-addon1">
                             {searchStore()}
                         </InputGroup.Text> */}
-                        <div className="Header-SearchBar-Button-Div" id="basic-addon1">
-                            {searchStore()}
-                        </div>
+                        {searchStore()}
+                        
                     </InputGroup.Prepend>
                     <FormControl onChange={(e) => { setLabelSearchText(e.target.value); }} placeholder="Hae kaupasta" aria-label="Search" aria-describedby="basic-addon1" />
                 </InputGroup>
@@ -122,7 +131,13 @@ const Header = (x) => {
                         )}
                         
                         {/* TODO: Ostoskorin logo ja päivittyvät grafiikat kun ostoskoriin lisätään esineitä. */}
-                        <NavLink className="flex-header-link" activeClassName="active" to="/Maksu">Ostoskori: {cookies?.shoppingCart?.length ?(cookies?.shoppingCart?.length):(0)} </NavLink>
+                        
+                        <Button variant="light" size='sm' href='/Maksu'>
+                            Ostoskori: 
+                            <Badge bg="secondary" variant="dark">
+                                {cookies?.shoppingCart?.length ?(cookies?.shoppingCart?.length):(0)}
+                            </Badge>
+                        </Button>
                     </Navbar.Collapse>
                 </Navbar>
             </div>
@@ -138,6 +153,8 @@ const Header = (x) => {
                         {/* Otsikko */}
                         Kirjaudu
                     </Modal.Title>
+
+                    <CloseButton onClick={()=>{resetValues();}}/>
                 </Modal.Header>
                 <Modal.Body className="Login-Modal-Body">
                     <div className="login-main">
@@ -151,7 +168,7 @@ const Header = (x) => {
                                 <Form.Label>Salasana</Form.Label>
                                 <Form.Control className="login-inputs" type="password" placeholder="Salasana" {...password} autoComplete="new-password" />
                             </Form.Group>
-                            {/*<Button type="Submit"  defaultValue={loading ? 'Loading...' : 'Login'} onClick={handleLogin} disabled={loading} variant="primary" >Kirjaudu</Button>*/}
+                            {/*<Button variant="dark"  type="Submit"  defaultValue={loading ? 'Loading...' : 'Login'} onClick={handleLogin} disabled={loading} variant="primary" >Kirjaudu</Button>*/}
                             </Form>
                             <Error message={message}/>
                         </div>
@@ -160,8 +177,8 @@ const Header = (x) => {
                 </Modal.Body>
                 <Modal.Footer className="Login-Modal-Footer">
                     <div>
-                        <Button  onClick={handleLogin} >Kirjaudu</Button>
-                        <Button onClick={() => { resetValues(); }}>Peruuta</Button></div>
+                        <Button variant="dark"  onClick={handleLogin} >Kirjaudu</Button>
+                        <Button variant="dark"  onClick={() => { resetValues(); }}>Peruuta</Button></div>
                     {/* Ilmoituksen footteri */}
                     <div>
                         <p>Eikö sinulla ole käyttäjää. Voit rekisteröityä <NavLink onClick={() => { resetValues(); }} to="/Rekisteroityminen">Täältä</NavLink> </p>
@@ -169,6 +186,7 @@ const Header = (x) => {
                     </div>
                 </Modal.Footer>
             </Modal>
+
             {/* Logoutmodal */}
             <Modal
                 show={logOutModalShow}
@@ -180,6 +198,8 @@ const Header = (x) => {
                     <Modal.Title id="contained-modal-title-vcenter">
                         Signing out
                     </Modal.Title>
+                    
+                    <CloseButton onClick={()=>{resetValues();}}/>
                 </Modal.Header>
                 <Modal.Body className="Return-Modal-Body">
                     <div className="return-main">
@@ -190,17 +210,17 @@ const Header = (x) => {
                 </Modal.Body>
                 <Modal.Footer className="Return-Modal-Footer">
                     <div>
-                <Button className='HeaderLogoutModalButton' onClick={() => {setLogOutModalShow(false);
-                removeCookie('Guid',{ path: '/Maksu' });
-                removeCookie('currentLocationId',{ path: '/Maksu' });
-                removeCookie('token',{ path: '/' });
-                removeCookie('userId',{ path: '/' });
-                removeCookie('shoppingCart',{ path: '/' }); 
-                navigate("/"); 
+                <Button variant="dark"  className='HeaderLogoutModalButton' onClick={() => {
+                    setLogOutModalShow(false);
+                    removeCookie('Guid',{ path: '/Maksu' });
+                    removeCookie('currentLocationId',{ path: '/Maksu' });
+                    removeCookie('token',{ path: '/' });
+                    removeCookie('userId',{ path: '/' });
+                    removeCookie('shoppingCart',{ path: '/' }); 
+                    navigate("/"); 
                 window.location.reload();}}>Sign out</Button>
-                        <Button onClick={() => { setLogOutModalShow(false); }}>Cancel</Button>
+                        <Button variant="dark"  onClick={() => { setLogOutModalShow(false); }}>Cancel</Button>
                     </div>
-
                 </Modal.Footer>
             </Modal>
         </div>

@@ -1,5 +1,5 @@
 import './PostCss.css';
-import { Image, Card, Row, Col } from 'react-bootstrap';
+import { Image, Card, Row, Col, Button,Spinner } from 'react-bootstrap';
 import { MDBRating } from 'mdbreact';
 import React,{useEffect, useRef, useState} from 'react';
 import { useCookies } from 'react-cookie';
@@ -35,18 +35,15 @@ const MakePost = (p) => {
               p.receivePostModifyData({ idJobPost: e.idJobPost, label: e.label, priceStartingAt: e.priceStartingAt, priceEndingAt: e.priceEndingAt, hourEstimate: e.hourEstimate, description: e.description });
             }
             var url ="http://localhost:3000/Tuote?id="+e?.id;
+            
             return (<Col>
               <Card className="Post-Card">
                 <Card.Body>
                   <Card.Title><a href={url}className="font-weight-bold d-block">{e?.label}</a></Card.Title>
-                  <Card.Text className=""> 
-                    <div className="ProfileCardTitleContainer">
-                      <div>
-                      <p>Hinta: {e?.price}€</p>
-                      </div>
-                    </div>
-                  </Card.Text>
+                  
                   <img className='ReviewLinkedImage' src={e?.imageLink}/>
+                  
+                  <p>Hinta: {e?.price}€</p>
                   {/* Tämä on ehdollista renderöintiä, pitää määrittää kenttiin jotka voi olla tyhjiä */}
                   {
                     e?.size ? (<Card.Text>
@@ -92,7 +89,7 @@ const MakePost = (p) => {
                       <MakeRatingStars/>
                     </Card.Text> */}
                     <Card.Text>
-                      <button className='Post-Button' onClick={()=>{if(cookies['shoppingCart'] == null || cookies['shoppingCart'] == undefined){
+                      <Button variant="dark"  className='Post-Button' onClick={()=>{if(cookies['shoppingCart'] == null || cookies['shoppingCart'] == undefined){
                         setCookie('shoppingCart', [{PostId:e?.id}], { path: '/' })
                         window.location.reload();
                       }
@@ -111,13 +108,13 @@ const MakePost = (p) => {
                           setCookie('shoppingCart', JSON.stringify(i), { path: '/',expires: 0})
                           window.location.reload();
                         }
-                      }}}>Lisää ostoskoriin</button>
+                      }}}>Lisää ostoskoriin</Button>
 
                       {p.mode == 1 ? (<div>                
                           {/*  Tähän tekstin tilalle roskiksen logo */}
-                          <input type="button" onClick={(x) => { sendDataDelete() }} value="Poista" />
+                          <input type="Button" onClick={(x) => { sendDataDelete() }} value="Poista" />
                           {/* Tähän tekstin tilalle kynän logo  */}
-                          <input type="button" onClick={(x) => { sendDataModify() }} value="Muokkaa" />
+                          <input type="Button" onClick={(x) => { sendDataModify() }} value="Muokkaa" />
                         </div>)
                       : (null)
                       }
@@ -143,8 +140,10 @@ const MakeShoppingCartItem = (p) => {
           if(e!= null){
             return (
               <div className="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
-                <div className="d-flex flex-row"><img className="rounded  Post-Image" src={e?.imageLink} />
-                  <div className="ml-2"><span className="font-weight-bold d-block">{e?.label}</span>
+                <div className="d-flex flex-row">
+                  <img className="rounded  Post-Image" src={e?.imageLink} />
+                  <div className="ml-2">
+                    <span className="font-weight-bold d-block">{e?.label}</span>
                     <span className="ml-2">
                       {/* Tämä on ehdollista renderöintiä, pitää määrittää kenttiin jotka voi olla tyhjiä */}
                       {
@@ -172,7 +171,7 @@ const MakeShoppingCartItem = (p) => {
                     </span>
                 </div>
                 <div className="d-flex flex-row align-items-center"><i className="fa fa-trash-o ml-3 text-black-50"></i> 
-                <button onClick={()=>{
+                <Button variant="dark"  onClick={()=>{
                   var i = cookies['shoppingCart'];
                   i?.map((item,index)=>{
                     if(item?.PostId == e?.id){
@@ -183,7 +182,7 @@ const MakeShoppingCartItem = (p) => {
                   setCookie('shoppingCart', JSON.stringify(i), { path: '/',expires: 0})
                   
                   window.location.reload();
-                }}>Poista ostoskorista</button>
+                }}>Poista ostoskorista</Button>
                 </div>
               </div>  
             </div>
@@ -236,7 +235,9 @@ const MakeShoppingCartItem = (p) => {
   )
 }
     else {
-      return(<div><p>Loading</p></div>)
+      return(<div>
+        <Spinner  animation="border" /> 
+      </div>)
     }
 }
 

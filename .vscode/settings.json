@@ -2,5 +2,7 @@
     "appService.zipIgnorePattern": [
         "node_modules{,/**}",
         ".vscode{,/**}"
-    ]
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/a96c48dd-081f-4222-812a-4ec5a8363f6f/AppServices/subscriptions/a96c48dd-081f-4222-812a-4ec5a8363f6f/resourceGroups/VaateKauppaYritysResourceGroup/providers/Microsoft.Web/sites/VaateKauppaYritysFrontend",
+    "appService.deploySubpath": "."
 }

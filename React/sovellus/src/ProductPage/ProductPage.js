@@ -51,7 +51,9 @@ const ProductPage = () => {
         <h1> {post?.label}</h1>
         <div className="Store-Post-Data-Container">
             <div className="Store-Post-Title-Container">
-                <img className='Store-Post-Image' src={post?.imageLink}/>
+                <div className='Store-Post-Image-Container'>
+                    <img className='Store-Post-Image' src={post?.imageLink}/>
+                </div>
                 {console.log(post)}
                 {
                     post?.price ? (
@@ -60,22 +62,22 @@ const ProductPage = () => {
                 }
                 <Button variant="dark"  onClick={()=>{
                     if(cookies['shoppingCart'] == null || cookies['shoppingCart'] == undefined){
-                    setCookie('shoppingCart', [{PostId:post?.id}], { path: '/' })
+                        setCookie('shoppingCart', [{PostId:post?.id}], { path: '/' })
                     }
                     else{
                         var i = cookies['shoppingCart'];
                         var t = true;
                         i?.map((item,index)=>{
-                        if(item?.PostId == post?.id){
-                            t = false;
-                        }
+                            if(item?.PostId == post?.id){
+                                t = false;
+                            }
                         })
 
                         if(t == true)
                         {
-                        i[i.length] ={PostId:post?.id}
-                        setCookie('shoppingCart', JSON.stringify(i), { path: '/',expires: 0})
-                        window.location.reload();
+                            i[i.length] ={PostId:post?.id}
+                            setCookie('shoppingCart', JSON.stringify(i), { path: '/',expires: 0})
+                            window.location.reload();
                         }
                     }}}
                 >Lisää ostoskoriin</Button>

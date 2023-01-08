@@ -19,3 +19,12 @@
 .Store-Post-Image{
     max-width: 500px;
 }
+
+.Store-Post-Image-Container{
+    margin: 5px;
+    border-width: 2px;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 2px;
+    border-style: dotted;
+}

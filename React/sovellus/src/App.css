@@ -10,6 +10,18 @@ p{
   padding: 0px;
 }
 
+.footer{
+  flex-shrink: 0;  
+  width:100%;
+}
+.content{
+  flex: 1 0 auto; 
+  /* flex-grow: 1; */
+}
+.Main-Div{
+  display: flex;
+  flex-direction: column;
+}
 /* For the searchbar img in header and store */
 .Searchbar-Image{
   max-height: 38px;
@@ -30,7 +42,4 @@ p{
   min-height: 100vh; 
   display:flex;
   flex-direction: column;
-}
-.content{
-  flex-grow: 1;
 }

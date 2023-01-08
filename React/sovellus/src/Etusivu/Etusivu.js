@@ -9,14 +9,22 @@ const EtusivuTekstit = () => {
     var titleContainer =  null;
 
     const getCarouselPosts = async ()=>{
-        var postsFetch = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Posts?take=3");
+        try{
+            var postsFetch = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/Posts?take=3");
 
-        var posts = await postsFetch.json();
-        setPosts(posts);
+            var posts = await postsFetch.json();
+            if(posts != null){
+                setPosts(posts);
+            }
+        }
+        catch(e){
+            console.log(e);
+        }
+       
     }
-    useEffect(()=>{
+    useEffect( async ()=>{
         titleContainer =  document.getElementById('EtusivuTitleMainContainerId');
-        getCarouselPosts();
+        await getCarouselPosts();
     },[]);
 
     function fadeOutOnScroll(element) {

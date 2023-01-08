@@ -31,9 +31,9 @@ const Rekisteroityminen = ()=>{
             if(tarkistus.type != ""){
               setMessage(tarkistus.title);
             } 
-            else if(tarkistus.status =="Error")setMessage(tarkistus.message);
+            if(tarkistus.status =="Error")setMessage(tarkistus.message);
             else{
-              setMessage("");
+              setMessage("Käyttäjän luonti onnistui!");
               //navigate("/");
               setCookie('loginModal', "true", { path: '/' ,expires: 0});
               window.location.reload();
@@ -78,13 +78,13 @@ return(
       <Form.Label>Puhelinnumero</Form.Label>
       <Form.Control placeholder="Puhelinnumero"{...phonenumber}/>
     </Form.Group>
-    <input type="Button" onClick={()=>{if(passwordAgain.value == password.value){
+    <Button  variant="dark outline-secondary" onClick={()=>{if(passwordAgain.value == password.value){
       setLoading(true)}
       else
       {
         setMessage("Salasanat eivät täsmää");
       }
-      }} value={'Rekisteröidy'} disabled={loading} variant="primary"/><br />
+      }} disabled={loading} >Rekisteröidy</Button><br />
 
   </Form>
   <p>Salasanan pitää olla vähintään 8 merkkiä pitkä, sisältää isoja kirjaimia, erikoismerkkejä ja numeroita</p>

@@ -60,7 +60,7 @@ function App() {
   const checkToken = ()=>{
     if(state == true ){
       return(
-      <div>
+      <div className='Main-Div'>
         <nav className="header">
           <Routes>
             <Route path="/*" element={<Header privacy={state} />} />
@@ -90,7 +90,7 @@ function App() {
     }
     else{
       return (
-      <div>
+      <div className='Main-Div'>
         <nav className="header">
           <Routes>
             <Route path="/*" element={<Header privacy={state} />} />

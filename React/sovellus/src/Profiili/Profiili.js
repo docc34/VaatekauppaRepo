@@ -28,11 +28,12 @@ function Profiili() {
       try{
         const result = await fetch("https://vaatekauppayritysbackend.azurewebsites.net/api/user",options)
         //const posts = await getProfilePostsService(cookies?.userId);
-        if (result?.status == "Error") {
-          setMessage(result.message);
+        var i = await result.json();
+        
+        if (i?.status == "Error") {
+          setMessage(i.message);
         }
         else{
-          var i = await result.json();
           setProfileData(i);
           setProfileLocation(i?.location);
           setProfileOrders(i?.orders);

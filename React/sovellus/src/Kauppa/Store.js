@@ -95,7 +95,7 @@ const Store = () => {
                 </InputGroup>
                 <Error message={message}/>
             </div>
-            {/* Outobugi ei näytä nappeja jos ovat tässä */}
+            
             <div>
                 <Button variant="dark"  onClick={()=>{let i = searchObject; i.priceSort = "desc"; setSearchObject(i); getStoreData(i); }}>Kalliimmat ensin</Button>
                 <Button variant="dark"   onClick={()=>{let i = searchObject; i.priceSort = "asc"; setSearchObject(i); getStoreData(i);}}>Halvimmat ensin</Button>

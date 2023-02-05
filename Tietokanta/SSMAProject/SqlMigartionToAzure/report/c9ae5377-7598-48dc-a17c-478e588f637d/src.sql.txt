@@ -1,5 +1,0 @@
-CREATE TABLE `tax` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `taxPercentage` double NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8

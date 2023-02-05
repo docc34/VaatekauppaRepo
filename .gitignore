@@ -1,0 +1,4 @@
+node_modules
+Node/package-lock.json
+React/sovellus/package-lock.json
+React/sovellus/package.json

@@ -1,0 +1,41 @@
+sendgrind testapi apikey.
+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
+
+sendgrind apitestkey
+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
+
+Encodetus komento apiavaimelle käyttäen coreutils paketin työkaluja
+certutil -privatekey -encode not.txt encodedtest.txt
+Huom tulostiedosto ei saa olla olemassa.
+not.txt tiedoston sisältö encodetettiin
+
+Decodetus
+certutil -privatekey -decode encodedtest.txt test.txt
+
+Modeleista tietokannan luonti ensin luodaan datamigraatio
+add-migration Initial -Context ApplicationDbContext
+
+Pitää korvata varchar(767) => varchar(100)
+
+Sitten päivitetään tietokanta
+update-database -Context ApplicationDbContext
+
+Tuo normi tietokannan pöydät ef modeleiksi
+Scaffold-DbContext 'Data Source=localhost;Initial Catalog=vaatekauppadb; user=root; password=;' Microsoft.EntityFrameworkCore.SqlServer -OutputDir NewModels -Force
+
+21.2.2022
+Front rivit 5010
+Backend rivit 4023
+Tietokant 669
+
+18.3.2022 79 tuntia eka versio julkaistu.
+	Paypal sandbox personal
+sb-xybis7895175@personal.example.com
++^ChjA@9
+	Business
+sb-doxy48783494@business.example.com
+2+K!/vA#
+
+	TODO
+Laita paypalille oikeat tiedot kun tilataan ilman käyttäjänluontia
+Käyttäjätilin luonti tilauksen yhteydessä ei toimi

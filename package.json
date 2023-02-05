@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "BUILD_PATH='./React/sovellus' react-scripts build",
+    "build": "'cd ./React/sovellus' react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
